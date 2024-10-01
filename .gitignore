@@ -1,0 +1,41 @@
+# Ignoring IntelliJ IDEA-specific files
+/.idea/
+/*.iml
+/out/
+
+# Maven / Gradle specific files
+/target/
+/build/
+
+# Logs
+*.log
+
+# Temporary files
+*.class
+*.jar
+*.war
+*.ear
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# System-specific files
+*.class
+*.log
+*.tmp
+*.bak
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Specific to MacOS
+.DS_Store
+
+# Specific to Linux
+*~
+
+# Specific to Windows
+Thumbs.db
