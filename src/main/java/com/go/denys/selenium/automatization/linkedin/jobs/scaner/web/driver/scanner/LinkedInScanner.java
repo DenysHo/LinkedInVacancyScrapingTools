@@ -60,7 +60,7 @@ public class LinkedInScanner extends WebDriverScanner {
     public List<JobAd> scan() throws URISyntaxException {
         openJobAds();
 
-        int jobAdCount = Integer.parseInt(findElementByXpath(HEADER_JOB_COUNT).getText());
+        String jobAdCount = findElementByXpath(HEADER_JOB_COUNT).getText();
         logger.info("The number of Ads is written on the website = {}", jobAdCount);
 
         List<JobAd> jobAds = getJobList();
@@ -128,12 +128,20 @@ public class LinkedInScanner extends WebDriverScanner {
                             scroll(div);
                             click(div, 1000);
 
-                            logger.info("Job ad row number = {}", div.getAttribute("data-row"));
+                            String dataRowId = div.getAttribute("data-row");
+
+                            logger.info("Job ad row number = {}", dataRowId);
 
                             openAdContentIfNeeded(i, divElements, div);
 
-                            JobAd jobAd = resolveJobAd();
+                            JobAd jobAd = resolveJobAd(dataRowId);
                             jobs.add(jobAd);
+
+                            if (filter.getLimit() > 0 && filter.getLimit() >= jobs.size()) {
+                                moreElementsExist = false;
+                                counter = 0;
+                                break;
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -178,8 +186,10 @@ public class LinkedInScanner extends WebDriverScanner {
         }
     }
 
-    private JobAd resolveJobAd() throws InterruptedException {
+    private JobAd resolveJobAd(String id) throws InterruptedException {
         JobAd jobAd = new JobAd();
+
+        jobAd.setId(id);
 
         WebElement jobTitleElement = findElementByXpath(JOB_TITLE_XPATH);
         jobAd.setTitle(jobTitleElement.getText());
