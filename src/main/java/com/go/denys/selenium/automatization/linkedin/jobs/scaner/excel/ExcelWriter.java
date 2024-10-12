@@ -1,27 +1,29 @@
 package com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel;
 
-import lombok.AllArgsConstructor;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Scanner;
 
 public class ExcelWriter {
 
-    private List<List<String>> data;
-    private List<String> headers;
-    private String path;
+    private final List<List<String>> data;
+    private final List<String> headers;
+    private final String path;
     private int row;
-    private String sheetName;
+    private final String sheetName;
 
-    private static final Workbook workbook;
-    private static final CreationHelper creationHelper;
-    private static final CellStyle headerStyle;
-    private static final CellStyle linkStyle;
-    private static final CellStyle style;
+    private static Workbook workbook;
+    private static CreationHelper creationHelper;
+    private static CellStyle headerStyle;
+    private static CellStyle linkStyle;
+    private static CellStyle style;
 
 
     public ExcelWriter(List<List<String>> data, List<String> headers, String path, String sheetName) {
@@ -32,8 +34,7 @@ public class ExcelWriter {
         row = 0;
     }
 
-    static {
-        workbook = new XSSFWorkbook();
+    public void initializeStyles() {
         creationHelper = workbook.getCreationHelper();
 
         headerStyle = workbook.createCellStyle();
@@ -52,7 +53,28 @@ public class ExcelWriter {
     }
 
     public void write() {
-        Sheet sheet = workbook.createSheet(sheetName);
+        File file = new File(path);
+        Sheet sheet;
+        try {
+            if (file.exists()) {
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    workbook = new XSSFWorkbook(fis);
+                    sheet = workbook.getSheet(sheetName);
+
+                    // Если листа с таким именем нет, создаем новый
+                    if (sheet == null) {
+                        sheet = workbook.createSheet(sheetName);
+                    }
+                }
+            } else {
+                workbook = new XSSFWorkbook();
+                sheet = workbook.createSheet(sheetName);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open the Excel file.", e);
+        }
+
+        initializeStyles();
 
         writeHeader(sheet);
         writeRows(sheet);
@@ -97,7 +119,11 @@ public class ExcelWriter {
             workbook.write(fileOut);
             workbook.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("The file is already open. Please close the file and press Enter to continue...");
+            Scanner scanner = new Scanner(System.in);
+            scanner.nextLine(); // Waiting for input from the user
+
+            saveFile();
         }
     }
 }
