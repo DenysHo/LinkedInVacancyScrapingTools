@@ -137,6 +137,7 @@ public class LinkedInScanner extends WebDriverScanner {
                         }
                     }
                 } catch (Exception e) {
+                    logger.info("An error occurred: {}", e.getMessage(), e);
                     moreElementsExist = false;
                 }
             }
@@ -147,17 +148,22 @@ public class LinkedInScanner extends WebDriverScanner {
     }
 
     private void openAdContentIfNeeded(int i, List<WebElement> divElements, WebElement div) throws InterruptedException {
-        WebElement jobTitleElement = findElementByXpath(JOB_TITLE_XPATH);
+        try {
+            //WebElement jobTitleElement = findElementByXpath(JOB_TITLE_XPATH);
+            Optional<WebElement> jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
 
-        while (jobTitleElement.getText().isEmpty()) {
-            //open next
-            int nextI = i == divElements.size() - 1 ? i - 1 : i + 1;
-            WebElement nextDiv = divElements.get(nextI);
-            scroll(nextDiv);
-            click(nextDiv);
-            scroll(div);
-            click(div, 1000);
-            jobTitleElement = findElementByXpath(JOB_TITLE_XPATH);
+            while (jobTitleElement.isEmpty() || jobTitleElement.get().getText().isEmpty()) {
+                //open next
+                int nextI = i == divElements.size() - 1 ? i - 1 : i + 1;
+                WebElement nextDiv = divElements.get(nextI);
+                scroll(nextDiv);
+                click(nextDiv);
+                scroll(div);
+                click(div, 1000);
+                jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
