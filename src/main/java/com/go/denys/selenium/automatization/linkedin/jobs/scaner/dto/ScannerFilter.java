@@ -16,8 +16,10 @@ public class ScannerFilter {
     private Optional<String> location;
     private Optional<TimeRangeSelector> timeRange;
     private boolean uniqueness;
+    private int limit;
 
     public ScannerFilter() {
         uniqueness = true;
+        limit = 0;
     }
 }
