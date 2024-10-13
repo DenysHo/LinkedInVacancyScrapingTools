@@ -3,7 +3,6 @@ package com.go.denys.selenium.automatization.linkedin.jobs.scaner;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel.JobAdsExcelWriter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.util.JobAdUtil;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.web.driver.scanner.LinkedInScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

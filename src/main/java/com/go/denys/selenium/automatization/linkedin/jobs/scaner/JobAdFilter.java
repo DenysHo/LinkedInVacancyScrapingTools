@@ -24,7 +24,7 @@ public class JobAdFilter {
     @Value("${profiles.path}")
     private static String profilesPath;
 
-    private ScannerFilter filter;
+    private final ScannerFilter filter;
 
     public JobAdFilter(ScannerFilter filter) {
         this.filter = filter;

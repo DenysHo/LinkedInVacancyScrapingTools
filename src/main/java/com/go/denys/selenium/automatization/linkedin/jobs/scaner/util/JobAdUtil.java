@@ -30,7 +30,7 @@ public class JobAdUtil {
                 ad.getId(),
                 ad.getTitle(),
                 ad.getUrl().replaceAll("\"", ""),
-                ad.getDescription().replaceAll("\\r|\\n", "").replaceAll("\"", "")
+                ad.getDescription().replaceAll("[\\r\\n]", "").replaceAll("\"", "")
                 );
     }
 }
