@@ -60,8 +60,6 @@ public class ExcelWriter {
                 try (FileInputStream fis = new FileInputStream(file)) {
                     workbook = new XSSFWorkbook(fis);
                     sheet = workbook.getSheet(sheetName);
-
-                    // Если листа с таким именем нет, создаем новый
                     if (sheet == null) {
                         sheet = workbook.createSheet(sheetName);
                     }

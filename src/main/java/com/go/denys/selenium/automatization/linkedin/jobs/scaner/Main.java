@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.TimeRangeSelector.DAY;
+import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.util.JobAdUtil.print;
+import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.util.JobAdUtil.printForTest;
 
 public class Main {
 
@@ -40,25 +42,5 @@ public class Main {
         print(filtered);
         JobAdsExcelWriter excelWriter = new JobAdsExcelWriter();
         excelWriter.write(filtered);
-    }
-
-    public static void print(List<JobAd> ads) {
-        for(JobAd ad : ads) {
-            JobAdUtil.print(ad);
-        }
-    }
-
-    public static void printForTest(List<JobAd> ads) {
-        for(JobAd ad : ads) {
-            String pattern = "jobs.add(new JobAd(\"%s\", \"%s\", \"%s\", %n\"%s\"));";
-            //JobAd(String id, String title, String url, String description) {
-            System.out.printf((pattern) + "%n",
-                    ad.getId(),
-                    ad.getTitle(),
-                    ad.getDescription().replaceAll("\\r|\\n", "").replaceAll("\"", ""),
-                    ad.getFirmaName(),
-                    ad.getUrl().replaceAll("\"", ""),
-                    ad.getLocation());
-        }
     }
 }

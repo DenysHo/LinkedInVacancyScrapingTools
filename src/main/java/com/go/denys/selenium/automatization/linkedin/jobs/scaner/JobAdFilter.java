@@ -32,10 +32,7 @@ public class JobAdFilter {
 
     static {
         try {
-            //System.out.println(profilesPath);
-
-            DetectorFactory.loadProfile("src/main/resources/profiles"); // Путь к языковым профилям
-
+            DetectorFactory.loadProfile("src/main/resources/profiles"); // path to languages profiles
         } catch (LangDetectException e) {
             e.printStackTrace();
         }
@@ -62,17 +59,16 @@ public class JobAdFilter {
                 .toList();
         //todo "+7 years of experience"
         //todo "At least 5 years"
-        //todo "инженер"
         //todo "Android Java Developer"
 
         logger.info("Uniqueness value = {}", filter.isUniqueness());
         if (filter.isUniqueness())  {
             result = result.stream()
                     .collect(Collectors.toMap(
-                            JobAd::getUrl,  // используем поле field в качестве ключа
-                            obj -> obj,          // объект остается таким же
-                            (existing, replacement) -> existing)) // обработка дубликатов
-                    .values() // получаем уникальные значения
+                            JobAd::getUrl,  // use field Url as a key
+                            obj -> obj,
+                            (existing, replacement) -> existing))
+                    .values()
                     .stream().toList();
         }
 
@@ -111,7 +107,6 @@ public class JobAdFilter {
         }).toList();
     }
 
-    // Метод для фильтрации объявлений, содержащих только немецкий или оба языка
     public List<JobAd> filterGermanJobs(List<JobAd> jobs) {
         return jobs.stream()
                 .filter(job -> {
@@ -122,21 +117,15 @@ public class JobAdFilter {
                         Detector detector = DetectorFactory.create();
                         detector.append(job.getDescription());
 
-                        // Получаем вероятные языки
                         List<Language> languages = detector.getProbabilities();
 
-                        // Проверяем, есть ли немецкий язык в вероятных языках
-                        boolean containsGerman = languages.stream()
-                                .anyMatch(lang -> lang.lang.equals("de") && lang.prob > 0.2);  // например, вероятность выше 20%
-
-                        // Проверяем, есть ли английский язык в вероятных языках
                         boolean containsEnglish = languages.stream()
                                 .anyMatch(lang -> lang.lang.equals("en") && lang.prob > 0.2);
 
                         return containsEnglish;
 
                     } catch (LangDetectException e) {
-                        //e.printStackTrace();
+                        e.printStackTrace();
                     }
                     return true;
                 })

@@ -36,7 +36,6 @@ public class ExcelWriterTest {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Определяем форматтер с нужным форматом
         DateTimeFormatter formatterSheet = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm");
         String formattedDateTime = now.format(formatterSheet);
 
@@ -104,7 +103,6 @@ public class ExcelWriterTest {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Определяем форматтер с нужным форматом
         DateTimeFormatter formatterSheet = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm");
         String formattedDateTime = now.format(formatterSheet);
 
