@@ -21,10 +21,6 @@ public class JobAdHistoryService {
         this.jobAdHistoryRepo = jobAdHistoryRepo;
     }
 
-    public JobAdHistoryEntity save(JobAdHistoryEntity entity) {
-        return jobAdHistoryRepo.save(entity);
-    }
-
     public void save(List<JobAd> dto) {
         List<JobAdHistoryEntity> entities = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();

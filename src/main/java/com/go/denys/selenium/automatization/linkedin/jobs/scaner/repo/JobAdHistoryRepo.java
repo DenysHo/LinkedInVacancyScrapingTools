@@ -5,16 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JobAdHistoryRepo extends JpaRepository<JobAdHistoryEntity, Long> {
-    List<JobAdHistoryEntity> findByLink(String link);
-
-    boolean existsByLink(String link);
-
-    boolean existsByDescription(String description);
 
     @Query("SELECT CASE WHEN COUNT(j) > 0 THEN true ELSE false END " +
             "FROM JobAdHistoryEntity j " +

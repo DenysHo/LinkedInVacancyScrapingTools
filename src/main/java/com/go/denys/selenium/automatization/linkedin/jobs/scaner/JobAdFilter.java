@@ -8,7 +8,6 @@ import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.JobAdHistoryService;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

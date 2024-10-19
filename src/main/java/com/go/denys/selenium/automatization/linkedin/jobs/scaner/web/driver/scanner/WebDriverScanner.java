@@ -51,7 +51,7 @@ public class WebDriverScanner {
         return driver.findElements(By.xpath(xpath)).stream().findFirst();
     }
 
-    protected WebElement findElementByСssSelector(String cssSelector) {
+    protected WebElement findElementByCssSelector(String cssSelector) {
         return driver.findElement(By.cssSelector(cssSelector));
     }
 

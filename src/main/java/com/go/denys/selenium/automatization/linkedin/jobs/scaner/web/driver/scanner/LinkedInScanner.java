@@ -14,7 +14,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-@Data
 public class LinkedInScanner extends WebDriverScanner {
 
     public static final String JOB_TITLE_XPATH = "//h2[@class='top-card-layout__title font-sans text-lg papabear:text-xl font-bold leading-open text-color-text mb-0 topcard__title']";
@@ -150,7 +149,6 @@ public class LinkedInScanner extends WebDriverScanner {
 
     private void openAdContentIfNeeded(int i, List<WebElement> divElements, WebElement div) throws InterruptedException {
         try {
-            //WebElement jobTitleElement = findElementByXpath(JOB_TITLE_XPATH);
             Optional<WebElement> jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
 
             while (jobTitleElement.isEmpty() || jobTitleElement.get().getText().isEmpty()) {
@@ -209,7 +207,7 @@ public class LinkedInScanner extends WebDriverScanner {
     }
 
     private void filter() throws InterruptedException {
-        click(findElementByСssSelector(TIME_RANGE_FILTER_BUTTON_CSS));
+        click(findElementByCssSelector(TIME_RANGE_FILTER_BUTTON_CSS));
         click(findElementById(filter.getTimeRange().getId()));
         click(findElementByXpath(SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH));
     }
