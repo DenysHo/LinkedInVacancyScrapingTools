@@ -11,6 +11,7 @@ public class JobAdsExcelWriter {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm");
     private static final List<String> headers;
+    public static final String PATH = "C:\\DenysHo\\Documents\\jobs\\%s.xlsx";
 
     static {
         headers = new ArrayList<>();
@@ -29,8 +30,9 @@ public class JobAdsExcelWriter {
         LocalDateTime now = LocalDateTime.now();
 
         String formattedDateTime = now.format(FORMATTER);
+        String path = String.format(PATH, formattedDateTime);
 
-        ExcelWriter writer = new ExcelWriter(data, headers, "C:\\Users\\gluza\\OneDrive\\Рабочий стол\\jobs.xlsx", formattedDateTime);
+        ExcelWriter writer = new ExcelWriter(data, headers, path, "new ads");
         writer.write();
     }
 }

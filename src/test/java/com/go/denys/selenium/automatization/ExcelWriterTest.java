@@ -1,13 +1,9 @@
 package com.go.denys.selenium.automatization;
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel.ExcelWriter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel.JobAdToExcelWritingTransformer;
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel.JobAdsExcelWriter;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,92 +19,8 @@ public class ExcelWriterTest {
         jobAdList.add(new JobAd("Java / C Programmer (Java Full Stack Engineer)", "Job Title: Java / C Programmer (Java Full Stack Engineer)Job Location: Leipzig, Germany/ HybridJob Type : ContractLanguage: German is mustExperience: 7-10 years.Job Description:Java knowledgeEspecially unit tests, integration tests (ideally with DBunit, Mockito)Java 17HibernateExperience with C-ProgrammingUse of Sonar (optional)Knowledge of Ranorex (optional, could be used to expand test automation of Kompass302Erf)German-speakingRegards,Rachanarachana@falconsmartit.com", "Falcon Smart IT (FalconSmartIT)", "https://de.linkedin.com/jobs/view/java-c-programmer-java-full-stack-engineer-at-falcon-smart-it-falconsmartit-4025870351?trk=public_jobs_topcard-title", "Leipzig, Saxony, Germany"));
         jobAdList.add(new JobAd("Software Engineer", "Description dvhaus is searching for a Java Expert/ Developer.Must have 3+ yrs experience with Java in the FrontendMust have experience with legacy systems and code (check tech requirements below!)Must be able to be on-site in Oberhaching near Munich during the induction periodMust speak German on at least C1 level and be located in GermanyTechnologiesJavaSeleniumRequirementsClient application (front end)Code guidelinesException handlingJSP basic structure regarding accessibilityResponsive behaviorServletscontainersJAX-WSSelenium (test automation)jQueryServer (Back End)LinuxSQLJavaApache Log4jWorking environmentJBOSS EAP 7.4Create JUnit testsRemote debuggingSSO (Single Sign On)Nexus (Maven Repository)EclipseeFiles system (eIp, e2a, VIS)Database administrationResponsibilitiesFrontend development in Java.Implementation of refactoring measures.Bug fixes.Customer contact to clarify technical and functional issues.Modernization, maintenance and further development of complex processes using the latest technologies.Requirements analysis in cooperation with customers, creation of concepts.Recruitment ProcessCultural fit call with Managing Director (≈ 30 minutes)Tech assessment call with Teamlead (≈60 minutes)BenefitsHome Office/ fully remote within Germany after induction periodWork-Life-Balance (no overtime, weekend work, public holiday work)", "ju ucy", "https://de.linkedin.com/jobs/view/software-engineer-4026507219?trk=public_jobs_topcard-title", "Germany"));
 
-        JobAdToExcelWritingTransformer transformer = new JobAdToExcelWritingTransformer();
-        List<List<String>> adsToWrite = transformer.transform(jobAdList);
 
-        List<String> headers = new ArrayList<>();
-        headers.add("Company Name");
-        headers.add("Position");
-        headers.add("Location");
-        headers.add("Date");
-        headers.add("Status");
-        headers.add("URL");
-
-        LocalDateTime now = LocalDateTime.now();
-
-        DateTimeFormatter formatterSheet = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm");
-        String formattedDateTime = now.format(formatterSheet);
-
-        ExcelWriter writer = new ExcelWriter(adsToWrite, headers, "C:\\Users\\gluza\\OneDrive\\Рабочий стол\\jobs.xlsx", formattedDateTime);
-        writer.write();
-    }
-
-
-    @Test
-    public void writeTest() {
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String formattedDate = currentDate.format(formatter);
-
-
-        List<String> headers = new ArrayList<>();
-        headers.add("Company Name");
-        headers.add("Position");
-        headers.add("Location");
-        headers.add("Date");
-        headers.add("Status");
-        headers.add("URL");
-
-        List<String> row1 = new ArrayList<>();
-        row1.add("Genedata");
-        row1.add("Java Software Engineer");
-        row1.add("Munich, Bavaria, Germany");
-        row1.add(formattedDate);
-        row1.add("geschickt");
-        row1.add("https://de.linkedin.com/jobs/view/java-software-engineer-at-genedata-4025233561?trk=public_jobs_topcard-title");
-
-        List<String> row2 = new ArrayList<>();
-        row2.add("Falcon Smart IT (FalconSmartIT)");
-        row2.add("Java / C Programmer (Java Full Stack Engineer)");
-        row2.add("Leipzig, Saxony, Germany");
-        row2.add(formattedDate);
-        row2.add("geschickt");
-        row2.add("https://de.linkedin.com/jobs/view/java-c-programmer-java-full-stack-engineer-at-falcon-smart-it-falconsmartit-4025506418?trk=public_jobs_topcard-title");
-
-        List<String> row3 = new ArrayList<>();
-        row3.add("SAP");
-        row3.add("Intern (f/m/d) - Java Developer for Cloud Applications");
-        row3.add("Walldorf, Baden-Württemberg, Germany");
-        row3.add(formattedDate);
-        row3.add("geschickt");
-        row3.add("https://de.linkedin.com/jobs/view/intern-f-m-d-java-developer-for-cloud-applications-at-sap-3826036379?trk=public_jobs_topcard-title");
-
-        List<String> row4 = new ArrayList<>();
-        row4.add("Skywaves Rise");
-        row4.add("Java Developer");
-        row4.add("Frankfurt Rhine-Main Metropolitan Area");
-        row4.add(formattedDate);
-        row4.add("geschickt");
-        row4.add("https://de.linkedin.com/jobs/view/java-developer-at-skywaves-rise-4027234674?trk=public_jobs_topcard-title");
-
-        List<String> row5 = new ArrayList<>();
-        row5.add("TESTQ Technologies Limited");
-        row5.add("Java Full Stack Engineer (Java / C Programmer)");
-        row5.add("Leipzig, Saxony, Germany");
-        row5.add(formattedDate);
-        row5.add("geschickt");
-        row5.add("https://de.linkedin.com/jobs/view/java-full-stack-engineer-java-c-programmer-at-testq-technologies-limited-4027258161?trk=public_jobs_topcard-title");
-
-        List<List<String>> data = List.of(row1, row2, row3, row4, row5);
-
-        LocalDateTime now = LocalDateTime.now();
-
-        DateTimeFormatter formatterSheet = DateTimeFormatter.ofPattern("dd.MM.yyyy HH-mm");
-        String formattedDateTime = now.format(formatterSheet);
-
-        ExcelWriter writer = new ExcelWriter(data, headers, "C:\\Users\\gluza\\OneDrive\\Рабочий стол\\jobs.xlsx", formattedDateTime);
-        writer.write();
-
-
+        JobAdsExcelWriter excelWriter = new JobAdsExcelWriter();
+        excelWriter.write(jobAdList);
     }
 }
