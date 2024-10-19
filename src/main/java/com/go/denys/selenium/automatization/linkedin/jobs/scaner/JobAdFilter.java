@@ -6,28 +6,35 @@ import com.cybozu.labs.langdetect.LangDetectException;
 import com.cybozu.labs.langdetect.Language;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.JobAdHistoryService;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.JobLevel.*;
 
-@Getter
+@Service
+@Data
+@NoArgsConstructor
 public class JobAdFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JobAdFilter.class);
 
     @Value("${profiles.path}")
     private static String profilesPath;
+    private JobAdHistoryService jobAdHistoryService;
 
-    private final ScannerFilter filter;
-
-    public JobAdFilter(ScannerFilter filter) {
-        this.filter = filter;
+    @Autowired
+    public JobAdFilter(JobAdHistoryService jobAdHistoryService) {
+        this.jobAdHistoryService = jobAdHistoryService;
     }
 
     static {
@@ -38,44 +45,58 @@ public class JobAdFilter {
         }
     }
 
-    public List<JobAd> filter(List<JobAd> jobs) {
+    public List<JobAd> filter(List<JobAd> jobs, ScannerFilter filter) {
         List<JobAd> result = filterPosition(jobs);
         result = filterGermanJobs(result);
-        result = result.stream()
-                .filter(j -> {
-                    String desc = j.getDescription().toLowerCase();
-
-                    boolean noGermanSpeaking = (!desc.contains("german") || desc.contains("english") || desc.contains("germany")) && !desc.contains("german and english") && !desc.contains("english and german");
-                    if (!noGermanSpeaking) {
-                        logger.debug(String.format("Filtered %s required German", j.getId()));
-                    }
-                    boolean javaSpring = desc.matches(".*" + "java([^s]|$)" + ".*") || desc.contains("spring");
-                    if (!javaSpring) {
-                        logger.debug(String.format("Filtered %s not contains java or spring", j.getId()));
-                    }
-
-                    return noGermanSpeaking && javaSpring;
-                })
-                .toList();
-        //todo "+7 years of experience"
-        //todo "At least 5 years"
-        //todo "Android Java Developer"
-
-        logger.info("Uniqueness value = {}", filter.isUniqueness());
-        if (filter.isUniqueness())  {
-            result = result.stream()
-                    .collect(Collectors.toMap(
-                            JobAd::getUrl,  // use field Url as a key
-                            obj -> obj,
-                            (existing, replacement) -> existing))
-                    .values()
-                    .stream().toList();
+        result = filterDescription(result);
+        if (filter.isUniqueness()) {
+            result = filterDuplicates(result);
+        }
+        if (filter.isPrevious()) {
+            result = filterByPreviousTimes(result);
         }
 
         return result;
     }
 
-    private static List<JobAd> filterPosition(List<JobAd> jobs) {
+    private List<JobAd> filterByPreviousTimes(List<JobAd> result) {
+        result = result.stream()
+                .filter(j -> !jobAdHistoryService.checkIfRecordExists(j.getUrl(), j.getDescription()))
+                .toList();
+        return result;
+    }
+
+    private List<JobAd> filterDuplicates(List<JobAd> result) {
+        result = result.stream()
+                .collect(Collectors.toMap(
+                        JobAd::getUrl,  // use field Url as a key
+                        obj -> obj,
+                        (existing, replacement) -> existing))
+                .values()
+                .stream().toList();
+        return result;
+    }
+
+    private List<JobAd> filterDescription(List<JobAd> result) {
+        return result.stream()
+                .filter(j -> {
+                    String desc = j.getDescription().toLowerCase();
+
+                    boolean noGermanSpeaking = (!desc.contains("german") || desc.contains("english") || desc.contains("germany")) && !desc.contains("german and english") && !desc.contains("english and german");
+                    if (!noGermanSpeaking) {
+                        logger.info(String.format("Filtered %s required German", j.getId()));
+                    }
+                    boolean javaSpring = desc.matches(".*" + "java([^s]|$)" + ".*") || desc.contains("spring");
+                    if (!javaSpring) {
+                        logger.info(String.format("Filtered %s not contains java or spring", j.getId()));
+                    }
+
+                    return noGermanSpeaking && javaSpring;
+                })
+                .toList();
+    }
+
+    private List<JobAd> filterPosition(List<JobAd> jobs) {
         return jobs.stream().filter(j -> {
             String title = j.getTitle().toLowerCase();
             boolean senior = title.contains(SENIOR.getLevel());
@@ -101,7 +122,7 @@ public class JobAdFilter {
                     builder.append(" ").append(ENGINEER.getLevel());
                 }*/
 
-                logger.debug(String.format("Filtered %s by Position contains%s", j.getId(), builder));
+                logger.info(String.format("Filtered %s by Position contains%s", j.getId(), builder));
             }
             return result;
         }).toList();

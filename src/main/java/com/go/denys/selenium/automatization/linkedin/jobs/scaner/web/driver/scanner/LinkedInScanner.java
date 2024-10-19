@@ -9,13 +9,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-@Service
 @Data
 public class LinkedInScanner extends WebDriverScanner {
 
@@ -50,11 +48,6 @@ public class LinkedInScanner extends WebDriverScanner {
     public LinkedInScanner(ScannerFilter filter) {
         super();
         this.filter = filter;
-    }
-
-    public LinkedInScanner() {
-        super();
-        filter = new ScannerFilter();
     }
 
     public List<JobAd> scan() throws URISyntaxException {
@@ -92,8 +85,8 @@ public class LinkedInScanner extends WebDriverScanner {
 
     private URI formUri() throws URISyntaxException {
         URIBuilder uriBuilder = new URIBuilder(URL);
-        filter.getKeywords().ifPresent(keywords -> uriBuilder.addParameter(KEYWORDS_PARAMETER, keywords));
-        filter.getLocation().ifPresent(location -> uriBuilder.addParameter(LOCATION_PARAMETER, location));
+        uriBuilder.addParameter(KEYWORDS_PARAMETER, filter.getKeywords());
+        uriBuilder.addParameter(LOCATION_PARAMETER, filter.getLocation());
         return uriBuilder.build();
     }
 
@@ -137,7 +130,7 @@ public class LinkedInScanner extends WebDriverScanner {
                             JobAd jobAd = resolveJobAd(dataRowId);
                             jobs.add(jobAd);
 
-                            if (filter.getLimit() > 0 && filter.getLimit() >= jobs.size()) {
+                            if (filter.getLimit() > 0 && filter.getLimit() <= jobs.size()) {
                                 moreElementsExist = false;
                                 counter = 0;
                                 break;
@@ -216,10 +209,8 @@ public class LinkedInScanner extends WebDriverScanner {
     }
 
     private void filter() throws InterruptedException {
-        if (filter.getTimeRange().isPresent()) {
-            click(findElementByСssSelector(TIME_RANGE_FILTER_BUTTON_CSS));
-            click(findElementById(filter.getTimeRange().get().getId()));
-            click(findElementByXpath(SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH));
-        }
+        click(findElementByСssSelector(TIME_RANGE_FILTER_BUTTON_CSS));
+        click(findElementById(filter.getTimeRange().getId()));
+        click(findElementByXpath(SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH));
     }
 }
