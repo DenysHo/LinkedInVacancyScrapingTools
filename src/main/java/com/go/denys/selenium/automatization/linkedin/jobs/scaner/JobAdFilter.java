@@ -38,9 +38,10 @@ public class JobAdFilter {
 
     static {
         try {
+            //todo
             DetectorFactory.loadProfile("src/main/resources/profiles"); // path to languages profiles
         } catch (LangDetectException e) {
-            e.printStackTrace();
+            logger.info("An error occurred: {}", e.getMessage(), e);
         }
     }
 
@@ -145,7 +146,7 @@ public class JobAdFilter {
                         return containsEnglish;
 
                     } catch (LangDetectException e) {
-                        e.printStackTrace();
+                        logger.info("An error occurred: {}", e.getMessage(), e);
                     }
                     return true;
                 })

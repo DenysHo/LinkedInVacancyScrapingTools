@@ -2,7 +2,6 @@ package com.go.denys.selenium.automatization.linkedin.jobs.scaner.web.driver.sca
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
-import lombok.Data;
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -21,7 +20,6 @@ public class LinkedInScanner extends WebDriverScanner {
     public static final String KEYWORDS_PARAMETER = "keywords";
     public static final String LOCATION_PARAMETER = "location";
 
-    public static final String LINKEDIN_URL = "https://www.linkedin.com/";
     public static final String DISMISS_BUTTON = "//button[@class='modal__dismiss btn-tertiary h-[40px] w-[40px] p-0 rounded-full indent-0 contextual-sign-in-modal__modal-dismiss absolute right-0 m-[20px] cursor-pointer']";
     public static final String MODAL_DISMISS_BUTTON = "//button[contains(@class,'modal__dismiss') and @data-tracking-control-name='public_jobs_contextual-sign-in-modal_modal_dismiss']";
     public static final String BUTTON_PRIMARY_DATA = "button.artdeco-global-alert-action.artdeco-button--inverse.artdeco-button--2.artdeco-button--primary[data-control-name='ga-cookie.consent.accept.v4']";
@@ -42,7 +40,7 @@ public class LinkedInScanner extends WebDriverScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(LinkedInScanner.class);
 
-    private ScannerFilter filter;
+    private final ScannerFilter filter;
 
     public LinkedInScanner(ScannerFilter filter) {
         super();
@@ -147,7 +145,7 @@ public class LinkedInScanner extends WebDriverScanner {
         return jobs;
     }
 
-    private void openAdContentIfNeeded(int i, List<WebElement> divElements, WebElement div) throws InterruptedException {
+    private void openAdContentIfNeeded(int i, List<WebElement> divElements, WebElement div) {
         try {
             Optional<WebElement> jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
 
@@ -162,7 +160,7 @@ public class LinkedInScanner extends WebDriverScanner {
                 jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.info("An error occurred: {}", e.getMessage(), e);
         }
     }
 

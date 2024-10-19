@@ -77,14 +77,6 @@ public class WebDriverScanner {
         }
     }
 
-    protected WebElement waitUntilByXpath(String xpath) {
-        return wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-    }
-
-    protected boolean checkExistByXpath(String xpath) {
-        return !findElementsByXpath(xpath).isEmpty();
-    }
-
     protected void click(WebElement element, long millis) throws InterruptedException {
         element.click();
         Thread.sleep(millis);
