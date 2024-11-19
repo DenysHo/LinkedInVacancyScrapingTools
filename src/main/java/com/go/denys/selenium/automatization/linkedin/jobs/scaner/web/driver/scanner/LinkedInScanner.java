@@ -13,7 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
-public class LinkedInScanner extends WebDriverScanner {
+public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
 
     public static final String JOB_TITLE_XPATH = "//h2[@class='top-card-layout__title font-sans text-lg papabear:text-xl font-bold leading-open text-color-text mb-0 topcard__title']";
     public static final String URL = "https://www.linkedin.com/jobs/search";
@@ -40,26 +40,8 @@ public class LinkedInScanner extends WebDriverScanner {
 
     private static final Logger logger = LoggerFactory.getLogger(LinkedInScanner.class);
 
-    private final ScannerFilter filter;
-
-    public LinkedInScanner(ScannerFilter filter) {
-        super();
-        this.filter = filter;
-    }
-
-    public List<JobAd> scan() throws URISyntaxException {
-        openJobAds();
-
-        String jobAdCount = findElementByXpath(HEADER_JOB_COUNT).getText();
-        logger.info("The number of Ads is written on the website = {}", jobAdCount);
-
-        List<JobAd> jobAds = getJobList();
-        logger.info("Count scanned Ads = {}", jobAds.size());
-
-        return jobAds;
-    }
-
-    private void openJobAds() throws URISyntaxException {
+    @Override
+    protected void openJobAds() throws URISyntaxException {
         URI uri = formUri();
 
         try {
@@ -72,12 +54,23 @@ public class LinkedInScanner extends WebDriverScanner {
             clickElementByXpathIfExists(DISMISS_BUTTON);
             clickElementByXpathIfExists(MODAL_DISMISS_BUTTON);
             clickElementIfExists(By.cssSelector(BUTTON_PRIMARY_DATA));
-            Thread.sleep(2000);
+            sleep(2000);
 
             filter();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            sleep(2000);
+
+            currentUrl = getDriver().getCurrentUrl();
+            if (!currentUrl.contains(URL)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            openJobAds();
         }
+    }
+
+    @Override
+    protected String getAdCount() {
+        return findElementByXpath(HEADER_JOB_COUNT).getText();
     }
 
     private URI formUri() throws URISyntaxException {
@@ -87,60 +80,57 @@ public class LinkedInScanner extends WebDriverScanner {
         return uriBuilder.build();
     }
 
-    public List<JobAd> getJobList() {
+    @Override
+    protected List<JobAd> getJobList() {
         List<JobAd> jobs = new ArrayList<>();
-        try {
-            int countProcessedElements = 0;
-            List<WebElement> divElements;
+        int countProcessedElements = 0;
+        List<WebElement> divElements;
 
-            boolean moreElementsExist = true;
-            int counter = OPEN_NEW_AD_TRY_COUNT;
-            while (moreElementsExist || counter > 0) {
-                try {
-                    By cssSelector = By.cssSelector(JOBS_SEARCH_RESULTS_LIST_CSS);
-                    divElements = getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(cssSelector));
-                    divElements = divElements.stream().skip(countProcessedElements).toList();
+        boolean moreElementsExist = true;
+        int counter = OPEN_NEW_AD_TRY_COUNT;
+        while (moreElementsExist || counter > 0) {
+            try {
+                By cssSelector = By.cssSelector(JOBS_SEARCH_RESULTS_LIST_CSS);
+                divElements = getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(cssSelector));
+                divElements = divElements.stream().skip(countProcessedElements).toList();
 
-                    if (divElements.isEmpty()) {
-                        counter--;
-                        openMoreJobAd();
-                    }
+                if (divElements.isEmpty()) {
+                    counter--;
+                    openMoreJobAd();
+                }
 
-                    if (divElements.isEmpty()) {
-                        moreElementsExist = false;
-                    } else {
-                        counter = OPEN_NEW_AD_TRY_COUNT;
-                        countProcessedElements += divElements.size();
-                        logger.info("Count processed elements = {}", countProcessedElements);
+                if (divElements.isEmpty()) {
+                    moreElementsExist = false;
+                } else {
+                    counter = OPEN_NEW_AD_TRY_COUNT;
+                    countProcessedElements += divElements.size();
+                    logger.info("Count processed elements = {}", countProcessedElements);
 
-                        for (int i = 0; i < divElements.size(); i++) {
-                            WebElement div = divElements.get(i);
-                            scroll(div);
-                            click(div, 1000);
+                    for (int i = 0; i < divElements.size(); i++) {
+                        WebElement div = divElements.get(i);
+                        scroll(div);
+                        click(div, 1000);
 
-                            String dataRowId = div.getAttribute("data-row");
+                        String dataRowId = div.getAttribute("data-row");
 
-                            logger.info("Job ad row number = {}", dataRowId);
+                        logger.info("Job ad row number = {}", dataRowId);
 
-                            openAdContentIfNeeded(i, divElements, div);
+                        openAdContentIfNeeded(i, divElements, div);
 
-                            JobAd jobAd = resolveJobAd(dataRowId);
-                            jobs.add(jobAd);
+                        JobAd jobAd = resolveJobAd(dataRowId);
+                        jobs.add(jobAd);
 
-                            if (filter.getLimit() > 0 && filter.getLimit() <= jobs.size()) {
-                                moreElementsExist = false;
-                                counter = 0;
-                                break;
-                            }
+                        if (filter.getLimit() > 0 && filter.getLimit() <= jobs.size()) {
+                            moreElementsExist = false;
+                            counter = 0;
+                            break;
                         }
                     }
-                } catch (Exception e) {
-                    logger.info("An error occurred: {}", e.getMessage(), e);
-                    moreElementsExist = false;
                 }
+            } catch (Exception e) {
+                logger.info("An error occurred: {}", e.getMessage(), e);
+                moreElementsExist = false;
             }
-        } finally {
-            getDriver().quit();
         }
         return jobs;
     }
@@ -154,9 +144,9 @@ public class LinkedInScanner extends WebDriverScanner {
                 int nextI = i == divElements.size() - 1 ? i - 1 : i + 1;
                 WebElement nextDiv = divElements.get(nextI);
                 scroll(nextDiv);
-                click(nextDiv);
+                click(nextDiv, 1000);
                 scroll(div);
-                click(div, 1000);
+                click(div, 2000);
                 jobTitleElement = findElementOptionalByXpath(JOB_TITLE_XPATH);
             }
         } catch (Exception e) {
@@ -197,7 +187,7 @@ public class LinkedInScanner extends WebDriverScanner {
 
         WebElement showMoreButton = findElementByXpath(SHOW_ALL_DESCRIPTION_BUTTON_XPATH);
         showMoreButton.click();
-        Thread.sleep(1000);
+        sleep(1000);
 
         WebElement jobDescriptionElement = findElementByXpath(DESCRIPTION_ELEMENT_XPATH);
         jobAd.setDescription(jobDescriptionElement.getText());

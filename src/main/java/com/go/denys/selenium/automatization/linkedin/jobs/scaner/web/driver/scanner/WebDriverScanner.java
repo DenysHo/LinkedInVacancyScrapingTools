@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Data
-public class WebDriverScanner {
+public abstract class WebDriverScanner {
 
     private WebDriver driver;
     private WebDriverWait wait;
@@ -29,9 +29,9 @@ public class WebDriverScanner {
         setWait( new WebDriverWait(getDriver(), Duration.ofSeconds(10)));
     }
 
-    protected void get(String url) throws InterruptedException {
+    protected void get(String url) {
         driver.get(url);
-        Thread.sleep(2000);
+        sleep(2000);
     }
 
     protected JavascriptExecutor getJs() {
@@ -58,6 +58,22 @@ public class WebDriverScanner {
         return driver.findElement(By.id(id));
     }
 
+    protected Optional<WebElement> findOptionElementById(String id) {
+        return findOptionElement(By.id(id));
+    }
+
+    protected Optional<WebElement> findOptionElementByCssSelector(String cssSelector) {
+        return findOptionElement(By.cssSelector(cssSelector));
+    }
+
+    protected Optional<WebElement> findOptionElement(By by) {
+        List<WebElement> elements = findElements(by);
+        if (!elements.isEmpty()) {
+            return Optional.of(elements.get(0));
+        }
+        return Optional.empty();
+    }
+
     protected WebElement findElementByXpath(String xpathExpression) {
         return driver.findElement(By.xpath(xpathExpression));
     }
@@ -76,9 +92,17 @@ public class WebDriverScanner {
         }
     }
 
-    protected void click(WebElement element, long millis) throws InterruptedException {
+    protected void click(WebElement element, long millis) {
         element.click();
-        Thread.sleep(millis);
+        sleep(millis);
+    }
+
+    protected void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     protected void click(WebElement element) throws InterruptedException {
@@ -87,7 +111,12 @@ public class WebDriverScanner {
 
     protected void scroll(WebElement element, long millis) throws InterruptedException {
         getJs().executeScript("arguments[0].scrollIntoView(false);", element);
-        Thread.sleep(millis);
+        sleep(millis);
+    }
+
+    protected void scrollIntoView(WebElement element, long millis) {
+        getJs().executeScript("arguments[0].scrollIntoView(true);", element);
+        sleep(millis);
     }
 
     protected void scroll(WebElement element) throws InterruptedException {
@@ -96,7 +125,7 @@ public class WebDriverScanner {
 
     protected void scroll(int px, long millis) throws InterruptedException {
         getJs().executeScript(String.format(SCROLL_SCRIPT, px));
-        Thread.sleep(millis);
+        sleep(millis);
     }
 
     protected void scroll(int px) throws InterruptedException {

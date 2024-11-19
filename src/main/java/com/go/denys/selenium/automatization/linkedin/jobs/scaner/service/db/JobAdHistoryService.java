@@ -1,4 +1,4 @@
-package com.go.denys.selenium.automatization.linkedin.jobs.scaner.service;
+package com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.db;
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.entity.JobAdHistoryEntity;

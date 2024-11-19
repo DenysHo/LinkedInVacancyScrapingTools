@@ -1,12 +1,13 @@
 package com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @EqualsAndHashCode
-@Builder
 public class JobAd {
 
     @Builder.Default
@@ -58,3 +59,5 @@ public class JobAd {
                 '}' + '\n';
     }
 }
+
+

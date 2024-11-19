@@ -1,7 +1,7 @@
 package com.go.denys.selenium.automatization;
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.JobAdFilter;
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter.JobAdFilter;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

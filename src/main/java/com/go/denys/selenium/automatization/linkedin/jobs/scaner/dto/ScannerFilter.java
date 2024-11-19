@@ -1,13 +1,17 @@
 package com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto;
 
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.Profile;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.TimeRangeSelector;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
+@SuperBuilder
 public class ScannerFilter {
 
     @Builder.Default
@@ -22,5 +26,7 @@ public class ScannerFilter {
     private boolean previous = true;
     @Builder.Default
     private int limit = 0;
+    @Builder.Default
+    private List<Profile> profiles = new ArrayList<>();
 
 }
