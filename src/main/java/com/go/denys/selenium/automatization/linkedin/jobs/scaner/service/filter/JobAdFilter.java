@@ -94,6 +94,10 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
     private List<A> filterDescription(List<A> result) {
         return result.stream()
                 .filter(j -> {
+                    if (j.getDescription().isEmpty()) {
+                        return true;
+                    }
+
                     String desc = j.getDescription().toLowerCase();
 
                     boolean noGermanSpeaking = (!desc.contains("german") || desc.contains("english") || desc.contains("germany")) && !desc.contains("german and english") && !desc.contains("english and german");

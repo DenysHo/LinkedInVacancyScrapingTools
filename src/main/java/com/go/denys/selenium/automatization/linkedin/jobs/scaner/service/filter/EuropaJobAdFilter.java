@@ -2,7 +2,6 @@ package com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.EuropaJobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.EuropaScannerFilter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.db.JobAdHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

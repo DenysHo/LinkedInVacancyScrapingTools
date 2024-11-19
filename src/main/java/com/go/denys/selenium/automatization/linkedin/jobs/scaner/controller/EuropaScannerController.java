@@ -47,7 +47,7 @@ public class EuropaScannerController {
         EuropaScannerFilter scannerFilter = EuropaScannerFilter.builder()
                 .keywords("Java Developer")
                 .profiles(List.of(EN, UK, RU))
-                .locations(List.of(Location.DE))
+                .locations(List.of(Location.SWEDEN))
                 //.locations(List.of(FR))
                 //.locations(List.of(ALL))
                 //.locations(List.of(CZ))
