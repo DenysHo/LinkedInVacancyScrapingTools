@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,22 +45,17 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
         adsCountForLogging = jobs.size();
         List<A> result = filterPosition(jobs);
         logFilter("Position", result.size());
-        //print(new ArrayList<>(result));
-        result = filterGermanJobs(result, filter);
+        result = filterLanguagesDescriptionJobs(result, filter);
         logFilter("German", result.size());
-        //print(new ArrayList<>(result));
         result = filterDescription(result);
         logFilter("Description", result.size());
-        //print(new ArrayList<>(result));
         if (filter.isUniqueness()) {
             result = filterDuplicates(result);
             logFilter("Uniqueness", result.size());
-            //print(new ArrayList<>(result));
         }
         if (filter.isPrevious()) {
             result = filterByPreviousTimes(result);
             logFilter("Previous Times", result.size());
-            //print(new ArrayList<>(result));
         }
 
         return result;
@@ -94,20 +88,14 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
     private List<A> filterDescription(List<A> result) {
         return result.stream()
                 .filter(j -> {
-                    if (j.getDescription().isEmpty()) {
+                    if (j.getDescription().isEmpty() || j.getDescription().length() < 10) {
                         return true;
                     }
 
                     String desc = j.getDescription().toLowerCase();
 
                     boolean noGermanSpeaking = (!desc.contains("german") || desc.contains("english") || desc.contains("germany")) && !desc.contains("german and english") && !desc.contains("english and german");
-                    if (!noGermanSpeaking) {
-                        logger.debug(String.format("Filtered %s required German", j.getId()));
-                    }
                     boolean javaSpring = desc.matches(".*" + "java([^s]|$)" + ".*") || desc.contains("spring");
-                    if (!javaSpring) {
-                        logger.debug(String.format("Filtered %s not contains java or spring", j.getId()));
-                    }
 
                     return noGermanSpeaking && javaSpring;
                 })
@@ -146,11 +134,11 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
         }).toList();
     }
 
-    public List<A> filterGermanJobs(List<A> jobs, F filter) {
+    public List<A> filterLanguagesDescriptionJobs(List<A> jobs, F filter) {
         return jobs.stream()
                 .filter(job -> {
                     try {
-                        if (job.getDescription() == null || job.getDescription().isEmpty()) {
+                        if (job.getDescription() == null || job.getDescription().isEmpty() || filter.getProfiles().isEmpty()) {
                             return true;
                         }
                         Detector detector = DetectorFactory.create();
@@ -163,10 +151,19 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
                         languageChecks.put("ru", filter.getProfiles().contains(RU));
                         languageChecks.put("uk", filter.getProfiles().contains(UK));
 
-                        return languageChecks.entrySet().stream()
+                        boolean containsFr = languages.stream()
+                                .anyMatch(lang -> lang.lang.equals("fr") && lang.prob > 0.3);
+
+                        boolean anyMatch = languageChecks.entrySet().stream()
                                 .anyMatch(entry -> entry.getValue() &&
                                         languages.stream()
                                                 .anyMatch(lang -> lang.lang.equals(entry.getKey()) && lang.prob > 0.2));
+
+                        if (containsFr) {
+                            return false;
+                        }
+
+                        return anyMatch;
 
                     } catch (LangDetectException e) {
                         logger.info("An error occurred: {}", e.getMessage(), e);

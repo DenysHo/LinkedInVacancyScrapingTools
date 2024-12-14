@@ -112,6 +112,9 @@ public class EuropaScanner extends BaseScanner<EuropaScannerFilter, EuropaJobAd>
                 filter.getLocations().get(0).getCode(),
                 filter.getKeywords().replaceAll(" ", "%20")));
 
+        uri = java.net.URI.create(
+                "https://europa.eu/eures/portal/jv-se/search?page=1&resultsPerPage=10&orderBy=BEST_MATCH&keywordsEverywhere=Java%20Developer&experience=NS,between_1_and_2_years,between_2_and_5_years,none_required,up_to_1_year&publicationPeriod=LAST_WEEK&lang=en");
+
         try {
             get(uri.toString());
             sleep(2000);

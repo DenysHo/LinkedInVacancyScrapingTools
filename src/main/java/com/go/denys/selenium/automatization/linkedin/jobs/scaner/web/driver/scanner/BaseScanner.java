@@ -33,6 +33,9 @@ public abstract class BaseScanner<F extends ScannerFilter, A extends JobAd> exte
 
             jobAds.addAll(getJobList());
             logger.info("Count scanned Ads = {}", jobAds.size());
+        }catch (Exception e) {
+            openJobAds();
+            jobAds = new ArrayList<>();
         } finally {
             getDriver().quit();
         }

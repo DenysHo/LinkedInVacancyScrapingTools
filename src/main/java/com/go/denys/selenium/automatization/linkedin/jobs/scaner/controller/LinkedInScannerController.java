@@ -1,6 +1,7 @@
 package com.go.denys.selenium.automatization.linkedin.jobs.scaner.controller;
 
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.Profile;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.scanner.LinkedInScannerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,8 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.TimeRangeSelector.DAY;
-import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.TimeRangeSelector.WEEK;
+import java.util.List;
+
+import static com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.TimeRangeSelector.*;
 
 @Controller
 @RequestMapping("/linkedin")
@@ -31,10 +33,10 @@ public class LinkedInScannerController {
                 "<body>" +
                 "<h1>Welcome to my LinkedIn Vacancy Scraping Tools!</h1>" +
                 (message != null ? "<p>" + message + "</p>" : "") +
-                "<form action='/scan' method='post'>" +
+                "<form action='/linkedin/scan' method='post'>" +
                 "<button type='submit'>Click me to check new ad!</button>" +
                 "</form>" +
-                "<form action='/test' method='post'>" +
+                "<form action='/linkedin/test' method='post'>" +
                 "<button type='submit'>Click me to Test!</button>" +
                 "</form>" +
                 "</body>" +
@@ -44,11 +46,12 @@ public class LinkedInScannerController {
     @PostMapping("/scan")
     public String scan() {
         ScannerFilter scannerFilter = ScannerFilter.builder()
-                .timeRange(WEEK)
-                .keywords("Java Developer")
+                .timeRange(MONTH)
+                .keywords("Java%20Developer")
                 .location("Germany")
                 .limit(0)
                 .previous(true)
+                .profiles(List.of(Profile.EN))
                 .build();
 
         String message;
@@ -60,7 +63,7 @@ public class LinkedInScannerController {
             message = "Oops, something went wrong:(";
         }
 
-        return "redirect:/?message=" + message;
+        return "redirect:/linkedin/?message=" + message;
     }
 
     @PostMapping("/test")
@@ -71,6 +74,7 @@ public class LinkedInScannerController {
                 .location("Germany")
                 .limit(5)
                 .previous(false)
+                .profiles(List.of(Profile.EN))
                 .build();
 
         String message;
@@ -82,7 +86,7 @@ public class LinkedInScannerController {
             message = "Oops, something went wrong:(";
         }
 
-        return "redirect:/?message=" + message;
+        return "redirect:/linkedin/?message=" + message;
     }
 
 }

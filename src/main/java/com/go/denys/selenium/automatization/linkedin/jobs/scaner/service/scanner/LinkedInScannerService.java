@@ -23,7 +23,7 @@ public class LinkedInScannerService extends BaseScannerService<
 
     @Override
     protected String getFolderForExcelWriter() {
-        return "C:\\DenysHo\\Documents\\jobs\\LinkedIn";
+        return "C:\\Denys\\Documents\\jobs\\LinkedIn";
     }
 
     @Override

@@ -2,10 +2,10 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: linkedin_scanner_mysql
+    container_name: vacancy_scanner_mysql
     environment:
-      MYSQL_DATABASE: linkedinscanner
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: vacancyscanner
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: user
       MYSQL_PASSWORD: userpassword
     ports:

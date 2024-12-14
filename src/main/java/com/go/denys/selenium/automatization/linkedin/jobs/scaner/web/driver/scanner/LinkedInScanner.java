@@ -5,6 +5,7 @@ import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilt
 import org.apache.http.client.utils.URIBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
     public static final String BUTTON_PRIMARY_DATA = "button.artdeco-global-alert-action.artdeco-button--inverse.artdeco-button--2.artdeco-button--primary[data-control-name='ga-cookie.consent.accept.v4']";
     public static final String HEADER_JOB_COUNT = "//span[@class='results-context-header__job-count']";
     public static final String JOBS_SEARCH_RESULTS_LIST_CSS = "ul.jobs-search__results-list a[data-row][data-column], ul.jobs-search__results-list div[data-row][data-column]";
-    public static final int OPEN_NEW_AD_TRY_COUNT = 20;
+    public static final int OPEN_NEW_AD_TRY_COUNT = 2000;
     public static final String TIME_RANGE_FILTER_BUTTON_CSS = "button[data-tracking-control-name='public_jobs_f_TPR']";
     public static final String SHOW_MORE_BUTTON_XPATH = "//button[@class='infinite-scroller__show-more-button infinite-scroller__show-more-button--visible']";
     public static final String SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH = "//button[@class='filter__submit-button' and @data-tracking-control-name='public_jobs_f_TPR']";
@@ -41,8 +42,9 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
     private static final Logger logger = LoggerFactory.getLogger(LinkedInScanner.class);
 
     @Override
-    protected void openJobAds() throws URISyntaxException {
-        URI uri = formUri();
+    protected void openJobAds() {
+        //URI uri = formUri();
+        URI uri = URI.create("https://www.linkedin.com/jobs/search/?f_TPR=r604800&keywords=Java%20Developer&geoId=101282230&&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R&position=1&pageNum=0");
 
         try {
             get(uri.toString());
@@ -53,14 +55,11 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
             }
             clickElementByXpathIfExists(DISMISS_BUTTON);
             clickElementByXpathIfExists(MODAL_DISMISS_BUTTON);
-            clickElementIfExists(By.cssSelector(BUTTON_PRIMARY_DATA));
-            sleep(2000);
+            clickElementIfExists(By.cssSelector(BUTTON_PRIMARY_DATA), 2000);
 
-            filter();
-            sleep(2000);
+            //filter();
 
-            currentUrl = getDriver().getCurrentUrl();
-            if (!currentUrl.contains(URL)) {
+            if (getDriver().getPageSource().contains("HTTP ERROR")) {
                 throw new Exception();
             }
         } catch (Exception e) {
@@ -104,7 +103,6 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
                 } else {
                     counter = OPEN_NEW_AD_TRY_COUNT;
                     countProcessedElements += divElements.size();
-                    logger.info("Count processed elements = {}", countProcessedElements);
 
                     for (int i = 0; i < divElements.size(); i++) {
                         WebElement div = divElements.get(i);
@@ -113,12 +111,11 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
 
                         String dataRowId = div.getAttribute("data-row");
 
-                        logger.info("Job ad row number = {}", dataRowId);
-
                         openAdContentIfNeeded(i, divElements, div);
 
                         JobAd jobAd = resolveJobAd(dataRowId);
                         jobs.add(jobAd);
+                        logger.info("Found job ad: {}", jobs.size());
 
                         if (filter.getLimit() > 0 && filter.getLimit() <= jobs.size()) {
                             moreElementsExist = false;
@@ -197,6 +194,6 @@ public class LinkedInScanner extends BaseScanner<ScannerFilter, JobAd> {
     private void filter() throws InterruptedException {
         click(findElementByCssSelector(TIME_RANGE_FILTER_BUTTON_CSS));
         click(findElementById(filter.getTimeRange().getId()));
-        click(findElementByXpath(SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH));
+        click(findElementByXpath(SUBMIT_TIME_RANGE_FILTER_BUTTON_XPATH), 3000);
     }
 }

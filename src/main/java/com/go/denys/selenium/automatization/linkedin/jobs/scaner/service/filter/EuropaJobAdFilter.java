@@ -25,7 +25,6 @@ public class EuropaJobAdFilter extends JobAdFilter<EuropaScannerFilter, EuropaJo
 
         jobs = filterLocations(jobs, filter);
         logFilter("Locations", jobs.size());
-        print(new ArrayList<>(jobs));
 
         return super.filter(jobs, filter);
     }

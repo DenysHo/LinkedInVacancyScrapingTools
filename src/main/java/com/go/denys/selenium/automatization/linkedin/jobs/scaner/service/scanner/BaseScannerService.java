@@ -41,8 +41,6 @@ public abstract class BaseScannerService<
         List<A> ads = scanner.scan();
 
         if (!ads.isEmpty()) {
-            //printForTest(ads.stream().limit(Long.MAX_VALUE).toList());
-
             ads = jobAdFilter.filter(ads, scannerFilter);
             logger.info("Count Ads after filter = {}", ads.size());
 
@@ -50,8 +48,6 @@ public abstract class BaseScannerService<
                 if (scannerFilter.isPrevious()) {
                     jobAdHistoryService.save(new ArrayList<>(ads));
                 }
-
-                print(new ArrayList<>(ads));
                 JobAdsExcelWriter excelWriter = new JobAdsExcelWriter();
                 excelWriter.write(new ArrayList<>(ads), getFolderForExcelWriter());
             }

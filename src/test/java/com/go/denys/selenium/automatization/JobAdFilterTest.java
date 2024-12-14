@@ -1,6 +1,8 @@
 package com.go.denys.selenium.automatization;
 
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.config.LangDetectConfig;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
+import com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.Profile;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter.JobAdFilter;
 import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +16,7 @@ import java.util.List;
 public class JobAdFilterTest {
 
     private List<JobAd> jobs;
-    private JobAdFilter jobAdFilter;
+    private JobAdFilter<ScannerFilter, JobAd> jobAdFilter;
     private List<JobAd> expected;
     private List<JobAd> actual;
     private ScannerFilter filter;
@@ -25,8 +27,9 @@ public class JobAdFilterTest {
         jobs = new ArrayList<>();
         expected = new ArrayList<>();
         actual = new ArrayList<>();
-        filter = ScannerFilter.builder().uniqueness(false).previous(false).build();
-        jobAdFilter = new JobAdFilter();
+        filter = ScannerFilter.builder().uniqueness(false).previous(false).profiles(List.of(Profile.EN)).build();
+        jobAdFilter = new JobAdFilter<>();
+        new LangDetectConfig().init();
     }
 
     @Test public void filterTest1() {
@@ -360,6 +363,30 @@ public class JobAdFilterTest {
         expected.add(JobAd.builder().description("description spring").build());
 
 
+        actual = jobAdFilter.filter(jobs, filter);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void frFilterTest(){
+        jobs.add(JobAd.builder().description("qiub est un cabinet de conseil en stratégie des systèmes d'information qui accompagne ses clients à structurer leur Stratégie IT et à mener des Programmes de Transformation ambitieux. Nous sommes une jeune entreprise ambitieuse qui met au cœur de son projet un niveau d'exigence et de delivery élevé mais également l'équilibre vie pro / perso et le bien-être au travail de nos consultants.\n" +
+                "\n" +
+                "qiub recrute des Consultants Juniors jeunes diplômés principalement en école d'ingénieur, en école de commerce ou en filière universitaire pour renforcer ses équipes.\n" +
+                "\n" +
+                "Les Consultants qiub sont intégrés à des équipes qui mènent des prestations de conseil de haut-niveau pour le compte de clients. Au sein de ces équipes, ils sont encadrés et formés à notre métier. Les missions principales d'un Consultant Junior sont :\n" +
+                "\n" +
+                "- Formalisation des supports et des compte-rendus de réunion ;\n" +
+                "- Animation de réunions de suivi en autonomie ;\n" +
+                "- Analyse et synthèse de documents ;\n" +
+                "- Conduite d'entretiens d'audit ou d'état des lieux ;\n" +
+                "- Force de proposition pour trouver des solutions et appuyer ses coéquipiers ;\n" +
+                "- Participation aux plans de formation interne. java").build());
+
+        jobs.add(JobAd.builder().description("You have a passion for technology and want to make the world a greener place?Then become a changemaker (f/m/d) java description add").build());
+        jobs.add(JobAd.builder().description("Then become a changemaker (f/m/d) java description add").build());
+
+        expected.add(JobAd.builder().description("You have a passion for technology and want to make the world a greener place?Then become a changemaker (f/m/d) java description add").build());
+        expected.add(JobAd.builder().description("Then become a changemaker (f/m/d) java description add").build());
         actual = jobAdFilter.filter(jobs, filter);
         Assertions.assertEquals(expected, actual);
     }

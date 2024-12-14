@@ -78,10 +78,10 @@ public abstract class WebDriverScanner {
         return driver.findElement(By.xpath(xpathExpression));
     }
 
-    protected void clickElementIfExists(By by) throws InterruptedException {
+    protected void clickElementIfExists(By by, long millis) {
         List<WebElement> elements = findElements(by);
         if (!elements.isEmpty()) {
-            click(elements.get(0));
+            click(elements.get(0), millis);
         }
     }
 
