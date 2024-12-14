@@ -1,10 +1,10 @@
 package com.go.denys.selenium.automatization;
 
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.config.LangDetectConfig;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.enums.Profile;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter.JobAdFilter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.config.LangDetectConfig;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.JobAd;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.enums.Profile;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.filter.JobAdFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.ScannerFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

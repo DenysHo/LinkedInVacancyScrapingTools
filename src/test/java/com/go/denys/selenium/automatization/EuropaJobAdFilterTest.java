@@ -1,12 +1,9 @@
 package com.go.denys.selenium.automatization;
 
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.EuropaJobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.EuropaScannerFilter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.ScannerFilter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.db.JobAdHistoryService;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter.EuropaJobAdFilter;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.service.filter.JobAdFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.EuropaJobAd;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.EuropaScannerFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.db.JobAdHistoryService;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.filter.EuropaJobAdFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

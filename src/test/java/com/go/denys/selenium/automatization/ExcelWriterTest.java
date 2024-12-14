@@ -1,7 +1,7 @@
 package com.go.denys.selenium.automatization;
 
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.dto.JobAd;
-import com.go.denys.selenium.automatization.linkedin.jobs.scaner.excel.JobAdsExcelWriter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.JobAd;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.excel.JobAdsExcelWriter;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
