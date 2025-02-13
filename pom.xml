@@ -115,6 +115,18 @@
 			<artifactId>flyway-mysql</artifactId>
 			<version>10.19.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>11.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jwebmp.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>0.66.0.1</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

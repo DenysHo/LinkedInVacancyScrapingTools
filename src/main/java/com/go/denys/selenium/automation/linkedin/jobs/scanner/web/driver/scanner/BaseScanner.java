@@ -29,6 +29,7 @@ public abstract class BaseScanner<F extends ScannerFilter, A extends JobAd> exte
             openJobAds();
 
             String jobAdCount = getAdCount();
+            //todo write this to ScanResult<A>
             logger.info("The number of Ads is written on the website = {}", jobAdCount);
 
             jobAds.addAll(getJobList());

@@ -22,8 +22,9 @@ public class EuropaScanner extends BaseScanner<EuropaScannerFilter, EuropaJobAd>
     public static final String URI = "https://europa.eu/eures/portal/jv-se/search" +
             "?page=1&resultsPerPage=10" +
             "&orderBy=BEST_MATCH" +
-            "&locationCodes=%s" +
+            //"&locationCodes=%s" +
             "&keywordsEverywhere=%s" +
+            "&publicationPeriod=%s" +
             "&lang=en";
 
     @Override
@@ -53,7 +54,7 @@ public class EuropaScanner extends BaseScanner<EuropaScannerFilter, EuropaJobAd>
 
                 WebElement nextButton = findElementById(NEXT_BUTTON_ID);
                 String buttonClasses = nextButton.getAttribute("class");
-                if (buttonClasses.contains("p-disabled") || filter.getLimit() != 0 && filter.getLimit() <= count) {
+                if (buttonClasses.contains("p-disabled") || filter.getLimit() != 0 && filter.getLimit() < count) {
                     break;
                 }
                 boolean click = false;
@@ -108,13 +109,11 @@ public class EuropaScanner extends BaseScanner<EuropaScannerFilter, EuropaJobAd>
     @Override
     protected void openJobAds() {
         URI uri = java.net.URI.create(String.format(URI,
-                filter.getLocations().get(0).getCode(),
-                filter.getKeywords().replaceAll(" ", "%20")));
+                //filter.getLocations().get(0).getCode(),
+                filter.getKeywords().replaceAll(" ", "%20"),
+                filter.getPeriod().getValue()));
 
-        uri = java.net.URI.create(
-                "https://europa.eu/eures/portal/jv-se/search?page=1&resultsPerPage=10&orderBy=BEST_MATCH&keywordsEverywhere=Java%20Developer&experience=NS,between_1_and_2_years,between_2_and_5_years,none_required,up_to_1_year&publicationPeriod=LAST_WEEK&lang=en");
-
-        try {
+       try {
             get(uri.toString());
             sleep(2000);
         } catch (Exception e) {

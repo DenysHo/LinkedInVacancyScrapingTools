@@ -49,6 +49,12 @@ public abstract class WebDriverScanner {
     protected Optional<WebElement> findElementOptionalByXpath(String xpath) {
         return driver.findElements(By.xpath(xpath)).stream().findFirst();
     }
+    protected Optional<WebElement> findElementOptionalByCssSelector(String cssSelector) {
+        return driver.findElements(By.cssSelector(cssSelector)).stream().findFirst();
+    }
+    protected Optional<WebElement> findElementOptionalById(String id) {
+        return driver.findElements(By.id(id)).stream().findFirst();
+    }
 
     protected WebElement findElementByCssSelector(String cssSelector) {
         return driver.findElement(By.cssSelector(cssSelector));
@@ -123,12 +129,26 @@ public abstract class WebDriverScanner {
         scroll(element, 500);
     }
 
-    protected void scroll(int px, long millis) throws InterruptedException {
+
+    protected void scroll(int px, long millis) {
         getJs().executeScript(String.format(SCROLL_SCRIPT, px));
         sleep(millis);
     }
 
-    protected void scroll(int px) throws InterruptedException {
+    protected void scroll(int px) {
         scroll(px, 500);
     }
+
+    protected void scrollSmooth(WebElement scrollTo, WebElement element) {
+        long currentPosition = (Long) getJs().executeScript("return window.pageYOffset;");
+
+        long elementPosition = ((Double) getJs().executeScript("return arguments[0].getBoundingClientRect().top + window.pageYOffset;", scrollTo)).longValue();
+
+        while (currentPosition < elementPosition) {
+            currentPosition += 50;
+            getJs().executeScript("arguments[0].scrollBy(0, " + currentPosition + ");", element);
+            sleep(100);
+        }
+    }
+
 }

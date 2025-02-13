@@ -1,0 +1,27 @@
+{
+	"info": {
+		"_postman_id": "bc3efa1a-378a-44c1-af94-30f2ae4c8d14",
+		"name": "AdsScrapingTool",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9176596"
+	},
+	"item": [
+		{
+			"name": "LinkedIn",
+			"item": []
+		},
+		{
+			"name": "Europa",
+			"item": [
+				{
+					"name": "testScan",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

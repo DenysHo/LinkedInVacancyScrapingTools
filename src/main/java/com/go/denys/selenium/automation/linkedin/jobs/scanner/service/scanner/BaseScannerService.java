@@ -1,6 +1,7 @@
 package com.go.denys.selenium.automation.linkedin.jobs.scanner.service.scanner;
 
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.JobAd;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.ScanResult;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.ScannerFilter;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.excel.JobAdsExcelWriter;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.filter.JobAdFilter;
@@ -9,12 +10,8 @@ import com.go.denys.selenium.automation.linkedin.jobs.scanner.web.driver.scanner
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.go.denys.selenium.automation.linkedin.jobs.scanner.util.JobAdUtil.print;
-import static com.go.denys.selenium.automation.linkedin.jobs.scanner.util.JobAdUtil.printForTest;
 
 public abstract class BaseScannerService<
         S extends BaseScanner<SF, A>,
@@ -32,13 +29,15 @@ public abstract class BaseScannerService<
 
     private static final Logger logger = LoggerFactory.getLogger(BaseScannerService.class);
 
-    public List<A> scan(SF scannerFilter) throws URISyntaxException {
+    public ScanResult<A> scan(SF scannerFilter) throws Exception {
         logger.info("Scanner start it's execution");
+        ScanResult<A> result = new ScanResult<A>();
 
-        //todo
         S scanner = resolveScanner();
         scanner.setFilter(scannerFilter);
         List<A> ads = scanner.scan();
+
+        result.setAdsFound(ads.size());
 
         if (!ads.isEmpty()) {
             ads = jobAdFilter.filter(ads, scannerFilter);
@@ -53,7 +52,10 @@ public abstract class BaseScannerService<
             }
         }
 
-        return ads;
+        result.setAdsAfterFilter(ads.size());
+        result.setAds(ads);
+
+        return result;
     }
 
     protected abstract String getFolderForExcelWriter();

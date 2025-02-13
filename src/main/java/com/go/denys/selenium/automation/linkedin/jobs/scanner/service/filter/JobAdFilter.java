@@ -134,6 +134,7 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
         }).toList();
     }
 
+    //todo rewrite
     public List<A> filterLanguagesDescriptionJobs(List<A> jobs, F filter) {
         return jobs.stream()
                 .filter(job -> {

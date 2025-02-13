@@ -12,14 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class ScannerFilter {
+@ToString
+public abstract class ScannerFilter {
 
     @Builder.Default
     private String keywords = "";
-    @Builder.Default
-    private String location = "";
-    @Builder.Default
-    private TimeRangeSelector timeRange = TimeRangeSelector.DAY;
     @Builder.Default
     private boolean uniqueness = true;
     @Builder.Default

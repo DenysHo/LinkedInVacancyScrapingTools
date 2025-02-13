@@ -1,24 +1,38 @@
 package com.go.denys.selenium.automation.linkedin.jobs.scanner.service.scanner;
 
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.JobAd;
-import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.ScannerFilter;
-import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.filter.JobAdFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.LinkedInScannerFilter;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.dto.ScanResult;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.db.JobAdHistoryService;
+import com.go.denys.selenium.automation.linkedin.jobs.scanner.service.filter.JobAdFilter;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.web.driver.scanner.BaseScanner;
 import com.go.denys.selenium.automation.linkedin.jobs.scanner.web.driver.scanner.LinkedInScanner;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LinkedInScannerService extends BaseScannerService<
-        BaseScanner<ScannerFilter, JobAd>,
-        ScannerFilter,
+        BaseScanner<LinkedInScannerFilter, JobAd>,
+        LinkedInScannerFilter,
         JobAd,
-        JobAdFilter<ScannerFilter, JobAd>> {
+        JobAdFilter<LinkedInScannerFilter, JobAd>> {
+
+    @Value("${linkedin.user.login}")
+    private String linkedInUserLogin;
+    @Value("${linkedin.user.password}")
+    private String linkedInUserPassword;
 
     @Autowired
-    protected LinkedInScannerService(JobAdFilter<ScannerFilter, JobAd> jobAdFilter, JobAdHistoryService jobAdHistoryService) {
+    protected LinkedInScannerService(JobAdFilter<LinkedInScannerFilter, JobAd> jobAdFilter, JobAdHistoryService jobAdHistoryService) {
         super(jobAdFilter, jobAdHistoryService);
+    }
+
+    @Override
+    public ScanResult<JobAd> scan(LinkedInScannerFilter scannerFilter) throws Exception {
+        scannerFilter.setLinkedInUserLogin(linkedInUserLogin);
+        scannerFilter.setLinkedInUserPassword(linkedInUserPassword);
+        return super.scan(scannerFilter);
     }
 
     @Override
