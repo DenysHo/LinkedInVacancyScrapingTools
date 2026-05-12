@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import static com.go.denys.selenium.automation.linkedin.jobs.scanner.enums.JobLevel.*;
 import static com.go.denys.selenium.automation.linkedin.jobs.scanner.enums.Profile.*;
-import static com.go.denys.selenium.automation.linkedin.jobs.scanner.util.JobAdUtil.print;
 
 @Service
 @Data
@@ -108,10 +107,8 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
             boolean senior = title.contains(SENIOR.getLevel());
             boolean architect = title.contains(ARCHITECT.getLevel());
             boolean teamLead = title.contains(TEAM_LEAD.getLevel());
-            //boolean engineer = title.contains(ENGINEER.getLevel());
             boolean middle = title.contains(MIDDLE.getLevel());
             boolean junior = title.contains(JUNIOR.getLevel());
-            //boolean developer = title.contains(DEVELOPER.getLevel());
             boolean result = !senior && !architect && !teamLead || middle || junior;
 
             if (!result) {
@@ -122,11 +119,7 @@ public class JobAdFilter<F extends ScannerFilter, A extends JobAd> {
                     builder.append(" ").append(ARCHITECT.getLevel());
                 } else if (teamLead) {
                     builder.append(" ").append(TEAM_LEAD.getLevel());
-                } /*else if (lead) {
-                    builder.append(" ").append(LEAD.getLevel());
-                } else if (engineer) {
-                    builder.append(" ").append(ENGINEER.getLevel());
-                }*/
+                }
 
                 logger.debug(String.format("Filtered %s by Position contains%s", j.getId(), builder));
             }

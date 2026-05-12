@@ -19,19 +19,19 @@ public class LinkedInScanner extends BaseScanner<LinkedInScannerFilter, JobAd> {
     protected void openJobAds() {
 
         try {
-            login();
-
             String url = String.format("https://www.linkedin.com/jobs/search/" +
                     "?f_TPR=%s" +
                     "&keywords=%s" +
                     //todo
-                    "&geoId=101282230" +
+                    "&geoId=%s" +
                     "&origin=JOB_SEARCH_PAGE_JOB_FILTER" +
                     "&refresh=true" +
                     "&sortBy=R" +
                     "&position=1&pageNum=0",
                     filter.getTimeRange().getRange(),
-                    filter.getKeywords().replaceAll(" ", "%20")
+                    filter.getKeywords().replaceAll(" ", "%20"),
+                    //todo
+                    filter.getLocation().equals("Ukraine") ? "102264497" : "101282230"
                     );
 
             get(url);
@@ -45,8 +45,9 @@ public class LinkedInScanner extends BaseScanner<LinkedInScannerFilter, JobAd> {
         }
     }
 
+    @Override
     //todo userPassword
-    private void login() {
+    protected void login() {
         get("https://www.linkedin.com/login");
 
         WebElement usernameField = getDriver().findElement(By.id("username"));
@@ -64,7 +65,8 @@ public class LinkedInScanner extends BaseScanner<LinkedInScannerFilter, JobAd> {
 
     @Override
     protected String getAdCount() {
-        return findElementByCssSelector("div.jobs-search-results-list__subtitle span").getText();
+        Optional<WebElement> count = findElementOptionalByCssSelector("div.jobs-search-results-list__subtitle span");
+        return count.isPresent() ? count.get().getText() : "0";
     }
 
     @Override
@@ -125,7 +127,7 @@ public class LinkedInScanner extends BaseScanner<LinkedInScannerFilter, JobAd> {
         WebElement pageButton = findElementByXpath(String.format("//button[@aria-label='Page %s']", pageNum));
         scrollSmooth(pageButton, targetElement);
 
-        By cssSelector = By.cssSelector("[data-view-name='job-card']");
+        By cssSelector =By.cssSelector("div.job-card-container");
         divElements = getWait().until(ExpectedConditions.presenceOfAllElementsLocatedBy(cssSelector));
         return divElements;
     }

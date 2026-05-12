@@ -26,6 +26,7 @@ public abstract class BaseScanner<F extends ScannerFilter, A extends JobAd> exte
     public List<A> scan() throws URISyntaxException {
         List<A> jobAds = new ArrayList<>();
         try {
+            login();
             openJobAds();
 
             String jobAdCount = getAdCount();
@@ -35,6 +36,7 @@ public abstract class BaseScanner<F extends ScannerFilter, A extends JobAd> exte
             jobAds.addAll(getJobList());
             logger.info("Count scanned Ads = {}", jobAds.size());
         }catch (Exception e) {
+            logger.info("An error occurred: {}", e.getMessage(), e);
             openJobAds();
             jobAds = new ArrayList<>();
         } finally {
@@ -48,5 +50,7 @@ public abstract class BaseScanner<F extends ScannerFilter, A extends JobAd> exte
     protected abstract void openJobAds() throws URISyntaxException;
 
     protected abstract String getAdCount();
+
+    protected abstract void login();
 
 }
