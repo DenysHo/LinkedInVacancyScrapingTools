@@ -50,15 +50,28 @@ public class LinkedInScanner extends BaseScanner<LinkedInScannerFilter, JobAd> {
     protected void login() {
         get("https://www.linkedin.com/login");
 
-        WebElement usernameField = getDriver().findElement(By.id("username"));
+        WebElement usernameField = getDriver()
+                .findElements(By.cssSelector("input[type='email']"))
+                .stream()
+                .filter(WebElement::isDisplayed)
+                .findFirst()
+                .orElseThrow();
         usernameField.sendKeys("pashasom29@gmail.com");
         sleep(500);
 
-        WebElement passwordField = getDriver().findElement(By.id("password"));
+        WebElement passwordField = getDriver().findElements(By.cssSelector("input[type='password']"))
+                .stream()
+                .filter(WebElement::isDisplayed)
+                .findFirst()
+                .orElseThrow();
         passwordField.sendKeys("LinkedInPassword29Test!");
         sleep(500);
 
-        WebElement signInButton = getDriver().findElement(By.xpath("//button[@aria-label='Sign in']"));
+        WebElement signInButton = getDriver().findElements(By.xpath("//button[.//span[text()='Einloggen']]"))
+                .stream()
+                .filter(WebElement::isDisplayed)
+                .findFirst()
+                .orElseThrow();
         signInButton.click();
         sleep(1500);
     }

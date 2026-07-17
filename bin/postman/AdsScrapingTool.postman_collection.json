@@ -1,0 +1,150 @@
+{
+	"info": {
+		"_postman_id": "e88f8995-63a7-4ed8-a339-2dcd84b1f0cb",
+		"name": "AdsScrapingTool",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9176596"
+	},
+	"item": [
+		{
+			"name": "LinkedIn",
+			"item": [
+				{
+					"name": "testScan",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\" : {\r\n        \"keywords\": \"Java%20Developer\",\r\n        \"location\" : \"Germany\",\r\n        \"timeRange\" : \"DAY\",\r\n        \"uniqueness\": true,\r\n        \"previous\": true,\r\n        \"limit\": 5,\r\n        \"profiles\": [\"EN\"]\r\n    } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/linkedin/scan",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"linkedin",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "scan",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\" : {\r\n        \"keywords\": \"Java%20Developer\",\r\n        \"location\" : \"Germany\",\r\n        \"timeRange\" : \"DAY\",\r\n        \"uniqueness\": true,\r\n        \"previous\": true,\r\n        \"limit\": 5,\r\n        \"profiles\": [\"EN\"]\r\n    } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/linkedin/scan",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"linkedin",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "scan MONTH",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\" : {\r\n        \"keywords\": \"Java Developer\",\r\n        \"location\" : \"Germany\",\r\n        \"timeRange\" : \"MONTH\",\r\n        \"uniqueness\": true,\r\n        \"previous\": true,\r\n        \"limit\": 0,\r\n        \"profiles\": [\"EN\"]\r\n    } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/linkedin/scan",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"linkedin",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "scan MONTH Ukr",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\" : {\r\n        \"keywords\": \"Java Developer\",\r\n        \"location\" : \"Ukraine\",\r\n        \"timeRange\" : \"MONTH\",\r\n        \"uniqueness\": true,\r\n        \"previous\": true,\r\n        \"limit\": 0,\r\n        \"profiles\": [\"EN\"]\r\n    } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/linkedin/scan",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"linkedin",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "scan WEEK",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"filter\" : {\r\n        \"keywords\": \"Java Developer\",\r\n        \"location\" : \"Germany\",\r\n        \"timeRange\" : \"WEEK\",\r\n        \"uniqueness\": true,\r\n        \"previous\": true,\r\n        \"limit\": 0,\r\n        \"profiles\": [\"EN\"]\r\n    } \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/linkedin/scan",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"linkedin",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

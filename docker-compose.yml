@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  mysql:
+  db:
     image: mysql:8.0
     container_name: vacancy_scanner_mysql
     environment:
@@ -9,14 +9,29 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: userpassword
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - my_network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: .
+    container_name: spring_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/vacancyscanner
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: userpassword
 
 volumes:
   mysql_data:
-
-networks:
-  my_network:
