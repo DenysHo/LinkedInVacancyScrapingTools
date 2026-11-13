@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/linkedin")
 public class LinkedInScannerRestController {
@@ -42,4 +44,13 @@ public class LinkedInScannerRestController {
 
     }
 
+    @GetMapping("/vacancies")
+    public List<String> getVacancies() {
+
+        return List.of(
+                "Java Developer",
+                "Spring Boot Developer",
+                "React Developer"
+        );
+    }
 }
