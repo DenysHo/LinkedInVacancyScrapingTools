@@ -1597,7 +1597,11 @@ const LVSCORE={'A2':45,'A2+':58,'≈B1':66,'B1':78,'B1+':88,'B2':95,'B2+':98,'�
 function stat(name,pct,info,tip){return {name,pct,info,tip};}
 function viewAnalyse(){
   const ed=S.examDate||DEFAULT_EXAM;const exam=ed?new Date(ed+'T08:30:00'):null;const days=exam?Math.max(0,Math.ceil((exam-Date.now())/86400000)):null;
-  const H=S.hist||[];const rows=[];
+  const H=(S.hist||[]).slice();const rows=[];
+  // старые результаты (до появления анализа): берём лучший балл из S.best
+  for(const kind of ['hoeren','lesen']){for(const t of testsOf(kind)){const b=S.best[t.id];if(b==null||H.some(h=>h.id===t.id))continue;const m=String(b).match(/(\d+)\/(\d+)/);if(m)H.push({d:0,kind,id:t.id,s:+m[1],n:+m[2],old:true});}}
+  if(S.best.lid&&!H.some(h=>h.kind==='lid'))H.push({d:0,kind:'lid',s:S.best.lid,n:33,old:true});
+  H.sort((a,b)=>a.d-b.d);
   // LiD
   const qs=allLid();const known=qs.filter(q=>(S.lid[q.id]||{}).last===1).length,wrongs=qs.filter(q=>(S.lid[q.id]||{}).last===0).length;
   const lidEx=H.filter(h=>h.kind==='lid').slice(-3);const lidPct=lidEx.length?Math.round(lidEx.reduce((a,h)=>a+h.s/h.n,0)/lidEx.length*100):(known?Math.round(known/qs.length*100):null);
@@ -1609,7 +1613,7 @@ function viewAnalyse(){
     const hs=H.filter(h=>h.kind===kind).slice(-5);const pct=hs.length?Math.round(hs.reduce((a,h)=>a+h.s/h.n,0)/hs.length*100):null;
     const weak=parts.filter(p=>p.pct!=null).sort((a,b)=>a.pct-b.pct)[0];
     rows.push({sec:label,pct,info:hs.length?`Пройдено тестов: ${H.filter(h=>h.kind===kind).length} · последние: ${hs.map(h=>h.s+'/'+h.n).join(', ')}`:'Ещё нет пройденных тестов',
-      tip:weak&&weak.pct<75?`Слабее всего ${weak.t} (${weak.pct}%). Тренируй его отдельно: кнопка генерации → «${weak.t}».`:(hs.length?'Держи уровень: 1 тест через день.':'Пройди хотя бы один тест.'),parts});
+      tip:weak&&weak.pct<75?`Слабее всего ${weak.t} (${weak.pct}%). Тренируй его отдельно: кнопка генерации → «${weak.t}».`:(hs.length?(pct<75?'Пройди ещё 1–2 теста — тогда будет видно, какой Teil слабее.':'Держи уровень: 1 тест через день.'):'Пройди хотя бы один тест.'),parts});
   }
   for(const [sec,label] of [['sprechen','🗣️ Sprechen'],['schreiben','✍️ Schreiben']]){
     const lv=((S.lv||{})[sec]||[]).slice(-5);const pct=lv.length?Math.round(lv.reduce((a,x)=>a+(LVSCORE[x.l]||60),0)/lv.length):null;
