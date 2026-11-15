@@ -2701,7 +2701,7 @@ function artQuiz(list,title,again){
       $('#ab').onclick=back;return;}
     const w=list[i];
     screen(`${esc(title)} · ${i+1}/${list.length}`,`<div class="bar"><i style="width:${i/list.length*100}%"></i></div>
-    <div class="card center wordcard"><div class="word">___ ${esc(w.w)}</div><p class="muted">${esc(w.ru)}</p><p>${dots('art',w.id)}</p></div>
+    <div class="card center wordcard"><div class="word">___ ${esc(w.w)}</div><p class="muted" id="aru"></p><p>${dots('art',w.id)}</p></div>
     <div class="arts">${['der','die','das'].map(g=>`<button class="art ${GCOL[g]}" data-g="${g}">${g}</button>`).join('')}</div>
     <div id="afb"></div><button class="wide hidden" id="anx">Дальше →</button>`);
     document.querySelectorAll('.art').forEach(b=>b.onclick=()=>{
@@ -2709,7 +2709,7 @@ function artQuiz(list,title,again){
       const ok=b.dataset.g===w.g;const st=mRecord('art',w.id,ok);
       document.querySelectorAll('.art').forEach(x=>{x.classList.add(x.dataset.g===w.g?'right':'dim');});if(!ok)b.classList.add('picked');
       if(ok)score++;else wrongs.push(w);
-      $('.word').innerHTML=`<span class="t${w.g}">${w.g}</span> ${esc(w.w)}`;$('.wordcard .dots').outerHTML=dots('art',w.id);
+      $('.word').innerHTML=`<span class="t${w.g}">${w.g}</span> ${esc(w.w)}`;$('#aru').textContent=w.ru;$('.wordcard .dots').outerHTML=dots('art',w.id);
       $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Правильно: '+w.g+' '+esc(w.w)}</b>${st.p>=MAST&&ok?' <b>🎉 Выучено!</b>':''}<br>💡 ${esc(ART_RULES[w.r].t)}</div>`;
       if(ok){setTimeout(()=>{if($('#anx')){i++;show();}},st.p>=MAST?1500:900);}else $('#anx').classList.remove('hidden');
     });
@@ -2781,8 +2781,8 @@ function vpQuiz(list,title,mode,again){
       $('#ab').onclick=back;return;}
     const x=list[i],valid=VERBEN.filter(y=>y.v===x.v).map(y=>y.p);
     const opts=shuffle([x.p,...shuffle(PREPS.filter(p=>!valid.includes(p))).slice(0,3)]);
-    const q=mode==='sent'?`<div class="sent">${vpEx(x,true)}</div><p class="muted">${esc(x.v)} — ${esc(x.ru)}</p>`
-      :`<div class="word">${esc(x.v)} ___ ?</div><p class="muted">${esc(x.ru)}</p>`;
+    const q=mode==='sent'?`<div class="sent">${vpEx(x,true)}</div><p class="muted" id="vru"></p>`
+      :`<div class="word">${esc(x.v)} ___ ?</div><p class="muted" id="vru"></p>`;
     screen(`${esc(title)} · ${i+1}/${list.length}`,`<div class="bar"><i style="width:${i/list.length*100}%"></i></div>
     <div class="card center wordcard">${q}<p>${dots('vp',x.id)}</p></div>
     <p class="muted small center" id="vstep">1️⃣ Выбери предлог</p>
@@ -2800,7 +2800,7 @@ function vpQuiz(list,title,mode,again){
       const kOk=b.dataset.k===x.k,ok=pOk&&kOk;const st=mRecord('vp',x.id,ok);
       document.querySelectorAll('#vp2 .pb').forEach(y=>y.classList.add(y.dataset.k===x.k?'right':'dim'));if(!kOk)b.classList.add('picked');
       if(ok)score++;else wrongs.push(x);
-      $('.wordcard .dots').outerHTML=dots('vp',x.id);
+      $('.wordcard .dots').outerHTML=dots('vp',x.id);$('#vru').textContent=x.v+' '+x.p+' — '+x.ru;const se=$('.sent');if(se)se.innerHTML=vpEx(x);
       $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Ошибка'}</b>${st.p>=MAST&&ok?' <b>🎉 Выучено!</b>':''}<br>${vpForm(x)} — ${esc(x.ru)}<br>📝 ${vpEx(x)}${PREP_HINT[x.p]?`<br>💡 ${esc(PREP_HINT[x.p])}`:''}</div>`;
       $('#anx').classList.remove('hidden');
     });
