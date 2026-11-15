@@ -1530,7 +1530,7 @@ function showErr(el,e,fb){
 function allLid(){return LID.concat(S.customQ||[]);}
 
 // ===================== NAV =====================
-const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['uebungen','🏋️','Übungen'],['analyse','📊','Анализ']];
+const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['uebungen','🏋️','Тренажёр'],['analyse','📊','Анализ']];
 let cur='lid',stack=[];
 function renderNav(){
   $('#nav').innerHTML=TABS.map(([k,i,l])=>`<button class="${k===cur?'on':''}" data-t="${k}"><span>${i}</span><small>${l}</small></button>`).join('');
@@ -1907,9 +1907,9 @@ const GCOL={der:'gder',die:'gdie',das:'gdas'};
 function artSt(w){return (S.art||{})[w.id]||{};}
 function viewUebungen(){
   const W=ART_WORDS,known=W.filter(w=>artSt(w).last===1).length;
-  screen('Übungen · тренировки',`<p class="muted">Короткие тренажёры для грамматики и слов. Выбери тренировку:</p>
+  screen('Тренажёры',`<p class="muted">Короткие тренажёры для грамматики и слов. Выбери тренажёр:</p>
   <button class="item" id="u-art"><span>🔤</span><div><b>Род: der / die / das</b><small>${W.length} слов по правилам · выучено ${known}</small></div></button>
-  <p class="muted small center" style="margin-top:18px">Здесь будут появляться новые тренировки.</p>`,false);
+  <p class="muted small center" style="margin-top:18px">Здесь будут появляться новые тренажёры.</p>`,false);
   $('#u-art').onclick=()=>{push(viewUebungen);viewArtikel();};
 }
 function viewArtikel(){
