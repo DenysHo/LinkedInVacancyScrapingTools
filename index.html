@@ -1269,6 +1269,7 @@ function viewLid(){
    <button class="tile" id="l-train"><span>🎯</span><b>Тренировка</b><small>Сразу видно, почему неправильно</small></button>
    <button class="tile" id="l-exam"><span>⏱️</span><b>Пробный тест</b><small>33 вопроса как на экзамене</small></button>
    <button class="tile" id="l-seq"><span>📚</span><b>По порядку</b><small>${S.seq?`продолжить с №${S.seq+1}`:'все 310 вопросов'}</small></button>
+   <button class="tile" id="l-blk"><span>📦</span><b>Блоки по 40</b><small>1–40, 41–80 … учить по частям</small></button>
    <button class="tile" id="l-wrong"><span>🔁</span><b>Мои ошибки</b><small>${wrong} вопросов</small></button>
    <button class="tile" id="l-notes"><span>📝</span><b>Конспект</b><small>все темы + мои заметки</small></button>
   </div>
@@ -1279,6 +1280,7 @@ function viewLid(){
   $('#l-seq').onclick=()=>{push(viewLid);const st=S.seq||0;lidQuiz(qs.slice(st).concat(qs.slice(0,st)),'seq');};
   $('#l-wrong').onclick=()=>{const w=qs.filter(q=>(S.lid[q.id]||{}).last===0);if(!w.length)return toast('Ошибок нет — отлично! 🎉');push(viewLid);lidQuiz(shuffle(w),'train');};
   $('#l-notes').onclick=()=>{push(viewLid);lidNotes();};
+  $('#l-blk').onclick=()=>{push(viewLid);lidBlocks();};
   $('#l-add').onclick=()=>{push(viewLid);lidImport();};
 }
 function lidQuiz(list,mode){
@@ -1286,7 +1288,7 @@ function lidQuiz(list,mode){
   const show=()=>{
     if(i>=list.length)return lidResult(list,answers,score,mode);
     const q=list[i];const order=(q.img||q.o.every(o=>/^(Bild )?\d$/.test(o)))?q.o.map((t,k)=>k):shuffle(q.o.map((t,k)=>k));
-    screen(mode==='exam'?`Тест · ${i+1}/${list.length}`:mode==='seq'?`По порядку · ${i+1}/${list.length}`:`Тренировка · ${i+1}/${list.length}`,`
+    screen(mode==='exam'?`Тест · ${i+1}/${list.length}`:mode==='seq'?`По порядку · ${i+1}/${list.length}`:mode==='block'?`Блок · ${i+1}/${list.length}`:`Тренировка · ${i+1}/${list.length}`,`
     <div class="bar"><i style="width:${i/list.length*100}%"></i></div>
     ${q.land?'<span class="chip">Bayern</span>':''}
     <div class="card"><p class="q">${q.n?`<small class="muted">№${q.n}${q.land?' Bayern':''}</small><br>`:''}${esc(q.q)}</p>${q.img&&LID_IMG[q.img]?`<img class="qimg" src="${LID_IMG[q.img]}" alt="">`:''}
@@ -1317,14 +1319,35 @@ async function explainMore(q){
   try{await ask(`Ты помогаешь готовиться к немецкому тесту «Leben in Deutschland». Вопрос: «${q.q}». Варианты: ${q.o.map((o,i)=>(i+1)+') '+o).join('; ')}. Правильный: «${q.o[q.a]}». Объясни по-русски коротко (4–6 предложений): почему это правильно, почему другие варианты неверны, и дай простую подсказку, как запомнить. Немецкие термины оставляй по-немецки.`,{onText:({text})=>el.innerHTML=md(text)});}
   catch(e){showErr(el,e,'Ошибка');}
 }
+let CUR_BLOCK=null;
+function lidBlockList(){
+  const g=LID.filter(q=>!q.land),b=LID.filter(q=>q.land),out=[];
+  for(let i=0;i<g.length;i+=40){const part=g.slice(i,i+40);out.push({k:'g'+i,name:`Вопросы ${part[0].n}–${part[part.length-1].n}`,qs:part});}
+  if(b.length)out.push({k:'by',name:'Бавария (10 вопросов)',qs:b});
+  if((S.customQ||[]).length)out.push({k:'own',name:`Мои добавленные (${S.customQ.length})`,qs:S.customQ});
+  return out;
+}
+function lidBlocks(){
+  const bl=lidBlockList();S.blk=S.blk||{};
+  screen('Блоки по 40',`<p class="muted">Учи вопросы частями: проходи один блок, пока все ответы не станут правильными, потом переходи к следующему.</p>
+  ${bl.map((x,i)=>{const kn=x.qs.filter(q=>(S.lid[q.id]||{}).last===1).length,wr=x.qs.filter(q=>(S.lid[q.id]||{}).last===0).length,pct=Math.round(kn/x.qs.length*100);
+    return `<div class="card blk"><div class="anh"><b>${esc(x.name)}</b>${S.blk[x.k]?`<span class="tag ${scoreCls(S.blk[x.k])}">последний: ${S.blk[x.k]}</span>`:''}</div>
+    <div class="bar big2"><i class="${pct>=90?'good':pct>=60?'mid':pct?'low':''}" style="width:${pct}%"></i></div>
+    <small class="muted">Выучено ${kn} из ${x.qs.length}${wr?` · ошибок: ${wr}`:''}</small>
+    <div class="row"><button data-b="${i}" data-m="seq">По порядку</button><button class="ghost" data-b="${i}" data-m="mix">Вперемешку</button>${wr?`<button class="ghost" data-b="${i}" data-m="err">Ошибки (${wr})</button>`:''}</div></div>`;}).join('')}`);
+  document.querySelectorAll('[data-b]').forEach(btn=>btn.onclick=()=>{const x=bl[+btn.dataset.b],m=btn.dataset.m;
+    let qs=x.qs;if(m==='mix')qs=shuffle(qs);if(m==='err')qs=shuffle(qs.filter(q=>(S.lid[q.id]||{}).last===0));
+    CUR_BLOCK={k:x.k,m};push(lidBlocks);lidQuiz(qs,'block');});
+}
 function lidResult(list,answers,score,mode){
+  if(mode==='block'&&CUR_BLOCK){S.blk=S.blk||{};if(CUR_BLOCK.m!=='err')S.blk[CUR_BLOCK.k]=`${score}/${list.length}`;save();}
   if(mode==='exam'){if(score>(S.best.lid||0))S.best.lid=score;S.hist=S.hist||[];S.hist.push({d:Date.now(),kind:'lid',s:score,n:list.length});save();}
   const pass=mode==='exam'?(score>=17?'🎉 Сдано даже для гражданства (≥17)':score>=15?'✅ Сдано (≥15)':'Пока не сдано — нужно минимум 15'):'';
   const wrong=answers.filter(a=>!a.ok);
   screen('Результат',`<div class="card center"><div class="big">${score}/${list.length}</div><p>${pass}</p></div>
   ${wrong.length?'<h3>Разбор ошибок</h3>'+wrong.map(a=>`<div class="card"><p class="q">${esc(a.q.q)}</p><p class="bad-t">Твой ответ: ${esc(a.q.o[a.k])}</p><p class="ok-t">Правильно: ${esc(a.q.o[a.q.a])}</p><p class="muted">${esc(a.q.why||'')}</p></div>`).join(''):'<p class="center">Без ошибок! 💪</p>'}
   <button class="wide" id="again">Ещё раз</button>`);
-  $('#again').onclick=()=>{stack.pop();viewLid();};
+  $('#again').onclick=()=>{if(mode==='block'){stack.pop();lidBlocks();}else{stack.pop();viewLid();}};
 }
 function lidNotes(){
   screen('Конспект',`<div class="card konspekt">${KONSPEKT}</div>
