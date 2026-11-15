@@ -2209,11 +2209,17 @@ function md(t){
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2800);}
 const sid=t=>'d'+[...String(t)].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7).toString(36).replace('-','m');
-function markDone(id,txt,sec){const m=String(txt||'').slice(0,400).match(/(A2\+?|B1\+?|B2\+?|начало B1)/);S.done=S.done||{};S.done[id]=m?m[1].replace('начало ','≈'):'✓';
+function lvlOf(txt){txt=String(txt||'');const re=/(начало B1|A2\s*[\/–-]\s*B1|B1\s*[\/–-]\s*B2|A1|A2\+?|B1[+-]?|B2\+?)/;
+  const k=txt.search(/Оценка|Уровень|Niveau/i);let m=k>=0?txt.slice(k,k+300).match(re):null;if(!m)m=txt.match(re);
+  return m?m[1].replace('начало ','≈').replace(/\s*[\/–-]\s*/,'/'):'✓';}
+function markDone(id,txt,sec){S.done=S.done||{};S.done[id]=lvlOf(txt);
   if(sec){S.lv=S.lv||{};(S.lv[sec]=S.lv[sec]||[]).push({d:Date.now(),l:S.done[id],id});S.lv[sec]=S.lv[sec].slice(-20);
     S.fb=S.fb||[];S.fb.push({sec,d:Date.now(),t:String(txt).slice(0,1400)});S.fb=S.fb.slice(-10);}save();}
+(function fixLevels(){try{let ch=0;Object.keys(S.lv||{}).forEach(sec=>S.lv[sec].forEach(e=>{if(e.l!=='✓')return;
+  const f=(S.fb||[]).find(f=>f.sec===sec&&Math.abs(f.d-e.d)<5000);if(!f)return;const l=lvlOf(f.t);if(l==='✓')return;
+  e.l=l;if(S.done&&S.done[e.id]==='✓')S.done[e.id]=l;ch=1;}));if(ch)save();}catch(e){}})();
 function logTeil(kind,teil,ok){S.teil=S.teil||{};const k=kind+'|'+teil;(S.teil[k]=S.teil[k]||[]).push(ok?1:0);S.teil[k]=S.teil[k].slice(-40);}
-function badge(v,cls=''){return v?`<span class="res ${cls}"><b>✓</b><small>${esc(v)}</small></span>`:'';}
+function badge(v,cls=''){return v?`<span class="res ${cls}"><b>✓</b><small>${v==='✓'?'сделано':esc(v)}</small></span>`:'';}
 function scoreCls(s){const m=String(s).match(/(\d+)\/(\d+)/);if(!m)return'';const p=m[1]/m[2];return p>=.6?'good':p>=.4?'mid':'low';}
 function extPrompt(p){
   const base='Ты — опытный экзаменатор экзамена DTZ (Deutsch-Test für Zuwanderer, уровни A2–B1) в Германии. Я готовлюсь к экзамену и хочу сдать на B1. Проверь меня строго, но доброжелательно, как настоящий экзаменатор. Отвечай по-русски, немецкие примеры давай по-немецки.\n\n';
