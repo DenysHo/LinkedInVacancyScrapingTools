@@ -72,6 +72,12 @@ button{font:inherit}
 .rule.gder{border-left-color:#2f6fd6}.rule.gdie{border-left-color:#d0453b}.rule.gdas{border-left-color:#2f9a55}
 .wordcard{padding:28px 12px}.word{font-size:34px;font-weight:800;letter-spacing:-.01em;word-break:break-word}
 .arts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.dots{letter-spacing:3px;color:#2f9a55;font-size:15px}.bad{color:#d0453b}
+.pbs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.pb{border:2px solid var(--line);background:var(--card);border-radius:16px;padding:18px 0;font-size:21px;font-weight:700;color:var(--ink);cursor:pointer}
+.pb.right{border-color:#2f9a55;background:#e3f4e8;color:#1d6b39}.pb.dim{opacity:.35}.pb.picked{border-color:#d0453b;background:#fbe5e3;opacity:.8;text-decoration:line-through}
+.mini{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:2px 10px;font-size:15px;cursor:pointer;color:var(--ink)}
+.wl{margin:8px 0;line-height:1.45}.sent{font-size:21px;line-height:1.5;margin:6px 0}.rulecard .rh{display:flex;gap:8px;align-items:baseline}.rulecard .rh small{margin-left:auto}
+.gderb{border-left:6px solid #2f6fd6}.gdieb{border-left:6px solid #d0453b}.gdasb{border-left:6px solid #2f9a55}
 .art{border:0;border-radius:18px;padding:22px 0;font-size:24px;font-weight:800;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s}
 .art:active{transform:scale(.97)}.art.gder{background:#2f6fd6}.art.gdie{background:#d0453b}.art.gdas{background:#2f9a55}
 .art.dim{opacity:.25}.art.picked{opacity:.6;text-decoration:line-through}.art.right{outline:4px solid var(--ink);outline-offset:2px}
@@ -1419,6 +1425,706 @@ das|Spiel|brief|игра
 das|Team|brief|команда
 das|Amt|brief|ведомство
 das|Ziel|brief|цель`.split('\n').map(l=>{const [g,w,r,ru]=l.split('|');return {g,w,r,ru,id:g+w};});
+
+// ===== расширение до 500+ слов =====
+Object.assign(ART_RULES,{
+ ig:{n:'-ig / -ich',g:'der',t:'-ig / -ich → der'},
+ tum:{n:'-tum',g:'das',t:'-tum → das (кроме der Irrtum, der Reichtum)'},
+ drink:{n:'алкоголь',g:'der',t:'алкогольные напитки → der (кроме das Bier)'},
+ dir:{n:'стороны света',g:'der',t:'стороны света → der'},
+ farb:{n:'цвета',g:'das',t:'цвет как существительное → das'},
+ met:{n:'металлы',g:'das',t:'металлы → das'}
+});
+const ART_X={
+ e:'der Name, der Kunde, der Junge, der Käse, der Kollege, der Löwe, der Affe, der Neffe, der Experte, der Buchstabe, der Gedanke · das Ende, das Auge, das Interesse',
+ er:'die Mutter, die Butter, die Schwester, die Tochter, die Nummer, die Feier, die Mauer, die Leiter (лестница), die Steuer · das Zimmer, das Fenster, das Wasser, das Messer, das Theater, das Fieber, das Ufer, das Alter, das Feuer, das Abenteuer, das Semester',
+ ge:'der Geburtstag, der Gedanke, der Geschmack, der Geruch, der Gewinn · die Geschichte, die Gefahr, die Geduld, die Gebühr, die Geburt, die Gegend',
+ nis:'die Erlaubnis, die Kenntnis, die Wildnis',
+ ma:'die Firma, die Oma, die Mama',
+ ment:'der Moment',
+ ur:'das Abitur',
+ ei:'das Ei, der Brei',
+ ie:'das Knie, das Genie',
+ o:'die Disco',
+ tum:'der Irrtum, der Reichtum',
+ drink:'das Bier',
+ wetter:'das Wetter, das Gewitter',
+ zeit:'die Nacht, die Woche'
+};
+`die|Zahlung|ung|оплата
+die|Abteilung|ung|отдел
+die|Ausbildung|ung|профобучение
+die|Bedienung|ung|обслуживание, официант(ка)
+die|Beratung|ung|консультация
+die|Bildung|ung|образование
+die|Erklärung|ung|объяснение
+die|Erholung|ung|отдых
+die|Lieferung|ung|доставка
+die|Mitteilung|ung|сообщение, уведомление
+die|Ordnung|ung|порядок
+die|Sitzung|ung|заседание
+die|Überweisung|ung|перевод денег; направление к врачу
+die|Untersuchung|ung|обследование
+die|Verabredung|ung|договорённость о встрече
+die|Veranstaltung|ung|мероприятие
+die|Verbindung|ung|связь, соединение
+die|Vorbereitung|ung|подготовка
+die|Werbung|ung|реклама
+die|Hoffnung|ung|надежда
+die|Übung|ung|упражнение
+die|Erkältung|ung|простуда
+die|Impfung|ung|прививка
+die|Kleidung|ung|одежда
+die|Richtung|ung|направление
+die|Störung|ung|помеха, неисправность
+die|Umgebung|ung|окрестности
+die|Unterstützung|ung|поддержка
+die|Verspätung|ung|опоздание
+die|Bestätigung|ung|подтверждение
+die|Genehmigung|ung|разрешение
+die|Beschreibung|ung|описание
+die|Krankheit|heit|болезнь
+die|Sicherheit|heit|безопасность
+die|Gelegenheit|heit|возможность, случай
+die|Kindheit|heit|детство
+die|Vergangenheit|heit|прошлое
+die|Wahrheit|heit|правда
+die|Schönheit|heit|красота
+die|Gewohnheit|heit|привычка
+die|Zufriedenheit|heit|удовлетворённость
+die|Pünktlichkeit|heit|пунктуальность
+die|Höflichkeit|heit|вежливость
+die|Sauberkeit|heit|чистота
+die|Tätigkeit|heit|деятельность
+die|Fähigkeit|heit|способность
+die|Geschwindigkeit|heit|скорость
+die|Flüssigkeit|heit|жидкость
+die|Ehrlichkeit|heit|честность
+die|Arbeitslosigkeit|heit|безработица
+die|Gesellschaft|schaft|общество
+die|Landschaft|schaft|пейзаж
+die|Wirtschaft|schaft|экономика
+die|Schwangerschaft|schaft|беременность
+die|Botschaft|schaft|посольство
+die|Wissenschaft|schaft|наука
+die|Partnerschaft|schaft|партнёрство
+die|Bereitschaft|schaft|готовность
+die|Verwandtschaft|schaft|родня
+die|Eigenschaft|schaft|качество, свойство
+die|Situation|ion|ситуация
+die|Aktion|ion|акция
+die|Region|ion|регион
+die|Position|ion|позиция
+die|Tradition|ion|традиция
+die|Religion|ion|религия
+die|Operation|ion|операция
+die|Lektion|ion|урок
+die|Diskussion|ion|дискуссия
+die|Reaktion|ion|реакция
+die|Funktion|ion|функция
+die|Kommunikation|ion|общение
+die|Organisation|ion|организация
+die|Präsentation|ion|презентация
+die|Qualifikation|ion|квалификация
+die|Station|ion|станция, отделение
+die|Generation|ion|поколение
+die|Rezeption|ion|ресепшн
+die|Option|ion|вариант
+die|Universität|taet|университет
+die|Qualität|taet|качество
+die|Nationalität|taet|национальность
+die|Realität|taet|реальность
+die|Aktivität|taet|активность
+die|Priorität|taet|приоритет
+die|Spezialität|taet|фирменное блюдо
+die|Kreativität|taet|креативность
+die|Familie|ie|семья
+die|Industrie|ie|промышленность
+die|Batterie|ie|батарейка
+die|Energie|ie|энергия
+die|Garantie|ie|гарантия
+die|Kopie|ie|копия
+die|Strategie|ie|стратегия
+die|Therapie|ie|терапия
+die|Allergie|ie|аллергия
+die|Melodie|ie|мелодия
+die|Demokratie|ie|демократия
+die|Musik|ik|музыка
+die|Politik|ik|политика
+die|Technik|ik|техника
+die|Fabrik|ik|фабрика
+die|Kritik|ik|критика
+die|Klinik|ik|клиника
+die|Republik|ik|республика
+die|Grammatik|ik|грамматика
+die|Mathematik|ik|математика
+die|Statistik|ik|статистика
+die|Panik|ik|паника
+die|Natur|ur|природа
+die|Kultur|ur|культура
+die|Reparatur|ur|ремонт
+die|Temperatur|ur|температура
+die|Frisur|ur|причёска
+die|Figur|ur|фигура
+die|Tastatur|ur|клавиатура
+die|Literatur|ur|литература
+die|Agentur|ur|агентство
+die|Struktur|ur|структура
+die|Konferenz|enz|конференция
+die|Konkurrenz|enz|конкуренция
+die|Existenz|enz|существование
+die|Intelligenz|enz|интеллект
+die|Toleranz|enz|терпимость
+die|Distanz|enz|расстояние
+die|Lizenz|enz|лицензия
+die|Tendenz|enz|тенденция
+die|Polizei|ei|полиция
+die|Bäckerei|ei|пекарня
+die|Metzgerei|ei|мясная лавка
+die|Bücherei|ei|библиотека
+die|Partei|ei|партия
+die|Türkei|ei|Турция
+die|Datei|ei|файл
+die|Lehrerin|in|учительница
+die|Ärztin|in|врач (женщина)
+die|Freundin|in|подруга
+die|Kollegin|in|коллега (женщина)
+die|Nachbarin|in|соседка
+die|Verkäuferin|in|продавщица
+die|Chefin|in|начальница
+die|Kundin|in|клиентка
+die|Erzieherin|in|воспитательница
+die|Studentin|in|студентка
+die|Ecke|e|угол
+die|Flasche|e|бутылка
+die|Tasse|e|чашка
+die|Tüte|e|пакет
+die|Seite|e|страница, сторона
+die|Liste|e|список
+die|Decke|e|одеяло, потолок
+die|Dusche|e|душ
+die|Garage|e|гараж
+die|Hose|e|брюки
+die|Katze|e|кошка
+die|Kirche|e|церковь
+die|Klasse|e|класс
+die|Maschine|e|машина, станок
+die|Minute|e|минута
+die|Nase|e|нос
+die|Pflanze|e|растение
+die|Reihe|e|ряд, очередь
+die|Sache|e|вещь, дело
+die|Sonne|e|солнце
+die|Suppe|e|суп
+die|Tablette|e|таблетка
+die|Tante|e|тётя
+die|Wiese|e|луг
+die|Wolke|e|облако
+die|Zitrone|e|лимон
+die|Banane|e|банан
+die|Gurke|e|огурец
+die|Wäsche|e|бельё, стирка
+die|Grenze|e|граница
+die|Rente|e|пенсия
+die|Erde|e|земля
+die|Torte|e|торт
+die|Aufgabe|e|задание
+die|Gemeinde|e|община, муниципалитет
+die|Sorge|e|забота, беспокойство
+der|Lehrer|er|учитель
+der|Fahrer|er|водитель
+der|Bäcker|er|пекарь
+der|Verkäufer|er|продавец
+der|Mitarbeiter|er|сотрудник
+der|Arbeitgeber|er|работодатель
+der|Arbeitnehmer|er|работник
+der|Computer|er|компьютер
+der|Drucker|er|принтер
+der|Fernseher|er|телевизор
+der|Kugelschreiber|er|ручка
+der|Wecker|er|будильник
+der|Staubsauger|er|пылесос
+der|Bürger|er|гражданин
+der|Besucher|er|посетитель
+der|Maler|er|художник, маляр
+der|Spieler|er|игрок
+der|Teilnehmer|er|участник
+der|Vermieter|er|арендодатель
+der|Fehler|er|ошибка
+der|Lehrling|ling|ученик (на производстве)
+der|Liebling|ling|любимец
+der|Schmetterling|ling|бабочка
+der|Flüchtling|ling|беженец
+der|Zwilling|ling|близнец
+der|Säugling|ling|младенец
+der|Tourismus|ismus|туризм
+der|Journalismus|ismus|журналистика
+der|Optimismus|ismus|оптимизм
+der|Pessimismus|ismus|пессимизм
+der|Kapitalismus|ismus|капитализм
+der|Realismus|ismus|реализм
+der|Student|pers|студент
+der|Patient|pers|пациент
+der|Präsident|pers|президент
+der|Assistent|pers|ассистент
+der|Praktikant|pers|практикант
+der|Lieferant|pers|поставщик
+der|Polizist|pers|полицейский
+der|Tourist|pers|турист
+der|Journalist|pers|журналист
+der|Spezialist|pers|специалист
+der|Doktor|pers|доктор
+der|Direktor|pers|директор
+der|Autor|pers|автор
+der|Professor|pers|профессор
+der|Moderator|pers|ведущий
+der|Montag|zeit|понедельник
+der|Dienstag|zeit|вторник
+der|Mittwoch|zeit|среда
+der|Donnerstag|zeit|четверг
+der|Freitag|zeit|пятница
+der|Samstag|zeit|суббота
+der|Sonntag|zeit|воскресенье
+der|Januar|zeit|январь
+der|Februar|zeit|февраль
+der|März|zeit|март
+der|April|zeit|апрель
+der|Mai|zeit|май
+der|Juni|zeit|июнь
+der|Juli|zeit|июль
+der|August|zeit|август
+der|September|zeit|сентябрь
+der|Oktober|zeit|октябрь
+der|November|zeit|ноябрь
+der|Dezember|zeit|декабрь
+der|Frühling|zeit|весна
+der|Sommer|zeit|лето
+der|Herbst|zeit|осень
+der|Winter|zeit|зима
+der|Morgen|zeit|утро
+der|Vormittag|zeit|первая половина дня
+der|Mittag|zeit|полдень
+der|Nachmittag|zeit|после обеда
+der|Abend|zeit|вечер
+der|Regen|wetter|дождь
+der|Schnee|wetter|снег
+der|Wind|wetter|ветер
+der|Sturm|wetter|буря
+der|Nebel|wetter|туман
+der|Hagel|wetter|град
+der|Frost|wetter|мороз
+der|Donner|wetter|гром
+der|Blitz|wetter|молния
+der|Honig|ig|мёд
+der|König|ig|король
+der|Essig|ig|уксус
+der|Käfig|ig|клетка
+der|Teppich|ig|ковёр
+der|Bereich|ig|область, сфера
+der|Vergleich|ig|сравнение
+der|Strich|ig|черта, линия
+der|Wein|drink|вино
+der|Sekt|drink|игристое вино
+der|Wodka|drink|водка
+der|Whisky|drink|виски
+der|Schnaps|drink|шнапс
+der|Norden|dir|север
+der|Süden|dir|юг
+der|Osten|dir|восток
+der|Westen|dir|запад
+das|Mädchen|chen|девочка
+das|Brötchen|chen|булочка
+das|Hähnchen|chen|курица (блюдо)
+das|Würstchen|chen|сосиска
+das|Märchen|chen|сказка
+das|Päckchen|chen|маленькая посылка
+das|Plätzchen|chen|печенье
+das|Kaninchen|chen|кролик
+das|Eichhörnchen|chen|белка
+das|Fräulein|chen|девушка (устар.)
+das|Büchlein|chen|книжечка
+das|Dokument|ment|документ
+das|Instrument|ment|инструмент
+das|Medikament|ment|лекарство
+das|Apartment|ment|апартаменты
+das|Parlament|ment|парламент
+das|Argument|ment|аргумент
+das|Experiment|ment|эксперимент
+das|Kompliment|ment|комплимент
+das|Museum|um|музей
+das|Zentrum|um|центр
+das|Studium|um|учёба в вузе
+das|Datum|um|дата
+das|Publikum|um|публика
+das|Gymnasium|um|гимназия
+das|Visum|um|виза
+das|Album|um|альбом
+das|Stadium|um|стадия
+das|Aquarium|um|аквариум
+das|Thema|ma|тема
+das|Klima|ma|климат
+das|Drama|ma|драма
+das|Komma|ma|запятая
+das|Schema|ma|схема
+das|Aroma|ma|аромат
+das|Schreiben|inf|письмо (документ)
+das|Lesen|inf|чтение
+das|Kochen|inf|готовка
+das|Rauchen|inf|курение
+das|Parken|inf|парковка
+das|Treffen|inf|встреча
+das|Wissen|inf|знание
+das|Vertrauen|inf|доверие
+das|Verhalten|inf|поведение
+das|Vergnügen|inf|удовольствие
+das|Gesicht|ge|лицо
+das|Gefühl|ge|чувство
+das|Gehalt|ge|зарплата
+das|Gesetz|ge|закон
+das|Gewicht|ge|вес
+das|Gerät|ge|прибор
+das|Gebiet|ge|область, район
+das|Gelände|ge|территория
+das|Gehirn|ge|мозг
+das|Gebirge|ge|горы
+das|Geschirr|ge|посуда
+das|Gewürz|ge|специя
+das|Geräusch|ge|шум, звук
+das|Auto|o|машина
+das|Büro|o|офис
+das|Kino|o|кино
+das|Foto|o|фото
+das|Radio|o|радио
+das|Konto|o|счёт в банке
+das|Video|o|видео
+das|Ergebnis|nis|результат
+das|Zeugnis|nis|аттестат, отзыв
+das|Erlebnis|nis|переживание, впечатление
+das|Geheimnis|nis|тайна
+das|Verständnis|nis|понимание
+das|Hindernis|nis|препятствие
+das|Gefängnis|nis|тюрьма
+das|Bedürfnis|nis|потребность
+das|Verhältnis|nis|отношение
+das|Eigentum|tum|собственность
+das|Wachstum|tum|рост
+das|Christentum|tum|христианство
+das|Rot|farb|красный цвет
+das|Blau|farb|синий цвет
+das|Grün|farb|зелёный цвет
+das|Gold|met|золото
+das|Silber|met|серебро
+das|Eisen|met|железо
+das|Kupfer|met|медь
+der|Moment|exc|момент (исключение: -ment, но der)
+das|Abitur|exc|аттестат (исключение: -ur, но das)
+die|Firma|exc|фирма (исключение: -ma, но die)
+die|Oma|exc|бабушка (исключение: -ma, но die — женщина)
+die|Mama|exc|мама (исключение: -ma, но die — женщина)
+das|Ei|exc|яйцо (исключение: -ei, но das)
+der|Brei|exc|каша (исключение: -ei, но der)
+das|Knie|exc|колено (исключение: -ie, но das)
+das|Genie|exc|гений (исключение: -ie, но das)
+der|Löwe|exc|лев (исключение: -e, но der — животное мужского рода)
+der|Affe|exc|обезьяна (исключение: -e, но der)
+der|Neffe|exc|племянник (исключение: -e, но der — мужчина)
+der|Experte|exc|эксперт (исключение: -e, но der — мужчина)
+der|Buchstabe|exc|буква (исключение: -e, но der)
+der|Gedanke|exc|мысль (исключение: -e и Ge-, но der)
+das|Interesse|exc|интерес (исключение: -e, но das)
+die|Schwester|exc|сестра (исключение: -er, но die — женщина)
+die|Nummer|exc|номер (исключение: -er, но die)
+die|Feier|exc|праздник (исключение: -er, но die)
+die|Mauer|exc|каменная стена (исключение: -er, но die)
+die|Leiter|exc|стремянка (die Leiter — лестница, der Leiter — руководитель)
+die|Steuer|exc|налог (исключение: -er, но die)
+das|Messer|exc|нож (исключение: -er, но das)
+das|Theater|exc|театр (исключение: -er, но das)
+das|Fieber|exc|температура, жар (исключение: -er, но das)
+das|Ufer|exc|берег (исключение: -er, но das)
+das|Alter|exc|возраст (исключение: -er, но das)
+das|Feuer|exc|огонь (исключение: -er, но das)
+das|Abenteuer|exc|приключение (исключение: -er, но das)
+das|Semester|exc|семестр (исключение: -er, но das)
+der|Geschmack|exc|вкус (исключение: Ge-, но der)
+der|Geruch|exc|запах (исключение: Ge-, но der)
+der|Gewinn|exc|выигрыш, прибыль (исключение: Ge-, но der)
+die|Gefahr|exc|опасность (исключение: Ge-, но die)
+die|Geduld|exc|терпение (исключение: Ge-, но die)
+die|Gebühr|exc|сбор, пошлина (исключение: Ge-, но die)
+die|Geburt|exc|рождение (исключение: Ge-, но die)
+die|Gegend|exc|местность (исключение: Ge-, но die)
+das|Gewitter|exc|гроза (исключение: погода, но das — Ge-)
+die|Kenntnis|exc|знание (исключение: -nis, но die)
+die|Wildnis|exc|дикая природа (исключение: -nis, но die)
+der|Irrtum|exc|заблуждение (исключение: -tum, но der)
+der|Reichtum|exc|богатство (исключение: -tum, но der)
+das|Bier|exc|пиво (исключение: алкоголь, но das)
+die|Disco|exc|дискотека (исключение: -o, но die)
+der|Arzt|brief|врач
+der|Termin|brief|назначенная встреча, приём
+der|Brief|brief|письмо
+der|Vertrag|brief|договор
+der|Platz|brief|место, площадь
+der|Zug|brief|поезд
+der|Bus|brief|автобус
+der|Weg|brief|путь, дорога
+der|Ort|brief|место, населённый пункт
+der|Raum|brief|помещение
+der|Garten|brief|сад
+der|Baum|brief|дерево
+der|Berg|brief|гора
+der|Fluss|brief|река
+der|Park|brief|парк
+der|Markt|brief|рынок
+der|Laden|brief|магазин
+der|Preis|brief|цена
+der|Plan|brief|план
+der|Kurs|brief|курс
+der|Test|brief|тест
+der|Job|brief|работа
+der|Chef|brief|начальник
+der|Mann|brief|мужчина, муж
+der|Sohn|brief|сын
+der|Vater|brief|отец
+der|Bruder|brief|брат
+der|Freund|brief|друг
+der|Nachbar|brief|сосед
+der|Gast|brief|гость
+der|Mensch|brief|человек
+der|Schlüssel|brief|ключ
+der|Löffel|brief|ложка
+der|Teller|brief|тарелка
+der|Apfel|brief|яблоко
+der|Kuchen|brief|пирог
+der|Saft|brief|сок
+der|Zucker|brief|сахар
+der|Reis|brief|рис
+der|Salat|brief|салат
+der|Fisch|brief|рыба
+der|Stuhl|brief|стул
+der|Tisch|brief|стол
+der|Schrank|brief|шкаф
+der|Boden|brief|пол, почва
+der|Kopf|brief|голова
+der|Fuß|brief|нога (ступня)
+der|Arm|brief|рука (от плеча)
+der|Rücken|brief|спина
+der|Bauch|brief|живот
+der|Zahn|brief|зуб
+der|Hals|brief|шея, горло
+der|Urlaub|brief|отпуск
+der|Unfall|brief|несчастный случай
+der|Ausweis|brief|удостоверение
+der|Pass|brief|паспорт
+der|Antrag|brief|заявление
+der|Grund|brief|причина
+der|Wunsch|brief|желание
+der|Rat|brief|совет
+der|Streit|brief|ссора
+der|Besuch|brief|визит
+der|Anruf|brief|звонок
+die|Frau|brief|женщина, жена
+die|Ampel|brief|светофор
+die|Gabel|brief|вилка
+die|Kartoffel|brief|картофель
+die|Milch|brief|молоко
+die|Wurst|brief|колбаса
+die|Luft|brief|воздух
+die|Kraft|brief|сила
+die|Angst|brief|страх
+die|Heimat|brief|родина
+die|Schicht|brief|смена
+die|Pflicht|brief|обязанность
+die|Ankunft|brief|прибытие
+die|Abfahrt|brief|отправление
+die|Zukunft|brief|будущее
+die|Frist|brief|срок
+die|Kunst|brief|искусство
+die|Wahl|brief|выбор, выборы
+die|Zahl|brief|число
+die|Fahrt|brief|поездка
+die|Haut|brief|кожа
+die|Maus|brief|мышь
+das|Problem|brief|проблема
+das|Programm|brief|программа
+das|System|brief|система
+das|Mittel|brief|средство
+das|Ding|brief|вещь
+das|Recht|brief|право
+das|Glas|brief|стекло, стакан
+das|Holz|brief|дерево (материал)
+das|Bild|brief|картина
+das|Dorf|brief|деревня
+das|Dach|brief|крыша
+das|Meer|brief|море
+das|Ohr|brief|ухо
+das|Bein|brief|нога
+das|Herz|brief|сердце
+das|Haar|brief|волос
+das|Fest|brief|праздник
+das|Fach|brief|предмет (в школе)
+das|Öl|brief|масло (растительное)
+das|Salz|brief|соль
+das|Mehl|brief|мука
+das|Hemd|brief|рубашка
+das|Kleid|brief|платье
+das|Tier|brief|животное
+das|Pferd|brief|лошадь
+das|Schiff|brief|корабль
+das|Stück|brief|кусок
+das|Telefon|brief|телефон
+das|Hobby|brief|хобби
+das|Training|brief|тренировка
+die|Krankenkasse|comp|больничная касса (die Kasse)
+der|Hausarzt|comp|семейный врач (der Arzt)
+das|Schlafzimmer|comp|спальня (das Zimmer)
+die|Fahrkarte|comp|билет (die Karte)
+der|Arbeitsplatz|comp|рабочее место (der Platz)
+die|Telefonnummer|comp|номер телефона (die Nummer)
+das|Wohnzimmer|comp|гостиная (das Zimmer)
+der|Stadtplan|comp|карта города (der Plan)
+die|Hausaufgabe|comp|домашнее задание (die Aufgabe)
+der|Führerschein|comp|водительские права (der Schein)
+das|Krankenhaus|comp|больница (das Haus)
+der|Bahnhof|comp|вокзал (der Hof)
+die|Sprechstunde|comp|приёмные часы (die Stunde)
+die|Hochzeit|comp|свадьба (die Zeit)
+das|Flugzeug|comp|самолёт (das Zeug)
+der|Feiertag|comp|праздничный день (der Tag)
+die|Waschmaschine|comp|стиральная машина (die Maschine)
+der|Schreibtisch|comp|письменный стол (der Tisch)
+der|Elternabend|comp|родительское собрание (der Abend)
+das|Schuljahr|comp|учебный год (das Jahr)
+der|Zahnarzt|comp|стоматолог (der Arzt)
+die|Postleitzahl|comp|почтовый индекс (die Zahl)
+das|Kinderbett|comp|детская кроватка (das Bett)
+der|Lebenslauf|comp|резюме (der Lauf)
+der|Sprachkurs|comp|языковой курс (der Kurs)
+die|Steuererklärung|comp|налоговая декларация (die Erklärung)
+das|Geburtsdatum|comp|дата рождения (das Datum)
+der|Nachname|comp|фамилия (der Name)
+der|Wohnort|comp|место жительства (der Ort)`.split('\n').forEach(l=>{const [g,w,r,ru]=l.split('|');if(!ART_WORDS.some(x=>x.w===w))ART_WORDS.push({g,w,r,ru,id:g+w});});
+
+// ===== Глаголы с предлогами (verb|prep|case|ru|пример с {предлогом}) =====
+const VERBEN=`abhängen|von|D|зависеть от|Ob wir fahren, hängt {von} dem Wetter ab.
+achten|auf|A|обращать внимание на|Bitte achten Sie {auf} die Hausordnung.
+anfangen|mit|D|начинать (что-то)|Morgen fange ich {mit} dem neuen Kurs an.
+ankommen|auf|A|зависеть от, быть важным (es kommt auf … an)|Es kommt {auf} den Preis an.
+antworten|auf|A|отвечать на|Ich antworte heute {auf} Ihre E-Mail.
+sich ärgern|über|A|злиться на|Ich ärgere mich {über} den Lärm.
+aufhören|mit|D|прекращать|Er hört um fünf Uhr {mit} der Arbeit auf.
+aufpassen|auf|A|присматривать за|Die Oma passt {auf} meine Tochter auf.
+sich aufregen|über|A|возмущаться|Mein Nachbar regt sich {über} die Kinder auf.
+ausgeben|für|A|тратить на|Wir geben viel Geld {für} Lebensmittel aus.
+sich bedanken|bei|D|благодарить (кого)|Ich bedanke mich {bei} meiner Lehrerin.
+sich bedanken|für|A|благодарить за|Ich bedanke mich {für} Ihre Hilfe.
+beginnen|mit|D|начинать|Wir beginnen pünktlich {mit} der Prüfung.
+sich bemühen|um|A|добиваться, стараться получить|Sie bemüht sich {um} eine neue Stelle.
+berichten|über|A|сообщать о|Die Zeitung berichtet {über} den Unfall.
+sich beschäftigen|mit|D|заниматься (чем)|Ich beschäftige mich gern {mit} Pflanzen.
+sich beschweren|bei|D|жаловаться (кому)|Der Mieter beschwert sich {bei} der Hausverwaltung.
+sich beschweren|über|A|жаловаться на|Ich möchte mich {über} die Heizung beschweren.
+bestehen|aus|D|состоять из|Der Kurs besteht {aus} zwölf Teilnehmern.
+bestehen|auf|D|настаивать на|Der Vermieter besteht {auf} pünktlicher Zahlung.
+sich beteiligen|an|D|участвовать в|Viele Eltern beteiligen sich {an} dem Sommerfest.
+sich bewerben|bei|D|подавать заявку (в фирму)|Er bewirbt sich {bei} einer Bäckerei.
+sich bewerben|um|A|претендовать на (место)|Sie bewirbt sich {um} eine Stelle als Verkäuferin.
+sich beziehen|auf|A|ссылаться на|Meine Frage bezieht sich {auf} Ihre Anzeige.
+bitten|um|A|просить о|Ich bitte Sie {um} einen neuen Termin.
+danken|für|A|благодарить за|Ich danke dir {für} das Geschenk.
+denken|an|A|думать о|Ich denke oft {an} meine Familie.
+diskutieren|über|A|обсуждать|Wir diskutieren {über} das Thema Homeoffice.
+einladen|zu|D|приглашать на|Ich lade dich {zu} meiner Party ein.
+sich entscheiden|für|A|выбрать, решиться на|Ich habe mich {für} die kleine Wohnung entschieden.
+sich entschließen|zu|D|решиться на|Sie entschließt sich {zu} einer Ausbildung.
+sich entschuldigen|bei|D|извиняться перед|Ich entschuldige mich {bei} meiner Kollegin.
+sich entschuldigen|für|A|извиняться за|Ich entschuldige mich {für} die Verspätung.
+sich erholen|von|D|отдыхать, оправляться от|Ich muss mich {von} der Grippe erholen.
+sich erinnern|an|A|вспоминать|Ich erinnere mich gern {an} meine Kindheit.
+erkennen|an|D|узнавать по|Ich erkenne ihn {an} seiner Stimme.
+sich erkundigen|nach|D|осведомляться о|Ich möchte mich {nach} den Kurszeiten erkundigen.
+erschrecken|über|A|испугаться (чего)|Das Kind erschrickt {über} den lauten Hund.
+erzählen|über|A|рассказывать о|Sie erzählt {über} ihr Leben in Deutschland.
+erzählen|von|D|рассказывать о|Er erzählt {von} seiner Reise.
+fragen|nach|D|спрашивать о|Der Tourist fragt {nach} dem Weg.
+sich freuen|auf|A|радоваться (будущему)|Die Kinder freuen sich {auf} die Ferien.
+sich freuen|über|A|радоваться (тому, что есть)|Ich freue mich {über} deinen Brief.
+gehen|um|A|речь идёт о (es geht um)|In dem Gespräch geht es {um} die Miete.
+gehören|zu|D|относиться к, входить в|Bayern gehört {zu} Deutschland.
+sich gewöhnen|an|A|привыкать к|Ich gewöhne mich langsam {an} das Wetter.
+glauben|an|A|верить в|Sie glaubt {an} die Liebe.
+gratulieren|zu|D|поздравлять с|Wir gratulieren dir {zu} deiner Hochzeit.
+halten|für|A|считать (кем/чем)|Ich halte das {für} eine gute Idee.
+halten|von|D|быть мнения о|Was hältst du {von} meinem Vorschlag?
+sich handeln|um|A|речь идёт о (es handelt sich um)|Es handelt sich {um} einen Fehler in der Rechnung.
+handeln|von|D|быть о (книга, фильм)|Das Buch handelt {von} einer Familie.
+helfen|bei|D|помогать в|Kannst du mir {bei} den Hausaufgaben helfen?
+hindern|an|D|мешать в|Der Regen hindert uns {an} dem Spaziergang.
+hoffen|auf|A|надеяться на|Wir hoffen {auf} gutes Wetter.
+hören|von|D|слышать о|Ich habe lange nichts {von} ihm gehört.
+sich informieren|über|A|узнавать, информироваться о|Ich informiere mich {über} die Kurse.
+sich interessieren|für|A|интересоваться|Meine Tochter interessiert sich {für} Tiere.
+klagen|über|A|жаловаться на|Der Patient klagt {über} Kopfschmerzen.
+kämpfen|für|A|бороться за|Die Gewerkschaft kämpft {für} höhere Löhne.
+kommen|zu|D|дойти до (es kommt zu)|Im Büro kam es {zu} einem Streit.
+sich konzentrieren|auf|A|сосредоточиться на|Ich konzentriere mich {auf} die Prüfung.
+sich kümmern|um|A|заботиться о|Ich kümmere mich {um} meine Tochter.
+lachen|über|A|смеяться над|Alle lachen {über} den Witz.
+leiden|an|D|болеть (чем)|Er leidet {an} einer Allergie.
+leiden|unter|D|страдать от|Viele Menschen leiden {unter} Stress.
+nachdenken|über|A|размышлять о|Ich denke {über} dein Angebot nach.
+protestieren|gegen|A|протестовать против|Die Bürger protestieren {gegen} den neuen Flughafen.
+rechnen|mit|D|рассчитывать на, ожидать|Im Januar muss man {mit} Schnee rechnen.
+reden|über|A|говорить о|Wir reden {über} den Urlaub.
+reden|von|D|говорить о|Er redet immer {von} seinem Auto.
+riechen|nach|D|пахнуть (чем)|Hier riecht es {nach} Kuchen.
+sagen|über|A|говорить о (мнение)|Was sagt der Arzt {über} die Ergebnisse?
+sagen|zu|D|сказать насчёт|Was sagst du {zu} meiner neuen Frisur?
+schicken|an|A|посылать (кому, куда)|Ich schicke die Unterlagen {an} die Firma.
+schicken|zu|D|направлять к|Der Hausarzt schickt mich {zu} einem Spezialisten.
+schimpfen|über|A|ругать|Alle schimpfen {über} das Wetter.
+schmecken|nach|D|иметь вкус (чего)|Der Tee schmeckt {nach} Zitrone.
+schreiben|an|A|писать (кому)|Ich schreibe {an} das Bürgeramt.
+sich schützen|vor|D|защищаться от|Man muss sich {vor} der Sonne schützen.
+sein|für|A|быть за|Ich bin {für} mehr Spielplätze.
+sein|gegen|A|быть против|Viele sind {gegen} die neuen Regeln.
+sorgen|für|A|заботиться о, обеспечивать|Die Eltern sorgen {für} ihre Kinder.
+sprechen|mit|D|говорить с|Ich spreche morgen {mit} meinem Chef.
+sprechen|über|A|говорить о|Lass uns {über} deine Pläne sprechen.
+sterben|an|D|умереть от|Früher starben viele Menschen {an} der Grippe.
+streiten|mit|D|ссориться с|Ich möchte nicht {mit} dir streiten.
+streiten|über|A|спорить о|Die Geschwister streiten {über} das Spielzeug.
+teilnehmen|an|D|участвовать в|Ich nehme {an} dem Deutschkurs teil.
+telefonieren|mit|D|говорить по телефону с|Ich habe {mit} der Ärztin telefoniert.
+sich treffen|mit|D|встречаться с|Ich treffe mich {mit} meiner Freundin.
+sich treffen|zu|D|встречаться для (чего)|Wir treffen uns {zu} einem kurzen Gespräch.
+überreden|zu|D|уговорить на|Er überredet mich {zu} einem Spaziergang.
+sich unterhalten|mit|D|беседовать с|Ich unterhalte mich {mit} der Nachbarin.
+sich unterhalten|über|A|беседовать о|Wir unterhalten uns {über} Bücher.
+sich verabreden|mit|D|договориться о встрече с|Ich verabrede mich {mit} einer Kollegin.
+sich verabschieden|von|D|прощаться с|Wir verabschieden uns {von} den Gästen.
+vergleichen|mit|D|сравнивать с|Vergleichen Sie München {mit} Berlin.
+sich verlassen|auf|A|полагаться на|Ich verlasse mich {auf} meinen Mann.
+sich verlieben|in|A|влюбиться в|Sie hat sich {in} das alte Haus verliebt.
+sich verstehen|mit|D|ладить с|Ich verstehe mich gut {mit} meinem Team.
+verstehen|von|D|разбираться в|Verstehst du etwas {von} Autos?
+sich vorbereiten|auf|A|готовиться к|Ich bereite mich {auf} die Prüfung vor.
+warnen|vor|D|предупреждать о|Die Polizei warnt {vor} dem Glatteis.
+warten|auf|A|ждать|Ich warte {auf} den Bus.
+sich wenden|an|A|обращаться к|Bitte wenden Sie sich {an} die Rezeption.
+werden|zu|D|превращаться в|Bei null Grad wird Wasser {zu} Eis.
+wissen|von|D|знать о|Ich weiß nichts {von} dem Termin.
+sich wundern|über|A|удивляться|Ich wundere mich {über} die hohen Preise.
+zuschauen|bei|D|наблюдать за|Darf ich dir {bei} der Arbeit zuschauen?
+zusehen|bei|D|смотреть, как кто-то что-то делает|Die Kinder sehen dem Koch {bei} der Arbeit zu.
+zweifeln|an|D|сомневаться в|Ich zweifle nicht {an} deinem Erfolg.`.split('\n').map(l=>{const [v,p,k,ru,ex]=l.split('|');return {v,p,k,ru,ex,id:v+'|'+p};});
+const PREPS=['an','auf','aus','bei','für','gegen','in','mit','nach','über','um','unter','von','vor','zu'];
+const PREP_HINT={mit:'mit — всегда Dativ',nach:'nach — всегда Dativ',bei:'bei — всегда Dativ',von:'von — всегда Dativ',zu:'zu — всегда Dativ',aus:'aus — всегда Dativ',
+ für:'für — всегда Akkusativ',um:'um — всегда Akkusativ',gegen:'gegen — всегда Akkusativ',
+ über:'über с глаголами — почти всегда Akkusativ',auf:'auf с глаголами — обычно Akkusativ (исключение: bestehen auf + D)',
+ an:'an бывает и A, и D: думать/вспоминать/привыкать/писать/обращаться → A; участвовать/болеть/умирать/сомневаться/узнавать/мешать → D',
+ in:'in (sich verlieben in) → Akkusativ',vor:'vor с глаголами — всегда Dativ (Angst vor, warnen vor, schützen vor)',unter:'unter с глаголами → Dativ (leiden unter)'};
 </script>
 <script>const PUBLIC_BUILD=true;
 // ===================== STATE =====================
@@ -1545,6 +2251,7 @@ function screen(title,html,back=true){
   const bk=$('#bk');if(bk)bk.onclick=()=>{stopSpeak();const f=stack.pop();f?f():go();};
 }
 function push(fn){stack.push(fn);}
+function back(){stopSpeak();const f=stack.pop();f?f():go();}
 
 // ===================== LEBEN IN DEUTSCHLAND =====================
 function viewLid(){
@@ -1902,73 +2609,206 @@ function runTest(test,kind){
   show();
 }
 
-// ===================== РОД (der/die/das) =====================
-const GCOL={der:'gder',die:'gdie',das:'gdas'};
-function artSt(w){return (S.art||{})[w.id]||{};}
+// ===================== ТРЕНАЖЁРЫ =====================
+const GCOL={der:'gder',die:'gdie',das:'gdas'};const MAST=5,ROUND=25;
+function mSt(store,id){return (S[store]||{})[id]||{};}
+function mProg(st){return st.p!=null?st.p:(st.last===1?1:0);}
+function mLearned(store,id){return mProg(mSt(store,id))>=MAST;}
+function mRecord(store,id,ok){S[store]=S[store]||{};const st=S[store][id]||{c:0,w:0};const p=mProg(st);ok?st.c++:st.w++;st.p=ok?Math.min(MAST,p+1):0;st.last=ok?1:0;S[store][id]=st;save();return st;}
+function mUnlearn(store,id){const st=mSt(store,id);st.p=0;S[store]=S[store]||{};S[store][id]=st;save();}
+function mActive(store,list){return list.filter(x=>!mLearned(store,x.id));}
+function mErrors(store,list){return list.filter(x=>mSt(store,x.id).w>0&&!mLearned(store,x.id)).sort((a,b)=>mSt(store,b.id).w-mSt(store,a.id).w);}
+function mRound(store,list){return shuffle(mActive(store,list)).slice(0,ROUND);}
+function dots(store,id){const p=mProg(mSt(store,id));return `<span class="dots">${'●'.repeat(p)}${'○'.repeat(MAST-p)}</span>`;}
+function hero(store,list,txt){const n=list.filter(x=>mLearned(store,x.id)).length;
+  return `<div class="hero"><div class="ring" style="--p:${Math.round(n/list.length*100)}"><b>${n}</b><small>из ${list.length}</small></div><div><p class="muted">${txt}</p><p class="muted small">Каждый раунд — ${ROUND} случайных. После ${MAST} правильных ответов подряд слово уходит в «✅ Выучено» и больше не попадается. Ошибка обнуляет счёт.</p></div></div>`;}
+
 function viewUebungen(){
-  const W=ART_WORDS,known=W.filter(w=>artSt(w).last===1).length;
+  const a=ART_WORDS.filter(w=>mLearned('art',w.id)).length,v=VERBEN.filter(w=>mLearned('vp',w.id)).length;
   screen('Тренажёры',`<p class="muted">Короткие тренажёры для грамматики и слов. Выбери тренажёр:</p>
-  <button class="item" id="u-art"><span>🔤</span><div><b>Род: der / die / das</b><small>${W.length} слов по правилам · выучено ${known}</small></div></button>
+  <button class="item" id="u-art"><span>🔤</span><div><b>Род: der / die / das</b><small>${ART_WORDS.length} слов · выучено ${a}</small></div></button>
+  <button class="item" id="u-vp"><span>🔗</span><div><b>Глаголы с предлогами + падеж</b><small>${VERBEN.length} глаголов · выучено ${v}</small></div></button>
   <p class="muted small center" style="margin-top:18px">Здесь будут появляться новые тренажёры.</p>`,false);
   $('#u-art').onclick=()=>{push(viewUebungen);viewArtikel();};
+  $('#u-vp').onclick=()=>{push(viewUebungen);viewVerben();};
 }
+
+// ---------- РОД ----------
+function artGroups(){const g={};ART_WORDS.forEach(w=>{(g[w.r]=g[w.r]||[]).push(w);});return g;}
+function artLine(w,extra=''){return `<p class="wl"><b class="t${w.g}">${w.g}</b> ${esc(w.w)} <span class="muted small">— ${esc(w.ru)}</span>${extra}</p>`;}
 function viewArtikel(){
-  S.art=S.art||{};const W=ART_WORDS;const known=W.filter(w=>artSt(w).last===1).length,wrong=W.filter(w=>artSt(w).last===0);
-  const groups={};W.forEach(w=>{(groups[w.r]=groups[w.r]||[]).push(w);});
-  const sect=(title,keys)=>`<h3>${title}</h3><div class="rules">${keys.filter(k=>groups[k]).map(k=>{const g=groups[k],kn=g.filter(w=>artSt(w).last===1).length,R=ART_RULES[k];
-    return `<button class="rule ${R.g?GCOL[R.g]:''}" data-r="${k}"><b>${esc(R.n)}</b><small>${R.g?R.g+' · ':''}${kn}/${g.length}</small></button>`;}).join('')}</div>`;
-  screen('Род: der / die / das',`
-  <div class="hero"><div class="ring" style="--p:${Math.round(known/W.length*100)}"><b>${known}</b><small>из ${W.length}</small></div>
-   <div><p class="muted">Угадай артикль. После ответа увидишь правило. Цвета: <b class="tder">der</b> · <b class="tdie">die</b> · <b class="tdas">das</b>.</p></div></div>
+  const W=ART_WORDS,G=artGroups(),err=mErrors('art',W),lrn=W.filter(w=>mLearned('art',w.id));
+  const exc=mActive('art',G.exc),brief=mActive('art',G.brief);
+  screen('Род: der / die / das',`${hero('art',W,'Угадай артикль. Цвета: <b class="tder">der</b> · <b class="tdie">die</b> · <b class="tdas">das</b>.')}
   <div class="grid">
-   <button class="tile" id="a-rnd"><span>🎲</span><b>20 случайных</b><small>все правила вперемешку</small></button>
-   <button class="tile" id="a-err"><span>🔁</span><b>Мои ошибки</b><small>${wrong.length} слов</small></button>
-   <button class="tile" id="a-brief"><span>✉️</span><b>Слова для писем</b><small>без правила — учить</small></button>
-   <button class="tile" id="a-exc"><span>⚠️</span><b>Исключения</b><small>самые коварные</small></button>
-  </div>
-  ${sect('🔴 die — по окончанию',['ung','heit','schaft','ion','taet','ie','ik','ur','enz','ei','in','e'])}
-  ${sect('🔵 der — по окончанию и смыслу',['er','ling','ismus','pers','zeit','wetter','ig'])}
-  ${sect('🟢 das — по окончанию',['chen','ment','um','ma','inf','ge','o','nis'])}
-  ${sect('⭐ Особые случаи',['comp','exc','brief'])}
-  <details class="card"><summary>📋 Шпаргалка всех правил</summary>
-   <p><b class="tdie">die:</b> -ung, -heit, -keit, -schaft, -ion, -tät, -ie, -ik, -ur, -enz, -anz, -ei, -in (женщины), -e (≈90 %)</p>
-   <p><b class="tder">der:</b> -er (люди, приборы), -ling, -ismus, -ent/-ant/-ist/-or (люди), дни, месяцы, сезоны, погода, -ig</p>
-   <p><b class="tdas">das:</b> -chen, -lein, -ment, -um, -ma, глагол как существительное, Ge-, -o, -nis, Café/Hotel/Kino</p>
-   <p><b>Всегда:</b> множественное число → die. Сложное слово → род последнего слова.</p></details>`);
-  const go=(list,title)=>{if(!list.length)return toast('Здесь пока нечего тренировать 🎉');push(viewArtikel);artQuiz(list,title);};
-  $('#a-rnd').onclick=()=>go(shuffle(W).slice(0,20),'20 случайных');
-  $('#a-err').onclick=()=>go(shuffle(wrong),'Мои ошибки');
-  $('#a-brief').onclick=()=>go(shuffle(groups.brief).slice(0,25),'Слова для писем');
-  $('#a-exc').onclick=()=>go(shuffle(groups.exc),'Исключения');
-  document.querySelectorAll('.rule').forEach(b=>b.onclick=()=>go(shuffle(groups[b.dataset.r]),ART_RULES[b.dataset.r].n));
+   <button class="tile" id="a-rnd"><span>🎲</span><b>Тренировка</b><small>${ROUND} слов вперемешку, все правила</small></button>
+   <button class="tile" id="a-exc"><span>⚠️</span><b>Исключения</b><small>осталось ${exc.length} из ${G.exc.length}</small></button>
+   <button class="tile" id="a-err"><span>🔁</span><b>Мои ошибки</b><small>${err.length} слов</small></button>
+   <button class="tile" id="a-ok"><span>✅</span><b>Выучено</b><small>${lrn.length} слов</small></button>
+   <button class="tile" id="a-rules"><span>📋</span><b>Правила</b><small>все окончания и исключения</small></button>
+   <button class="tile" id="a-brief"><span>✉️</span><b>Без правила</b><small>частые слова · ${brief.length}</small></button>
+  </div>`);
+  const start=(mk,title)=>{const l=mk();if(!l.length)return toast('Здесь всё выучено 🎉');push(viewArtikel);artQuiz(l,title,mk);};
+  $('#a-rnd').onclick=()=>start(()=>mRound('art',W),'Тренировка');
+  $('#a-exc').onclick=()=>start(()=>mRound('art',G.exc),'Исключения');
+  $('#a-brief').onclick=()=>start(()=>mRound('art',G.brief),'Без правила');
+  $('#a-err').onclick=()=>{push(viewArtikel);artErrors();};
+  $('#a-ok').onclick=()=>{push(viewArtikel);artLearned();};
+  $('#a-rules').onclick=()=>{push(viewArtikel);artRules();};
 }
-function artQuiz(list,title){
+function artErrors(){
+  const err=mErrors('art',ART_WORDS);
+  screen('🔁 Мои ошибки',err.length?`<p class="muted">Слова, в которых ты ошибалась. Они уйдут отсюда, когда ответишь правильно ${MAST} раз подряд.</p>
+   <button class="wide" id="e-go">Тренировать ошибки (${Math.min(ROUND,err.length)})</button>
+   <div class="card">${err.map(w=>artLine(w,` ${dots('art',w.id)} <span class="small bad">✗${mSt('art',w.id).w}</span><br><small class="muted">💡 ${esc(ART_RULES[w.r].t)}</small>`)).join('')}</div>`
+   :'<p class="center">Ошибок нет 💪</p>');
+  const b=$('#e-go');if(b)b.onclick=()=>{const mk=()=>shuffle(mErrors('art',ART_WORDS)).slice(0,ROUND);push(artErrors);artQuiz(mk(),'Мои ошибки',mk);};
+}
+function artLearned(){
+  const l=ART_WORDS.filter(w=>mLearned('art',w.id));
+  screen('✅ Выучено',l.length?`<p class="muted">Эти слова ты хорошо знаешь — они больше не попадаются в тренировке. Нажми ↩︎, чтобы вернуть слово.</p>
+   <div class="card">${l.map(w=>artLine(w,` <button class="mini" data-id="${esc(w.id)}">↩︎</button>`)).join('')}</div>`
+   :`<p class="center muted">Пока пусто. Слово попадёт сюда после ${MAST} правильных ответов подряд.</p>`);
+  document.querySelectorAll('.mini').forEach(b=>b.onclick=()=>{mUnlearn('art',b.dataset.id);toast('Слово вернулось в тренировку');artLearned();});
+}
+function artRules(){
+  const G=artGroups();
+  const card=k=>{const R=ART_RULES[k],g=G[k]||[];if(!g.length)return '';const kn=g.filter(w=>mLearned('art',w.id)).length;
+    return `<div class="card rulecard ${R.g?GCOL[R.g]+'b':''}"><div class="rh"><b>${esc(R.n)}</b>${R.g?` <b class="t${R.g}">→ ${R.g}</b>`:''}<small class="muted">${kn}/${g.length}</small></div>
+    <p>${esc(R.t)}</p><p class="small">Примеры: ${g.filter(w=>w.r===k).slice(0,5).map(w=>`<b class="t${w.g}">${w.g}</b> ${esc(w.w)}`).join(', ')}</p>
+    ${ART_X[k]?`<p class="small">⚠️ Исключения: ${esc(ART_X[k])}</p>`:''}
+    <button class="ghost small" data-r="${k}">Тренировать это правило</button></div>`;};
+  screen('📋 Правила рода',`
+  <div class="card"><p><b class="tdie">die:</b> -ung, -heit, -keit, -schaft, -ion, -tät, -ie, -ik, -ur, -enz, -anz, -ei, -in (женщины), -e (≈90 %)</p>
+   <p><b class="tder">der:</b> -er (люди, приборы), -ling, -ismus, -ent/-ant/-ist/-or (люди), -ig/-ich, дни, месяцы, сезоны, погода, стороны света, алкоголь</p>
+   <p><b class="tdas">das:</b> -chen, -lein, -ment, -um, -ma, -tum, глагол как существительное, Ge-, -o, -nis, цвета, металлы, Café/Hotel/Kino</p>
+   <p><b>Всегда:</b> множественное число → die. Сложное слово → род последнего слова. Мужчины → der, женщины → die.</p></div>
+  <h3>🔴 die</h3>${['ung','heit','schaft','ion','taet','ie','ik','ur','enz','ei','in','e'].map(card).join('')}
+  <h3>🔵 der</h3>${['er','ling','ismus','pers','ig','zeit','wetter','dir','drink'].map(card).join('')}
+  <h3>🟢 das</h3>${['chen','ment','um','ma','tum','inf','ge','o','nis','farb','met'].map(card).join('')}
+  <h3>⭐ Особые случаи</h3>${['comp','exc','brief'].map(card).join('')}`);
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const k=b.dataset.r,mk=()=>mRound('art',G[k]);const l=mk();if(!l.length)return toast('Это правило выучено 🎉');push(artRules);artQuiz(l,ART_RULES[k].n,mk);});
+}
+function artQuiz(list,title,again){
   let i=0,score=0;const wrongs=[];
   const show=()=>{
     if(i>=list.length){
       screen('Результат',`<div class="card center"><div class="big">${score}/${list.length}</div><p>${esc(title)}</p></div>
-      ${wrongs.length?'<h3>Повтори эти слова</h3><div class="card">'+wrongs.map(w=>`<p><b class="t${w.g}">${w.g}</b> ${esc(w.w)} <span class="muted small">— ${esc(w.ru)}</span><br><small class="muted">${esc(ART_RULES[w.r].t)}</small></p>`).join('')+'</div>':'<p class="center">Без ошибок! 💪</p>'}
-      <div class="row">${wrongs.length?'<button id="aw">Ещё раз только ошибки</button>':''}<button class="ghost" id="ab">К списку</button></div>`);
-      const aw=$('#aw');if(aw)aw.onclick=()=>artQuiz(shuffle(wrongs),'Ошибки');
-      $('#ab').onclick=()=>{stack.pop();viewArtikel();};return;}
+      ${wrongs.length?'<h3>Повтори эти слова</h3><div class="card">'+wrongs.map(w=>artLine(w,`<br><small class="muted">💡 ${esc(ART_RULES[w.r].t)}</small>`)).join('')+'</div>':'<p class="center">Без ошибок! 💪</p>'}
+      <div class="row">${again?`<button id="anew">🎲 Ещё ${ROUND} новых</button>`:''}${wrongs.length?'<button class="ghost" id="aw">Только эти ошибки</button>':''}<button class="ghost" id="ab">Назад</button></div>`);
+      const an=$('#anew');if(an)an.onclick=()=>{const l=again();if(!l.length)return toast('Здесь всё выучено 🎉');artQuiz(l,title,again);};
+      const aw=$('#aw');if(aw)aw.onclick=()=>artQuiz(shuffle(wrongs),'Ошибки раунда',null);
+      $('#ab').onclick=back;return;}
     const w=list[i];
     screen(`${esc(title)} · ${i+1}/${list.length}`,`<div class="bar"><i style="width:${i/list.length*100}%"></i></div>
-    <div class="card center wordcard"><div class="word">___ ${esc(w.w)}</div><p class="muted">${esc(w.ru)}</p></div>
+    <div class="card center wordcard"><div class="word">___ ${esc(w.w)}</div><p class="muted">${esc(w.ru)}</p><p>${dots('art',w.id)}</p></div>
     <div class="arts">${['der','die','das'].map(g=>`<button class="art ${GCOL[g]}" data-g="${g}">${g}</button>`).join('')}</div>
     <div id="afb"></div><button class="wide hidden" id="anx">Дальше →</button>`);
     document.querySelectorAll('.art').forEach(b=>b.onclick=()=>{
       if(b.parentNode.dataset.done)return;b.parentNode.dataset.done=1;
-      const ok=b.dataset.g===w.g;S.art=S.art||{};const st=S.art[w.id]||{c:0,w:0};ok?st.c++:st.w++;st.last=ok?1:0;S.art[w.id]=st;save();
+      const ok=b.dataset.g===w.g;const st=mRecord('art',w.id,ok);
       document.querySelectorAll('.art').forEach(x=>{x.classList.add(x.dataset.g===w.g?'right':'dim');});if(!ok)b.classList.add('picked');
       if(ok)score++;else wrongs.push(w);
-      $('.word').innerHTML=`<span class="t${w.g}">${w.g}</span> ${esc(w.w)}`;
-      $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Правильно: '+w.g+' '+esc(w.w)}</b><br>💡 ${esc(ART_RULES[w.r].t)}</div>`;
-      if(ok){setTimeout(()=>{if($('#anx')){i++;show();}},900);}else $('#anx').classList.remove('hidden');
+      $('.word').innerHTML=`<span class="t${w.g}">${w.g}</span> ${esc(w.w)}`;$('.wordcard .dots').outerHTML=dots('art',w.id);
+      $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Правильно: '+w.g+' '+esc(w.w)}</b>${st.p>=MAST&&ok?' <b>🎉 Выучено!</b>':''}<br>💡 ${esc(ART_RULES[w.r].t)}</div>`;
+      if(ok){setTimeout(()=>{if($('#anx')){i++;show();}},st.p>=MAST?1500:900);}else $('#anx').classList.remove('hidden');
     });
     $('#anx').onclick=()=>{i++;show();};
   };
   show();
 }
+
+// ---------- ГЛАГОЛЫ С ПРЕДЛОГАМИ ----------
+const KAS={A:'Akkusativ',D:'Dativ'};
+function vpForm(x){return `${esc(x.v)} <b>${x.p}</b> + ${x.k==='A'?'<b class="tder">Akk</b>':'<b class="tdas">Dat</b>'}`;}
+function vpEx(x,blank){return esc(x.ex).replace('{'+x.p+'}',blank?'<b>___</b>':`<b><u>${x.p}</u></b>`);}
+function vpLine(x,extra=''){return `<p class="wl">${vpForm(x)} <span class="muted small">— ${esc(x.ru)}</span>${extra}</p>`;}
+function viewVerben(){
+  const V=VERBEN,err=mErrors('vp',V),lrn=V.filter(x=>mLearned('vp',x.id));
+  screen('Глаголы с предлогами',`${hero('vp',V,'Выбери предлог, потом падеж: Akkusativ или Dativ.')}
+  <div class="grid">
+   <button class="tile" id="v-rnd"><span>🎯</span><b>Предлог + падеж</b><small>${ROUND} глаголов вперемешку</small></button>
+   <button class="tile" id="v-sent"><span>📝</span><b>В предложении</b><small>вставь предлог в пример</small></button>
+   <button class="tile" id="v-err"><span>🔁</span><b>Мои ошибки</b><small>${err.length} глаголов</small></button>
+   <button class="tile" id="v-ok"><span>✅</span><b>Выучено</b><small>${lrn.length} глаголов</small></button>
+   <button class="tile" id="v-rules"><span>📋</span><b>Правила и список</b><small>все ${V.length} по алфавиту</small></button>
+  </div>`);
+  const start=(mode,title)=>{const mk=()=>mRound('vp',V);const l=mk();if(!l.length)return toast('Всё выучено 🎉');push(viewVerben);vpQuiz(l,title,mode,mk);};
+  $('#v-rnd').onclick=()=>start('verb','Предлог + падеж');
+  $('#v-sent').onclick=()=>start('sent','В предложении');
+  $('#v-err').onclick=()=>{push(viewVerben);vpErrors();};
+  $('#v-ok').onclick=()=>{push(viewVerben);vpLearned();};
+  $('#v-rules').onclick=()=>{push(viewVerben);vpRules('abc');};
+}
+function vpErrors(){
+  const err=mErrors('vp',VERBEN);
+  screen('🔁 Мои ошибки',err.length?`<p class="muted">Глаголы, в которых ты ошибалась. Уйдут отсюда после ${MAST} правильных ответов подряд.</p>
+   <button class="wide" id="e-go">Тренировать ошибки (${Math.min(ROUND,err.length)})</button>
+   <div class="card">${err.map(x=>vpLine(x,` ${dots('vp',x.id)} <span class="small bad">✗${mSt('vp',x.id).w}</span><br><small class="muted">${vpEx(x)}</small>`)).join('')}</div>`
+   :'<p class="center">Ошибок нет 💪</p>');
+  const b=$('#e-go');if(b)b.onclick=()=>{const mk=()=>shuffle(mErrors('vp',VERBEN)).slice(0,ROUND);push(vpErrors);vpQuiz(mk(),'Мои ошибки','verb',mk);};
+}
+function vpLearned(){
+  const l=VERBEN.filter(x=>mLearned('vp',x.id));
+  screen('✅ Выучено',l.length?`<p class="muted">Эти глаголы больше не попадаются. Нажми ↩︎, чтобы вернуть.</p>
+   <div class="card">${l.map(x=>vpLine(x,` <button class="mini" data-id="${esc(x.id)}">↩︎</button>`)).join('')}</div>`
+   :`<p class="center muted">Пока пусто. Глагол попадёт сюда после ${MAST} правильных ответов подряд.</p>`);
+  document.querySelectorAll('.mini').forEach(b=>b.onclick=()=>{mUnlearn('vp',b.dataset.id);toast('Глагол вернулся в тренировку');vpLearned();});
+}
+function vpRules(mode){
+  const V=VERBEN.slice().sort((a,b)=>a.v.replace(/^sich /,'').localeCompare(b.v.replace(/^sich /,''),'de'));
+  let body='';
+  if(mode==='abc'){let L='';body=V.map(x=>{const l=x.v.replace(/^sich /,'')[0].toUpperCase().replace('Ä','A').replace('Ü','U');const h=l!==L?`</div><h3>${l}</h3><div class="card">`:'';L=l;
+    return h+vpLine(x,`<br><small class="muted">${vpEx(x)}</small>`);}).join('').replace(/^<\/div>/,'')+'</div>';}
+  else{body=PREPS.filter(p=>V.some(x=>x.p===p)).map(p=>`<h3>${p}</h3><p class="small muted">💡 ${esc(PREP_HINT[p]||'')}</p><div class="card">${V.filter(x=>x.p===p).map(x=>vpLine(x)).join('')}</div>`).join('');}
+  screen('📋 Глаголы с предлогами',`
+  <div class="card"><p><b>Только Dativ:</b> aus, bei, mit, nach, von, zu</p><p><b>Только Akkusativ:</b> für, um, gegen</p>
+   <p><b>über</b> с глаголами → почти всегда <b>Akk</b> · <b>auf</b> → обычно <b>Akk</b> (кроме bestehen auf + D) · <b>vor</b>, <b>unter</b> → <b>Dat</b> · <b>an</b> → бывает A и D, учить с глаголом.</p>
+   <p class="small muted">Вопрос к предмету: worauf? worüber? womit? — к человеку: auf wen? über wen? mit wem?</p></div>
+  <div class="row"><button class="${mode==='abc'?'':'ghost'}" id="r-abc">По алфавиту</button><button class="${mode==='prep'?'':'ghost'}" id="r-prep">По предлогам</button></div>
+  ${body}`);
+  $('#r-abc').onclick=()=>vpRules('abc');$('#r-prep').onclick=()=>vpRules('prep');
+}
+function vpQuiz(list,title,mode,again){
+  let i=0,score=0;const wrongs=[];
+  const show=()=>{
+    if(i>=list.length){
+      screen('Результат',`<div class="card center"><div class="big">${score}/${list.length}</div><p>${esc(title)}</p></div>
+      ${wrongs.length?'<h3>Повтори</h3><div class="card">'+wrongs.map(x=>vpLine(x,`<br><small class="muted">${vpEx(x)}</small>`)).join('')+'</div>':'<p class="center">Без ошибок! 💪</p>'}
+      <div class="row">${again?`<button id="anew">🎲 Ещё ${ROUND} новых</button>`:''}${wrongs.length?'<button class="ghost" id="aw">Только эти ошибки</button>':''}<button class="ghost" id="ab">Назад</button></div>`);
+      const an=$('#anew');if(an)an.onclick=()=>{const l=again();if(!l.length)return toast('Всё выучено 🎉');vpQuiz(l,title,mode,again);};
+      const aw=$('#aw');if(aw)aw.onclick=()=>vpQuiz(shuffle(wrongs),'Ошибки раунда',mode,null);
+      $('#ab').onclick=back;return;}
+    const x=list[i],valid=VERBEN.filter(y=>y.v===x.v).map(y=>y.p);
+    const opts=shuffle([x.p,...shuffle(PREPS.filter(p=>!valid.includes(p))).slice(0,3)]);
+    const q=mode==='sent'?`<div class="sent">${vpEx(x,true)}</div><p class="muted">${esc(x.v)} — ${esc(x.ru)}</p>`
+      :`<div class="word">${esc(x.v)} ___ ?</div><p class="muted">${esc(x.ru)}</p>`;
+    screen(`${esc(title)} · ${i+1}/${list.length}`,`<div class="bar"><i style="width:${i/list.length*100}%"></i></div>
+    <div class="card center wordcard">${q}<p>${dots('vp',x.id)}</p></div>
+    <p class="muted small center" id="vstep">1️⃣ Выбери предлог</p>
+    <div class="pbs" id="vp1">${opts.map(p=>`<button class="pb" data-p="${p}">${p}</button>`).join('')}</div>
+    <div class="pbs hidden" id="vp2"><button class="pb" data-k="A">Akkusativ</button><button class="pb" data-k="D">Dativ</button></div>
+    <div id="afb"></div><button class="wide hidden" id="anx">Дальше →</button>`);
+    let pOk=null;
+    document.querySelectorAll('#vp1 .pb').forEach(b=>b.onclick=()=>{
+      if(pOk!==null)return;pOk=b.dataset.p===x.p;
+      document.querySelectorAll('#vp1 .pb').forEach(y=>y.classList.add(y.dataset.p===x.p?'right':'dim'));if(!pOk)b.classList.add('picked');
+      $('#vstep').textContent=(pOk?'✅ ':'❌ Правильно: '+x.p+' · ')+'2️⃣ Какой падеж после «'+x.p+'»?';$('#vp2').classList.remove('hidden');
+    });
+    document.querySelectorAll('#vp2 .pb').forEach(b=>b.onclick=()=>{
+      if($('#vp2').dataset.done)return;$('#vp2').dataset.done=1;
+      const kOk=b.dataset.k===x.k,ok=pOk&&kOk;const st=mRecord('vp',x.id,ok);
+      document.querySelectorAll('#vp2 .pb').forEach(y=>y.classList.add(y.dataset.k===x.k?'right':'dim'));if(!kOk)b.classList.add('picked');
+      if(ok)score++;else wrongs.push(x);
+      $('.wordcard .dots').outerHTML=dots('vp',x.id);
+      $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Ошибка'}</b>${st.p>=MAST&&ok?' <b>🎉 Выучено!</b>':''}<br>${vpForm(x)} — ${esc(x.ru)}<br>📝 ${vpEx(x)}${PREP_HINT[x.p]?`<br>💡 ${esc(PREP_HINT[x.p])}`:''}</div>`;
+      $('#anx').classList.remove('hidden');
+    });
+    $('#anx').onclick=()=>{i++;show();};
+  };
+  show();
+}
+
 
 // ===================== ANALYSE =====================
 const DEFAULT_EXAM=(typeof PUBLIC_BUILD!=='undefined'&&PUBLIC_BUILD)?'':'2026-12-04';
