@@ -2214,7 +2214,7 @@ function lvlOf(txt){txt=String(txt||'');const re=/(начало B1|A2\s*[\/–-]
   return m?m[1].replace('начало ','≈').replace(/\s*[\/–-]\s*/,'/'):'✓';}
 function markDone(id,txt,sec){S.done=S.done||{};S.done[id]=lvlOf(txt);
   if(sec){S.lv=S.lv||{};(S.lv[sec]=S.lv[sec]||[]).push({d:Date.now(),l:S.done[id],id});S.lv[sec]=S.lv[sec].slice(-20);
-    S.fb=S.fb||[];S.fb.push({sec,d:Date.now(),t:String(txt).slice(0,1400)});S.fb=S.fb.slice(-10);}save();}
+    S.fb=S.fb||[];S.fb.push({sec,d:Date.now(),t:String(txt).slice(0,4000)});S.fb=S.fb.slice(-10);}save();if(sec==='schreiben'||sec==='sprechen')setTimeout(()=>{try{harvest(txt,sec);}catch(e){}},50);}
 (function fixLevels(){try{let ch=0;Object.keys(S.lv||{}).forEach(sec=>S.lv[sec].forEach(e=>{if(e.l!=='✓')return;
   const f=(S.fb||[]).find(f=>f.sec===sec&&Math.abs(f.d-e.d)<5000);if(!f)return;const l=lvlOf(f.t);if(l==='✓')return;
   e.l=l;if(S.done&&S.done[e.id]==='✓')S.done[e.id]=l;ch=1;}));if(ch)save();}catch(e){}})();
@@ -2653,7 +2653,9 @@ function viewArtikel(){
    <button class="tile" id="a-ok"><span>✅</span><b>Выучено</b><small>${lrn.length} слов</small></button>
    <button class="tile" id="a-rules"><span>📋</span><b>Правила</b><small>все окончания и исключения</small></button>
    <button class="tile" id="a-brief"><span>✉️</span><b>Без правила</b><small>частые слова · ${brief.length}</small></button>
+  ${MINE?`<button class="tile" id="a-mine"><span>✍️</span><b>Из моих текстов</b><small>ошибки из Schreiben и Sprechen · ${myArt().filter(x=>!mLearned('art',x.id)).length}</small></button>`:''}
   </div>`);
+  if($('#a-mine'))$('#a-mine').onclick=()=>{push(viewArtikel);mineScreen('art');};
   const start=(mk,title)=>{const l=mk();if(!l.length)return toast('Здесь всё выучено 🎉');push(viewArtikel);artQuiz(l,title,mk);};
   $('#a-rnd').onclick=()=>start(()=>mRound('art',W),'Тренировка');
   $('#a-exc').onclick=()=>start(()=>mRound('art',G.exc),'Исключения');
@@ -2738,7 +2740,9 @@ function viewVerben(){
    <button class="tile" id="v-err"><span>🔁</span><b>Мои ошибки</b><small>${err.length} глаголов</small></button>
    <button class="tile" id="v-ok"><span>✅</span><b>Выучено</b><small>${lrn.length} глаголов</small></button>
    <button class="tile" id="v-rules"><span>📋</span><b>Правила и список</b><small>все ${V.length} по алфавиту</small></button>
+  ${MINE?`<button class="tile" id="v-mine"><span>✍️</span><b>Из моих текстов</b><small>ошибки из Schreiben и Sprechen · ${myVp().filter(x=>!mLearned('vp',x.id)).length}</small></button>`:''}
   </div>`);
+  if($('#v-mine'))$('#v-mine').onclick=()=>{push(viewVerben);mineScreen('vp');};
   const start=(mode,title)=>{const mk=()=>mRound('vp',V);const l=mk();if(!l.length)return toast('Всё выучено 🎉');push(viewVerben);vpQuiz(l,title,mode,mk);};
   $('#v-rnd').onclick=()=>start('verb','Предлог + падеж');
   $('#v-sent').onclick=()=>start('sent','В предложении');
@@ -2785,7 +2789,7 @@ function vpQuiz(list,title,mode,again){
       const an=$('#anew');if(an)an.onclick=()=>{const l=again();if(!l.length)return toast('Всё выучено 🎉');vpQuiz(l,title,mode,again);};
       const aw=$('#aw');if(aw)aw.onclick=()=>vpQuiz(shuffle(wrongs),'Ошибки раунда',mode,null);
       $('#ab').onclick=back;return;}
-    const x=list[i],valid=VERBEN.filter(y=>y.v===x.v).map(y=>y.p);
+    const x=list[i],valid=VERBEN.filter(y=>y.v===x.v).map(y=>y.p).concat(x.p);
     const opts=shuffle([x.p,...shuffle(PREPS.filter(p=>!valid.includes(p))).slice(0,3)]);
     const q=mode==='sent'?`<div class="sent">${vpEx(x,true)}</div><p class="muted" id="vru"></p>`
       :`<div class="word">${esc(x.v)} ___ ?</div><p class="muted" id="vru"></p>`;
@@ -2815,6 +2819,47 @@ function vpQuiz(list,title,mode,again){
   show();
 }
 
+
+
+// ---------- МОИ ОШИБКИ ИЗ SCHREIBEN / SPRECHEN (только личная версия) ----------
+const MINE=!(typeof PUBLIC_BUILD!=='undefined'&&PUBLIC_BUILD);
+ART_RULES.my={n:'из моих текстов',g:'',t:'это слово было ошибкой в твоём тексте — учи вместе с артиклем'};
+const SRC={schreiben:'✍️ Schreiben',sprechen:'🗣️ Sprechen',hand:'✏️ добавлено вручную'};
+if(MINE&&!S.my){S.my={art:{},vp:{}};[['das','Meeting','встреча (рабочая)'],['das','Treffen','встреча']].forEach(([g,w,ru])=>{S.my.art[g+w]={id:g+w,g,w,ru,r:'my',src:'schreiben',d:Date.now()};});save();}
+function myArt(){return Object.values((S.my||{}).art||{}).map(x=>ART_WORDS.find(w=>w.id===x.id)||x);}
+function myVp(){return Object.values((S.my||{}).vp||{}).map(x=>VERBEN.find(v=>v.id===x.id)||x);}
+function srcOf(kind,id){const x=((S.my||{})[kind]||{})[id];return x?SRC[x.src]||'':'';}
+function addMy(kind,o,src){S.my=S.my||{art:{},vp:{}};
+  if(kind==='art'){const g=String(o.g||'').toLowerCase(),w=String(o.w||'').trim();if(!['der','die','das'].includes(g)||!w)return 0;const id=g+w;if(S.my.art[id])return 0;
+    const ex=ART_WORDS.find(x=>x.w.toLowerCase()===w.toLowerCase()&&x.g===g);S.my.art[id]={id:ex?ex.id:id,g,w:ex?ex.w:w,ru:o.ru||(ex&&ex.ru)||'',r:'my',src,d:Date.now()};mUnlearn('art',ex?ex.id:id);return 1;}
+  const v=String(o.v||'').trim(),p=String(o.p||'').trim().toLowerCase(),k=String(o.k||'').toUpperCase().startsWith('D')?'D':'A';if(!v||!p)return 0;
+  const ex=VERBEN.find(x=>x.v===v&&x.p===p);const id=ex?ex.id:v+'|'+p;if(S.my.vp[id])return 0;
+  let e=o.ex||'';if(e&&!e.includes('{'+p+'}'))e=e.replace(new RegExp('\\b'+p+'\\b'),'{'+p+'}');if(!e.includes('{'+p+'}'))e='';
+  S.my.vp[id]=ex?{id,src,d:Date.now()}:{id,v,p,k,ru:o.ru||'',ex:e||`${v} {${p}} …`,src,d:Date.now()};mUnlearn('vp',id);return 1;}
+async function harvest(txt,src,quiet){
+  if(!MINE||!AI)return 0;
+  try{const j=await askJSON(`Das ist eine Korrektur meines deutschen Textes (${src}):\n"""${String(txt).slice(0,6000)}"""\nFinde darin NUR diese Fehlertypen:\n1) falscher Artikel/Genus eines Nomens (z. B. "die Meeting" statt "das Meeting", auch falsche Endungen wegen falschem Genus) → in "art" mit dem RICHTIGEN Genus;\n2) falsche oder fehlende Präposition nach einem Verb oder falscher Kasus nach Verb+Präposition (z. B. "warten für" statt "warten auf") → in "vp" mit der RICHTIGEN Präposition und Kasus (A oder D).\nFormat: {"art":[{"g":"das","w":"Meeting","ru":"встреча"}],"vp":[{"v":"sich freuen","p":"auf","k":"A","ru":"радоваться (будущему)","ex":"Ich freue mich {auf} das Treffen."}]}\n"ru" = kurze russische Übersetzung. "ex" = richtiger Beispielsatz, Präposition in {}. Wenn es keine solchen Fehler gibt: {"art":[],"vp":[]}.`,{nocache:true});
+    let n=0;(j.art||[]).forEach(o=>n+=addMy('art',o,src));(j.vp||[]).forEach(o=>n+=addMy('vp',o,src));save();
+    if(n&&!quiet)toast(`🏋️ В тренажёр добавлено ошибок: ${n}`);return n;}catch(e){return 0;}
+}
+function mineScreen(kind){
+  const isA=kind==='art',L=isA?myArt():myVp(),act=L.filter(x=>!mLearned(kind,x.id));
+  const line=x=>(isA?artLine(x,` ${dots('art',x.id)}`):vpLine(x,` ${dots('vp',x.id)}<br><small class="muted">${vpEx(x)}</small>`)).replace('</p>',` <small class="muted">· ${srcOf(kind,x.id)}</small> <button class="mini" data-del="${esc(x.id)}">✕</button></p>`);
+  screen(isA?'✍️ Род: из моих текстов':'✍️ Глаголы: из моих текстов',`
+  <p class="muted">Сюда автоматически выписываются ошибки ${isA?'в роде существительных':'в предлогах и падежах после глаголов'} из твоих проверок Schreiben и Sprechen.</p>
+  ${act.length?`<button class="wide" id="m-go">Тренировать (${Math.min(ROUND,act.length)})</button>`:''}
+  <div class="card">${L.length?L.map(line).join(''):'<p class="muted">Пока пусто.</p>'}</div>
+  <h3>Добавить вручную</h3><div class="row"><input id="m-in" style="flex:1;min-width:0;font-size:16px;padding:12px;border-radius:12px;border:1px solid var(--line)" placeholder="${isA?'das Meeting – встреча':'sich freuen auf A – радоваться'}"><button id="m-add" style="flex:0 0 64px">+</button></div>
+  <button class="ghost wide" id="m-scan">🔎 Найти ошибки в прошлых проверках</button>`);
+  const b=$('#m-go');if(b)b.onclick=()=>{const mk=()=>shuffle((isA?myArt():myVp()).filter(x=>!mLearned(kind,x.id))).slice(0,ROUND);push(()=>mineScreen(kind));isA?artQuiz(mk(),'Из моих текстов',mk):vpQuiz(mk(),'Из моих текстов','verb',mk);};
+  document.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{const m=S.my[kind];Object.keys(m).forEach(k=>{if(m[k].id===x.dataset.del)delete m[k];});save();mineScreen(kind);});
+  $('#m-add').onclick=()=>{const v=$('#m-in').value.trim();if(!v)return;const [a,ru='']=v.split(/\s+[–-]\s+/);let ok=0;
+    if(isA){const m=a.match(/^(der|die|das)\s+(.+)$/i);if(m)ok=addMy('art',{g:m[1],w:m[2],ru},'hand');}
+    else{const m=a.match(/^(.+?)\s+(an|auf|aus|bei|für|gegen|in|mit|nach|über|um|unter|von|vor|zu)\s*\+?\s*(A|D|Akk\w*|Dat\w*)?$/i);if(m)ok=addMy('vp',{v:m[1],p:m[2],k:m[3]||'A',ru},'hand');}
+    if(!ok)return toast(isA?'Напиши так: das Meeting – встреча':'Напиши так: warten auf A – ждать');save();mineScreen(kind);};
+  $('#m-scan').onclick=async()=>{if(!AI)return toast('Поиск работает только внутри Claude');const fb=S.fb||[];if(!fb.length)return toast('Нет сохранённых проверок');
+    toast('Ищу ошибки…');let n=0;for(const f of fb)n+=await harvest(f.t,f.sec,true);toast(n?`Добавлено: ${n}`:'Новых ошибок не нашлось');mineScreen(kind);};
+}
 
 // ===================== ANALYSE =====================
 const DEFAULT_EXAM=(typeof PUBLIC_BUILD!=='undefined'&&PUBLIC_BUILD)?'':'2026-12-04';
