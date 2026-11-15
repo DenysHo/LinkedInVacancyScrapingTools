@@ -20,10 +20,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.5 Manrope,s
 @media(min-width:600px){body{background:color-mix(in srgb,var(--bg) 80%,#000 6%)}#top,#main,#nav{background:var(--bg)}#main{min-height:100vh;box-shadow:0 0 0 1px var(--line)}}
 .phone #top,.phone #main,.phone #nav{max-width:none}
 .fsbtn{margin-left:auto;border:0;background:var(--acc2);color:var(--acc);font-weight:800;font-size:16px;border-radius:14px;height:44px;padding:0 12px;cursor:pointer;flex:none}
-#nav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(6,1fr);background:var(--card);border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(7,1fr);background:var(--card);border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
 #nav button{border:0;background:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:1px;font:inherit;cursor:pointer;padding:6px 0;border-radius:14px}
 #nav span{font-size:30px;filter:grayscale(.6);opacity:.75}
-#nav small{font-size:12.5px;font-weight:800}
+#nav small{font-size:11.5px;font-weight:800;white-space:nowrap}
 #nav button.on{color:var(--acc);background:var(--acc2)}#nav button.on span{filter:none;opacity:1}
 h3{font-size:19px;margin:22px 0 8px;font-weight:800}h3 small{color:var(--mut);font-weight:600}
 h4{margin:10px 0 6px;font-size:17.5px}
@@ -65,6 +65,16 @@ button{font:inherit}
 .tag.good{background:var(--okb);color:var(--ok)}.tag.mid{background:#fff3d6;color:#a06a00}.tag.low{background:var(--badb);color:var(--bad)}.tag.na{background:var(--line);color:var(--mut)}
 .bar.big2{height:10px;margin:10px 0 6px}.bar i.good{background:var(--ok)}.bar i.mid{background:#e0a21b}.bar i.low{background:var(--bad)}
 .parts{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:10px;margin:8px 0}.parts .bar{margin:4px 0}
+.tder{color:#2f6fd6}.tdie{color:#d0453b}.tdas{color:#2f9a55}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.rule{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:10px 12px;text-align:left;cursor:pointer;color:var(--ink);border-left-width:6px}
+.rule b{display:block;font-size:16px}.rule small{color:var(--mut);font-size:13.5px}
+.rule.gder{border-left-color:#2f6fd6}.rule.gdie{border-left-color:#d0453b}.rule.gdas{border-left-color:#2f9a55}
+.wordcard{padding:28px 12px}.word{font-size:34px;font-weight:800;letter-spacing:-.01em;word-break:break-word}
+.arts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.art{border:0;border-radius:18px;padding:22px 0;font-size:24px;font-weight:800;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s}
+.art:active{transform:scale(.97)}.art.gder{background:#2f6fd6}.art.gdie{background:#d0453b}.art.gdas{background:#2f9a55}
+.art.dim{opacity:.25}.art.picked{opacity:.6;text-decoration:line-through}.art.right{outline:4px solid var(--ink);outline-offset:2px}
 .item em{color:var(--acc);font-style:normal}
 .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .pic{border:1px solid var(--line);background:var(--card);border-radius:16px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);overflow:hidden}
@@ -1132,6 +1142,284 @@ nl10:'Möbelhaus „Wohnwelt“\n\n3. OG  Restaurant / Kinderland (Betreuung fü
   for(const t of L){const x=L1H[t.id];if(!x)continue;const k=t.tasks.find(y=>y.teil==='Teil 1');if(k)k.text=x;}
 })();
 </script>
+<script>// ===== Тренажёр рода: der / die / das =====
+const ART_RULES={
+ ung:{n:'-ung',g:'die',t:'-ung → всегда die'},
+ heit:{n:'-heit / -keit',g:'die',t:'-heit / -keit → всегда die'},
+ schaft:{n:'-schaft',g:'die',t:'-schaft → всегда die'},
+ ion:{n:'-ion',g:'die',t:'-ion → всегда die'},
+ taet:{n:'-tät',g:'die',t:'-tät → всегда die'},
+ ie:{n:'-ie',g:'die',t:'-ie → die'},
+ ik:{n:'-ik',g:'die',t:'-ik → die'},
+ ur:{n:'-ur',g:'die',t:'-ur → die'},
+ enz:{n:'-enz / -anz',g:'die',t:'-enz / -anz → die'},
+ ei:{n:'-ei',g:'die',t:'-ei → die'},
+ in:{n:'-in (женщины)',g:'die',t:'женщина на -in → die'},
+ e:{n:'-e',g:'die',t:'-e → обычно die (≈90 %)'},
+ er:{n:'-er (люди, приборы)',g:'der',t:'человек или прибор на -er → der'},
+ ling:{n:'-ling',g:'der',t:'-ling → der'},
+ ismus:{n:'-ismus',g:'der',t:'-ismus → der'},
+ pers:{n:'-ent / -ant / -ist / -or',g:'der',t:'люди на -ent / -ant / -ist / -or → der'},
+ zeit:{n:'дни, месяцы, сезоны',g:'der',t:'дни недели, месяцы, времена года → der'},
+ wetter:{n:'погода',g:'der',t:'явления погоды → der'},
+ ig:{n:'-ig',g:'der',t:'-ig → der'},
+ chen:{n:'-chen / -lein',g:'das',t:'-chen / -lein → всегда das'},
+ ment:{n:'-ment',g:'das',t:'-ment → das'},
+ um:{n:'-um',g:'das',t:'-um → das'},
+ ma:{n:'-ma',g:'das',t:'-ma → das'},
+ inf:{n:'глагол как существительное',g:'das',t:'глагол как существительное (das Essen) → das'},
+ ge:{n:'Ge-',g:'das',t:'Ge- в начале → часто das'},
+ o:{n:'-o',g:'das',t:'-o → das'},
+ nis:{n:'-nis',g:'das',t:'-nis → обычно das'},
+ comp:{n:'сложные слова',g:'',t:'в сложном слове род по последнему слову'},
+ exc:{n:'⚠️ исключения',g:'',t:'исключение — выучить отдельно'},
+ brief:{n:'✉️ слова для писем',g:'',t:'без правила — выучить с артиклем'}
+};
+const ART_WORDS=`die|Wohnung|ung|квартира
+die|Rechnung|ung|счёт
+die|Heizung|ung|отопление
+die|Versicherung|ung|страховка
+die|Zeitung|ung|газета
+die|Lösung|ung|решение
+die|Meinung|ung|мнение
+die|Erfahrung|ung|опыт
+die|Anmeldung|ung|регистрация
+die|Bewerbung|ung|заявление о работе
+die|Einladung|ung|приглашение
+die|Wohnungssuche|comp|поиск квартиры
+die|Entschuldigung|ung|извинение
+die|Bestellung|ung|заказ
+die|Kündigung|ung|расторжение, увольнение
+die|Gesundheit|heit|здоровье
+die|Freiheit|heit|свобода
+die|Möglichkeit|heit|возможность
+die|Schwierigkeit|heit|трудность
+die|Mannschaft|schaft|команда
+die|Freundschaft|schaft|дружба
+die|Nachbarschaft|schaft|соседство
+die|Information|ion|информация
+die|Situation|ion|ситуация
+die|Lektion|ion|урок (в учебнике)
+die|Religion|ion|религия
+die|Universität|taet|университет
+die|Qualität|taet|качество
+die|Nationalität|taet|национальность
+die|Familie|ie|семья
+die|Batterie|ie|батарейка
+die|Energie|ie|энергия
+die|Musik|ik|музыка
+die|Politik|ik|политика
+die|Klinik|ik|клиника
+die|Reparatur|ur|ремонт
+die|Kultur|ur|культура
+die|Natur|ur|природа
+die|Frisur|ur|причёска
+die|Konferenz|enz|конференция
+die|Distanz|enz|расстояние
+die|Bäckerei|ei|пекарня
+die|Polizei|ei|полиция
+die|Bücherei|ei|библиотека
+die|Lehrerin|in|учительница
+die|Ärztin|in|врач (женщина)
+die|Nachbarin|in|соседка
+die|Freundin|in|подруга
+die|Lampe|e|лампа
+die|Woche|e|неделя
+die|Tasche|e|сумка
+die|Schule|e|школа
+die|Reise|e|поездка
+die|Sprache|e|язык
+die|Stunde|e|час
+die|Straße|e|улица
+die|Küche|e|кухня
+die|Miete|e|арендная плата
+die|Adresse|e|адрес
+die|Hilfe|e|помощь
+die|Frage|e|вопрос
+die|Brille|e|очки
+die|Jacke|e|куртка
+die|Karte|e|карта, билет
+die|Kasse|e|касса
+die|Pause|e|перерыв
+die|Treppe|e|лестница
+die|Toilette|e|туалет
+die|Farbe|e|цвет
+die|Größe|e|размер
+der|Name|exc|имя (исключение: -e, но der)
+der|Kunde|exc|клиент (исключение: -e, но der)
+der|Junge|exc|мальчик (исключение)
+der|Käse|exc|сыр (исключение)
+das|Ende|exc|конец (исключение: -e, но das)
+das|Auge|exc|глаз (исключение)
+der|Kollege|exc|коллега (люди на -e — der)
+der|Lehrer|er|учитель
+der|Vermieter|er|арендодатель
+der|Mieter|er|арендатор
+der|Fahrer|er|водитель
+der|Bäcker|er|пекарь
+der|Computer|er|компьютер
+der|Drucker|er|принтер
+der|Kühlschrank|comp|холодильник (der Schrank)
+der|Fernseher|er|телевизор
+der|Wecker|er|будильник
+das|Zimmer|exc|комната (исключение: -er, но das)
+das|Fenster|exc|окно (исключение)
+die|Mutter|exc|мать (исключение)
+die|Butter|exc|масло (исключение)
+das|Wasser|exc|вода (исключение)
+der|Frühling|ling|весна
+der|Lehrling|ling|ученик (на производстве)
+der|Tourismus|ismus|туризм
+der|Student|pers|студент
+der|Patient|pers|пациент
+der|Praktikant|pers|практикант
+der|Polizist|pers|полицейский
+der|Doktor|pers|доктор
+der|Montag|zeit|понедельник
+der|Freitag|zeit|пятница
+der|Sonntag|zeit|воскресенье
+der|Januar|zeit|январь
+der|Mai|zeit|май
+der|Dezember|zeit|декабрь
+der|Winter|zeit|зима
+der|Sommer|zeit|лето
+der|Herbst|zeit|осень
+der|Regen|wetter|дождь
+der|Schnee|wetter|снег
+der|Wind|wetter|ветер
+der|Nebel|wetter|туман
+das|Wetter|exc|погода (само слово — das!)
+der|Honig|ig|мёд
+der|König|ig|король
+der|Essig|ig|уксус
+das|Mädchen|chen|девочка
+das|Brötchen|chen|булочка
+das|Märchen|chen|сказка
+das|Hähnchen|chen|курица (блюдо)
+das|Dokument|ment|документ
+das|Medikament|ment|лекарство
+das|Apartment|ment|апартаменты
+das|Instrument|ment|инструмент
+das|Zentrum|um|центр
+das|Museum|um|музей
+das|Datum|um|дата
+das|Studium|um|учёба в вузе
+das|Thema|ma|тема
+das|Klima|ma|климат
+das|Problem|brief|проблема
+das|Essen|inf|еда
+das|Leben|inf|жизнь
+das|Einkaufen|inf|покупки
+das|Lernen|inf|учёба
+das|Schwimmen|inf|плавание
+das|Gespräch|ge|разговор
+das|Gebäude|ge|здание
+das|Geschäft|ge|магазин
+das|Gepäck|ge|багаж
+das|Getränk|ge|напиток
+das|Geschenk|ge|подарок
+das|Gemüse|ge|овощи
+das|Gericht|ge|блюдо, суд
+der|Geburtstag|exc|день рождения (исключение: Ge-, но der — der Tag)
+die|Geschichte|exc|история (исключение)
+das|Auto|o|машина
+das|Büro|o|офис
+das|Kino|o|кино
+das|Radio|o|радио
+das|Foto|o|фото
+das|Konto|o|банковский счёт
+das|Ergebnis|nis|результат
+das|Zeugnis|nis|аттестат, справка
+das|Erlebnis|nis|впечатление, событие
+die|Erlaubnis|exc|разрешение (исключение: -nis, но die)
+das|Café|exc|кафе
+das|Hotel|exc|гостиница
+das|Restaurant|exc|ресторан
+der|Mietvertrag|comp|договор аренды (der Vertrag)
+die|Haustür|comp|входная дверь (die Tür)
+das|Treppenhaus|comp|подъезд (das Haus)
+der|Kindergarten|comp|детский сад (der Garten)
+die|Kinderärztin|comp|детский врач (die Ärztin)
+das|Schwimmbad|comp|бассейн (das Bad)
+die|Bushaltestelle|comp|автобусная остановка (die Stelle)
+der|Hausmeister|comp|завхоз (der Meister)
+das|Arbeitsamt|comp|биржа труда (das Amt)
+die|Arbeitszeit|comp|рабочее время (die Zeit)
+der|Termin|brief|встреча, запись
+der|Brief|brief|письмо
+der|Kurs|brief|курс
+der|Vertrag|brief|договор
+der|Nachbar|brief|сосед
+der|Arzt|brief|врач
+der|Schlüssel|brief|ключ
+der|Müll|brief|мусор
+der|Antrag|brief|заявление
+der|Handwerker|er|мастер
+der|Urlaub|brief|отпуск
+der|Platz|brief|место
+der|Grund|brief|причина
+der|Preis|brief|цена
+der|Chef|brief|начальник
+der|Bus|brief|автобус
+der|Zug|brief|поезд
+der|Stau|brief|пробка
+der|Unterricht|brief|урок, занятия
+der|Ausweis|brief|удостоверение личности
+der|Pass|brief|паспорт
+der|Beruf|brief|профессия
+der|Schrank|brief|шкаф
+der|Tisch|brief|стол
+der|Stuhl|brief|стул
+der|Garten|brief|сад
+der|Balkon|brief|балкон
+der|Keller|brief|подвал
+der|Hund|brief|собака
+der|Tee|brief|чай
+der|Kaffee|brief|кофе
+die|Antwort|brief|ответ
+die|E-Mail|brief|e-mail
+die|Praxis|brief|врачебная практика
+die|Kita|brief|детский сад
+die|Nachricht|brief|сообщение
+die|Arbeit|brief|работа
+die|Stadt|brief|город
+die|Tür|brief|дверь
+die|Uhr|brief|часы
+die|Zeit|brief|время
+die|Hand|brief|рука
+die|Bank|brief|банк, скамейка
+die|Post|brief|почта
+die|Bahn|brief|железная дорога
+die|Tochter|brief|дочь
+die|Wand|brief|стена
+die|Welt|brief|мир
+die|Nacht|brief|ночь
+die|Prüfung|ung|экзамен
+das|Formular|brief|бланк
+das|Geld|brief|деньги
+das|Kind|brief|ребёнок
+das|Rezept|brief|рецепт
+das|Angebot|brief|предложение
+das|Haus|brief|дом
+das|Bett|brief|кровать
+das|Bad|brief|ванная
+das|Licht|brief|свет
+das|Jahr|brief|год
+das|Wort|brief|слово
+das|Land|brief|страна
+das|Paket|brief|посылка
+das|Ticket|brief|билет
+das|Handy|brief|мобильный телефон
+das|Fahrrad|comp|велосипед (das Rad)
+das|Brot|brief|хлеб
+das|Fleisch|brief|мясо
+das|Obst|brief|фрукты
+das|Buch|brief|книга
+das|Spiel|brief|игра
+das|Team|brief|команда
+das|Amt|brief|ведомство
+das|Ziel|brief|цель`.split('\n').map(l=>{const [g,w,r,ru]=l.split('|');return {g,w,r,ru,id:g+w};});
+</script>
 <script>const PUBLIC_BUILD=true;
 // ===================== STATE =====================
 const KEY='dtz-trainer-public-v1';
@@ -1242,13 +1530,13 @@ function showErr(el,e,fb){
 function allLid(){return LID.concat(S.customQ||[]);}
 
 // ===================== NAV =====================
-const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['analyse','📊','Анализ']];
+const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['artikel','🔤','Род'],['analyse','📊','Анализ']];
 let cur='lid',stack=[];
 function renderNav(){
   $('#nav').innerHTML=TABS.map(([k,i,l])=>`<button class="${k===cur?'on':''}" data-t="${k}"><span>${i}</span><small>${l}</small></button>`).join('');
   $('#nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{stopSpeak();cur=b.dataset.t;stack=[];try{location.hash=cur;}catch(e){}go();});
 }
-function go(){renderNav();window.scrollTo(0,0);({lid:viewLid,sprechen:viewSprechen,hoeren:()=>viewTests('hoeren'),schreiben:viewSchreiben,lesen:()=>viewTests('lesen'),analyse:viewAnalyse})[cur]();}
+function go(){renderNav();window.scrollTo(0,0);({lid:viewLid,sprechen:viewSprechen,hoeren:()=>viewTests('hoeren'),schreiben:viewSchreiben,lesen:()=>viewTests('lesen'),artikel:viewArtikel,analyse:viewAnalyse})[cur]();}
 function screen(title,html,back=true){
   try{stopDict();}catch(e){}
   $('#top').innerHTML=(back&&stack.length?`<button class="back" id="bk">‹</button>`:'')+`<h1>${title}</h1><button class="fsbtn" id="fs">Aa ${Math.round(ZOOM*100)}%</button>`;
@@ -1610,6 +1898,67 @@ function runTest(test,kind){
       $('#check').classList.add('hidden');$('#nx').classList.remove('hidden');
     };
     $('#nx').onclick=()=>{const au=$('#au');if(au)au.pause();ti++;show();};
+  };
+  show();
+}
+
+// ===================== РОД (der/die/das) =====================
+const GCOL={der:'gder',die:'gdie',das:'gdas'};
+function artSt(w){return (S.art||{})[w.id]||{};}
+function viewArtikel(){
+  S.art=S.art||{};const W=ART_WORDS;const known=W.filter(w=>artSt(w).last===1).length,wrong=W.filter(w=>artSt(w).last===0);
+  const groups={};W.forEach(w=>{(groups[w.r]=groups[w.r]||[]).push(w);});
+  const sect=(title,keys)=>`<h3>${title}</h3><div class="rules">${keys.filter(k=>groups[k]).map(k=>{const g=groups[k],kn=g.filter(w=>artSt(w).last===1).length,R=ART_RULES[k];
+    return `<button class="rule ${R.g?GCOL[R.g]:''}" data-r="${k}"><b>${esc(R.n)}</b><small>${R.g?R.g+' · ':''}${kn}/${g.length}</small></button>`;}).join('')}</div>`;
+  screen('Род: der / die / das',`
+  <div class="hero"><div class="ring" style="--p:${Math.round(known/W.length*100)}"><b>${known}</b><small>из ${W.length}</small></div>
+   <div><p class="muted">Угадай артикль. После ответа увидишь правило. Цвета: <b class="tder">der</b> · <b class="tdie">die</b> · <b class="tdas">das</b>.</p></div></div>
+  <div class="grid">
+   <button class="tile" id="a-rnd"><span>🎲</span><b>20 случайных</b><small>все правила вперемешку</small></button>
+   <button class="tile" id="a-err"><span>🔁</span><b>Мои ошибки</b><small>${wrong.length} слов</small></button>
+   <button class="tile" id="a-brief"><span>✉️</span><b>Слова для писем</b><small>без правила — учить</small></button>
+   <button class="tile" id="a-exc"><span>⚠️</span><b>Исключения</b><small>самые коварные</small></button>
+  </div>
+  ${sect('🔴 die — по окончанию',['ung','heit','schaft','ion','taet','ie','ik','ur','enz','ei','in','e'])}
+  ${sect('🔵 der — по окончанию и смыслу',['er','ling','ismus','pers','zeit','wetter','ig'])}
+  ${sect('🟢 das — по окончанию',['chen','ment','um','ma','inf','ge','o','nis'])}
+  ${sect('⭐ Особые случаи',['comp','exc','brief'])}
+  <details class="card"><summary>📋 Шпаргалка всех правил</summary>
+   <p><b class="tdie">die:</b> -ung, -heit, -keit, -schaft, -ion, -tät, -ie, -ik, -ur, -enz, -anz, -ei, -in (женщины), -e (≈90 %)</p>
+   <p><b class="tder">der:</b> -er (люди, приборы), -ling, -ismus, -ent/-ant/-ist/-or (люди), дни, месяцы, сезоны, погода, -ig</p>
+   <p><b class="tdas">das:</b> -chen, -lein, -ment, -um, -ma, глагол как существительное, Ge-, -o, -nis, Café/Hotel/Kino</p>
+   <p><b>Всегда:</b> множественное число → die. Сложное слово → род последнего слова.</p></details>`,false);
+  const go=(list,title)=>{if(!list.length)return toast('Здесь пока нечего тренировать 🎉');push(viewArtikel);artQuiz(list,title);};
+  $('#a-rnd').onclick=()=>go(shuffle(W).slice(0,20),'20 случайных');
+  $('#a-err').onclick=()=>go(shuffle(wrong),'Мои ошибки');
+  $('#a-brief').onclick=()=>go(shuffle(groups.brief).slice(0,25),'Слова для писем');
+  $('#a-exc').onclick=()=>go(shuffle(groups.exc),'Исключения');
+  document.querySelectorAll('.rule').forEach(b=>b.onclick=()=>go(shuffle(groups[b.dataset.r]),ART_RULES[b.dataset.r].n));
+}
+function artQuiz(list,title){
+  let i=0,score=0;const wrongs=[];
+  const show=()=>{
+    if(i>=list.length){
+      screen('Результат',`<div class="card center"><div class="big">${score}/${list.length}</div><p>${esc(title)}</p></div>
+      ${wrongs.length?'<h3>Повтори эти слова</h3><div class="card">'+wrongs.map(w=>`<p><b class="t${w.g}">${w.g}</b> ${esc(w.w)} <span class="muted small">— ${esc(w.ru)}</span><br><small class="muted">${esc(ART_RULES[w.r].t)}</small></p>`).join('')+'</div>':'<p class="center">Без ошибок! 💪</p>'}
+      <div class="row">${wrongs.length?'<button id="aw">Ещё раз только ошибки</button>':''}<button class="ghost" id="ab">К списку</button></div>`);
+      const aw=$('#aw');if(aw)aw.onclick=()=>artQuiz(shuffle(wrongs),'Ошибки');
+      $('#ab').onclick=()=>{stack.pop();viewArtikel();};return;}
+    const w=list[i];
+    screen(`${esc(title)} · ${i+1}/${list.length}`,`<div class="bar"><i style="width:${i/list.length*100}%"></i></div>
+    <div class="card center wordcard"><div class="word">___ ${esc(w.w)}</div><p class="muted">${esc(w.ru)}</p></div>
+    <div class="arts">${['der','die','das'].map(g=>`<button class="art ${GCOL[g]}" data-g="${g}">${g}</button>`).join('')}</div>
+    <div id="afb"></div><button class="wide hidden" id="anx">Дальше →</button>`);
+    document.querySelectorAll('.art').forEach(b=>b.onclick=()=>{
+      if(b.parentNode.dataset.done)return;b.parentNode.dataset.done=1;
+      const ok=b.dataset.g===w.g;S.art=S.art||{};const st=S.art[w.id]||{c:0,w:0};ok?st.c++:st.w++;st.last=ok?1:0;S.art[w.id]=st;save();
+      document.querySelectorAll('.art').forEach(x=>{x.classList.add(x.dataset.g===w.g?'right':'dim');});if(!ok)b.classList.add('picked');
+      if(ok)score++;else wrongs.push(w);
+      $('.word').innerHTML=`<span class="t${w.g}">${w.g}</span> ${esc(w.w)}`;
+      $('#afb').innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅ Правильно!':'❌ Правильно: '+w.g+' '+esc(w.w)}</b><br>💡 ${esc(ART_RULES[w.r].t)}</div>`;
+      if(ok){setTimeout(()=>{if($('#anx')){i++;show();}},900);}else $('#anx').classList.remove('hidden');
+    });
+    $('#anx').onclick=()=>{i++;show();};
   };
   show();
 }
