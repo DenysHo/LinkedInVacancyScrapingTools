@@ -1530,13 +1530,13 @@ function showErr(el,e,fb){
 function allLid(){return LID.concat(S.customQ||[]);}
 
 // ===================== NAV =====================
-const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['artikel','🔤','Род'],['analyse','📊','Анализ']];
+const TABS=[['lid','🇩🇪','LiD'],['sprechen','🗣️','Sprechen'],['hoeren','🎧','Hören'],['schreiben','✍️','Schreiben'],['lesen','📖','Lesen'],['uebungen','🏋️','Übungen'],['analyse','📊','Анализ']];
 let cur='lid',stack=[];
 function renderNav(){
   $('#nav').innerHTML=TABS.map(([k,i,l])=>`<button class="${k===cur?'on':''}" data-t="${k}"><span>${i}</span><small>${l}</small></button>`).join('');
   $('#nav').querySelectorAll('button').forEach(b=>b.onclick=()=>{stopSpeak();cur=b.dataset.t;stack=[];try{location.hash=cur;}catch(e){}go();});
 }
-function go(){renderNav();window.scrollTo(0,0);({lid:viewLid,sprechen:viewSprechen,hoeren:()=>viewTests('hoeren'),schreiben:viewSchreiben,lesen:()=>viewTests('lesen'),artikel:viewArtikel,analyse:viewAnalyse})[cur]();}
+function go(){renderNav();window.scrollTo(0,0);({lid:viewLid,sprechen:viewSprechen,hoeren:()=>viewTests('hoeren'),schreiben:viewSchreiben,lesen:()=>viewTests('lesen'),uebungen:viewUebungen,analyse:viewAnalyse})[cur]();}
 function screen(title,html,back=true){
   try{stopDict();}catch(e){}
   $('#top').innerHTML=(back&&stack.length?`<button class="back" id="bk">‹</button>`:'')+`<h1>${title}</h1><button class="fsbtn" id="fs">Aa ${Math.round(ZOOM*100)}%</button>`;
@@ -1905,6 +1905,13 @@ function runTest(test,kind){
 // ===================== РОД (der/die/das) =====================
 const GCOL={der:'gder',die:'gdie',das:'gdas'};
 function artSt(w){return (S.art||{})[w.id]||{};}
+function viewUebungen(){
+  const W=ART_WORDS,known=W.filter(w=>artSt(w).last===1).length;
+  screen('Übungen · тренировки',`<p class="muted">Короткие тренажёры для грамматики и слов. Выбери тренировку:</p>
+  <button class="item" id="u-art"><span>🔤</span><div><b>Род: der / die / das</b><small>${W.length} слов по правилам · выучено ${known}</small></div></button>
+  <p class="muted small center" style="margin-top:18px">Здесь будут появляться новые тренировки.</p>`,false);
+  $('#u-art').onclick=()=>{push(viewUebungen);viewArtikel();};
+}
 function viewArtikel(){
   S.art=S.art||{};const W=ART_WORDS;const known=W.filter(w=>artSt(w).last===1).length,wrong=W.filter(w=>artSt(w).last===0);
   const groups={};W.forEach(w=>{(groups[w.r]=groups[w.r]||[]).push(w);});
@@ -1927,7 +1934,7 @@ function viewArtikel(){
    <p><b class="tdie">die:</b> -ung, -heit, -keit, -schaft, -ion, -tät, -ie, -ik, -ur, -enz, -anz, -ei, -in (женщины), -e (≈90 %)</p>
    <p><b class="tder">der:</b> -er (люди, приборы), -ling, -ismus, -ent/-ant/-ist/-or (люди), дни, месяцы, сезоны, погода, -ig</p>
    <p><b class="tdas">das:</b> -chen, -lein, -ment, -um, -ma, глагол как существительное, Ge-, -o, -nis, Café/Hotel/Kino</p>
-   <p><b>Всегда:</b> множественное число → die. Сложное слово → род последнего слова.</p></details>`,false);
+   <p><b>Всегда:</b> множественное число → die. Сложное слово → род последнего слова.</p></details>`);
   const go=(list,title)=>{if(!list.length)return toast('Здесь пока нечего тренировать 🎉');push(viewArtikel);artQuiz(list,title);};
   $('#a-rnd').onclick=()=>go(shuffle(W).slice(0,20),'20 случайных');
   $('#a-err').onclick=()=>go(shuffle(wrong),'Мои ошибки');
