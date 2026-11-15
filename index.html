@@ -2639,7 +2639,7 @@ function artLine(w,extra=''){return `<p class="wl"><b class="t${w.g}">${w.g}</b>
 function viewArtikel(){
   const W=ART_WORDS,G=artGroups(),err=mErrors('art',W),lrn=W.filter(w=>mLearned('art',w.id));
   const exc=mActive('art',G.exc),brief=mActive('art',G.brief);
-  screen('Род: der / die / das',`${hero('art',W,'Угадай артикль. Цвета: <b class="tder">der</b> · <b class="tdie">die</b> · <b class="tdas">das</b>.')}
+  screen('Род: der / die / das',`${hero('art',W,'Выбери правильный артикль. Цвета: <b class="tder">der</b> · <b class="tdie">die</b> · <b class="tdas">das</b>.')}
   <div class="grid">
    <button class="tile" id="a-rnd"><span>🎲</span><b>Тренировка</b><small>${ROUND} слов вперемешку, все правила</small></button>
    <button class="tile" id="a-exc"><span>⚠️</span><b>Исключения</b><small>осталось ${exc.length} из ${G.exc.length}</small></button>
