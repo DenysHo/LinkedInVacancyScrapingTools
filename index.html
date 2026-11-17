@@ -59,6 +59,8 @@ button{font:inherit}
 .pic{position:relative}.pdone{position:absolute;top:6px;right:6px;background:var(--ok);color:#fff;font-style:normal;font-weight:800;font-size:13px;padding:3px 8px;border-radius:999px;z-index:2}
 .timer{display:flex;gap:12px;align-items:center;background:var(--acc2);border-radius:16px;padding:10px 14px;margin:8px 0}
 .timer span{font-size:22px;font-weight:800;color:var(--acc);flex:none}.timer small{font-size:14.5px;line-height:1.3}
+.tbtn{flex:none;margin-left:auto;border:0;background:var(--card);border-radius:12px;min-width:44px;height:40px;font-size:18px;cursor:pointer}.tbtn+.tbtn{margin-left:4px}
+.timer.late{background:#fbe5e3}.timer.late span{color:#d0453b}.timer.small{padding:6px 12px}.timer.small span{font-size:17px}
 .timer.warn{background:#fff3d6}.timer.warn span{color:#a06a00}.timer.over{background:var(--okb)}.timer.over span{color:var(--ok)}
 .an .anh{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .tag{font-size:14px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap}
@@ -2391,10 +2393,12 @@ function viewSprechen(){
   <div class="cards">${t2.map((x,i)=>`<button class="pic ${x.real?'real':''}" data-i="${i}">${(S.done||{})[sid('sp2_'+x.t)]?`<i class="pdone">✓ ${esc(S.done[sid('sp2_'+x.t)])}</i>`:''}${x.img?`<img src="${x.img}" alt="">`:`<span>${x.e}</span>`}<b>${esc(x.t)}</b></button>`).join('')}</div>
   <button class="wide ghost ai" id="new2">🤖 Новая тема для Teil 2</button>
   <h3>Teil 3 · Gemeinsam etwas planen <small>(${t3.length})</small></h3>
+  <button class="item" id="tpl3"><span>📋</span><div><b>Фразы для Teil 3</b><small>предложить, согласиться, возразить, договориться</small></div></button>
   <div class="t3list">${t3.map((x,i)=>`<button class="item p3 ${x.real?'realb':''}" data-i="${i}"><span class="num">${i+1}</span><div><b>${esc(x.t)}</b><small>${esc(x.s)}</small></div>${badge((S.done||{})[sid('sp3_'+x.t)])}</button>`).join('')}</div>
   <button class="wide ghost ai" id="new3">🤖 Новая тема для Teil 3</button>`,false);
   $('#t1').onclick=()=>{push(viewSprechen);sp1();};
   $('#tpl2').onclick=()=>{push(viewSprechen);viewBildTpl();};
+  $('#tpl3').onclick=()=>{push(viewSprechen);viewPlanTpl();};
   if($('#t1me'))$('#t1me').onclick=()=>{push(viewSprechen);spIntro();};
   document.querySelectorAll('.pic').forEach(b=>b.onclick=()=>{push(viewSprechen);sp2(t2[+b.dataset.i]);});
   document.querySelectorAll('.p3').forEach(b=>b.onclick=()=>{push(viewSprechen);sp3(t3[+b.dataset.i]);});
@@ -2450,14 +2454,29 @@ const FB=`Отвечай по-русски, дружелюбно и конкре
 **Улучшенная версия:** твой текст, исправленный, на уровне B1 (по-немецки).
 **Полезные фразы:** 3 фразы по теме, которые стоит выучить.
 Не будь слишком строгим к устной речи: это расшифровка речи, пунктуацию не исправляй.`;
+// ---------- ТАЙМЕРЫ ----------
+const fmtT=s=>{const n=Math.abs(s);return (s<0?'+':'')+Math.floor(n/60)+':'+String(n%60).padStart(2,'0');};
+function beep(){try{navigator.vibrate&&navigator.vibrate([300,150,300]);}catch(e){}try{const c=new (window.AudioContext||window.webkitAudioContext)();[0,0.35].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.value=0.2;o.start(c.currentTime+d);o.stop(c.currentTime+d+0.25);});}catch(e){}}
+function timerBox(id,secs,txt){return `<div class="timer" id="${id}"><span>⏱ <b>${fmtT(secs)}</b></span><small>${txt}</small><button class="tbtn" data-a="go">▶</button><button class="tbtn" data-a="rs">↺</button></div>`;}
+function wireTimer(id,secs,phase){
+  const box=document.getElementById(id);if(!box)return;const v=box.querySelector('b'),tx=box.querySelector('small'),base=tx.innerHTML,go=box.querySelector('[data-a=go]');
+  let left=secs,iv=null,rang=false;
+  const draw=()=>{v.textContent=fmtT(left);box.classList.toggle('warn',left<=30&&left>0);box.classList.toggle('late',left<=0);
+    tx.innerHTML=left<=0?'<b>Время вышло!</b> На экзамене тебя бы уже остановили.':(iv&&phase&&phase(left))||base;};
+  const stop=()=>{clearInterval(iv);iv=null;go.textContent='▶';};
+  go.onclick=()=>{if(iv){stop();draw();return;}go.textContent='⏸';iv=setInterval(()=>{if(!document.body.contains(box))return stop();left--;if(left===0&&!rang){rang=true;beep();}draw();},1000);draw();};
+  box.querySelector('[data-a=rs]').onclick=()=>{stop();left=secs;rang=false;draw();};draw();
+}
 function sp1(){
   const nf=()=>SPRECHEN1.nachfragen[Math.floor(Math.random()*SPRECHEN1.nachfragen.length)];
   screen('Teil 1 · Sich vorstellen',`<div class="card"><p>${SPRECHEN1.info}</p><h4>Расскажи о себе по пунктам:</h4><ul class="checks">${SPRECHEN1.punkte.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
   <div class="card accent"><small>Вопрос экзаменатора:</small><p class="q" id="nf">${esc(nf())}</p><div class="row"><button class="ghost" id="nfs">🔊</button><button class="ghost" id="nfn">Другой вопрос</button></div></div>
   ${MINE?'<button class="item" id="myintro"><span>📄</span><div><b>Мой рассказ о себе</b><small>выучить свой текст и проверить по нему</small></div></button>':''}
+  ${timerBox('tm1',120,'На экзамене рассказ о себе — около 2 минут на человека.')}
   <h3>Свободная тренировка</h3>${practiceBox('sp1',)}`);
   $('#nfn').onclick;
   if($('#myintro'))$('#myintro').onclick=()=>{push(sp1);spIntro();};
+  wireTimer('tm1',120);
   $('#nfn').onclick=()=>$('#nf').textContent=nf();
   $('#nfs').onclick=()=>speakLines([{s:'N',t:$('#nf').textContent}]);
   wirePractice('sp1',t=>`Ich bereite mich auf die DTZ-Prüfung (B1) vor, Sprechen Teil 1 (sich vorstellen). Punkte: ${SPRECHEN1.punkte.join(', ')}. Meine Antwort (Transkript):\n"""${t}"""\nGib Feedback. Sag auch, welche Punkte gefehlt haben.\n${FB}`);
@@ -2473,7 +2492,8 @@ function spIntro(){
   <div class="card intro" id="itext">${render()}</div>
   <div class="row"><button class="ghost" id="isay">🔊 Прослушать</button><button class="ghost" id="iedit">✏️ Изменить текст</button></div>
   <div id="iedbox" class="hidden"><textarea id="ied" class="editor" style="min-height:260px">${esc(T())}</textarea><div class="row"><button id="isave">Сохранить</button><button class="ghost" id="ireset">Вернуть исходный</button></div></div>
-  <h3>Расскажи по памяти</h3>${practiceBox('spme')}`);
+  <h3>Расскажи по памяти</h3>${timerBox('tmme',120,'На экзамене — около 2 минут. Включи таймер и расскажи вслух.')}${practiceBox('spme')}`);
+  wireTimer('tmme',120);
   const upd=()=>{S.introMode=mode;save();document.querySelectorAll('#imode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));$('#itext').innerHTML=render();};
   document.querySelectorAll('#imode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;upd();});upd();
   $('#isay').onclick=()=>speakLines(paras().map(t=>({s:'N',t})));
@@ -2505,14 +2525,31 @@ function sp2(x){
   <div class="card"><h4>1) Опиши картинку (что видишь, где, что делают люди)</h4><h4>2) Ответь на вопросы:</h4><ul>${x.f.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
   <button class="ghost" id="sq">🔊 Озвучить вопросы</button></div>
   <details class="card"><summary>📋 Структура и фразы для описания</summary>${bildTpl()}</details>
+  ${timerBox('tm2',180,'На экзамене Teil 2 — около 3 минут на тебя: ~1,5 мин описание, ~1,5 мин твой опыт.')}
   ${practiceBox(sid('sp2_'+x.t))}`);
+  wireTimer('tm2',180,l=>l>90?'<b>2A:</b> опиши картинку — кто, где, что делают, твои догадки.':'<b>2B:</b> переходи к себе — «Das kenne ich auch…», опыт, сравнение, мнение.');
   $('#desc').onclick=()=>$('#bild').classList.toggle('hidden');
   $('#sq').onclick=()=>speakLines(x.f.map(t=>({s:'N',t})));
   wirePractice(sid('sp2_'+x.t),t=>`Ich bereite mich auf die DTZ-Prüfung (B1) vor, Sprechen Teil 2. Thema: ${x.t}. Bild: ${x.bild}. Fragen: ${x.f.join(' ')}\nMein Transkript:\n"""${t}"""\nGib Feedback (Bildbeschreibung + Erfahrungen).\n${FB}`);
 }
+const PLAN_STEPS=[
+ ['1. Начать разговор',['Wir sollen zusammen … planen.','Wollen wir zuerst über … sprechen?','Womit fangen wir an?']],
+ ['2. Предложить',['Ich schlage vor, dass wir … (глагол в конец)','Wie wäre es, wenn wir … (глагол в конец)?','Wir könnten …','Was hältst du davon, wenn …?','Lass uns …','Hast du Lust, … zu …?']],
+ ['3. Согласиться',['Gute Idee!','Einverstanden.','Das finde ich gut.','Da hast du recht.','Das machen wir so.']],
+ ['4. Вежливо не согласиться',['Das ist eine gute Idee, aber …','Das finde ich nicht so gut, weil …','Ich bin nicht sicher, ob …','Ich habe eine andere Idee: …','Leider kann ich am … nicht, weil …']],
+ ['5. Спросить мнение партнёра',['Was meinst du?','Was denkst du darüber?','Bist du einverstanden?','Passt dir das?','Hast du eine Idee?']],
+ ['6. Договориться о времени и месте',['Wann hast du Zeit?','Am Samstag um 10 Uhr passt es mir gut.','Wie wäre es mit Freitagnachmittag?','Treffen wir uns um … vor dem / am …?']],
+ ['7. Распределить задачи',['Wer kümmert sich um …?','Ich kann … mitbringen / übernehmen.','Kannst du … organisieren?','Ich rufe … an und frage nach …']],
+ ['8. Подвести итог',['Also, wir treffen uns am … um …','Fassen wir zusammen: …','Dann ist alles klar. Super, dann machen wir das so!']]];
+const PLAN_RESCUE=['Entschuldigung, das habe ich nicht verstanden.','Kannst du das bitte wiederholen?','Wie meinst du das?'];
+function planTpl(){return `<div class="why"><b>Как вести Teil 3:</b> иди по пунктам задания по порядку. На каждый пункт: предложение → реакция партнёра → договорились → следующий пункт. Отвечай на слова партнёра и задавай вопросы — монолог оценивается хуже.</div>
+ ${PLAN_STEPS.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('')}
+ <h4>Если не поняла партнёра</h4><ul>${PLAN_RESCUE.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+ <p class="small muted">Порядок слов: dass / wenn / weil / ob → глагол в конец · Lass uns / Wir könnten → инфинитив в конец.</p>`;}
+function viewPlanTpl(){screen('📋 Фразы для Teil 3',`<p class="muted">Teil 3 «Gemeinsam etwas planen» — около 6 минут вдвоём.</p><div class="card">${planTpl()}</div>`);}
 function sp3(x){
   screen('Teil 3',`<div class="card"><h4>${esc(x.t)}</h4><p>${esc(x.s)}</p><h4>Обсудите и договоритесь:</h4><ul class="checks">${x.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
-  <details class="card"><summary>Полезные фразы</summary><ul>${REDEMITTEL3.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></details>
+  <details class="card"><summary>📋 Структура и фразы для Teil 3</summary>${planTpl()}</details>
   <h3>🤝 Диалог с партнёром</h3><p class="muted small">Claude играет твоего партнёра по экзамену. Отвечай короткими фразами, как в реальном разговоре. Голос партнёра звучит, если включён звук.</p>
   <div class="timer" id="tmrbox"><span>⏱ <b id="tmr">6:00</b></span><small id="tmrtxt">На экзамене Teil 3 длится около 6 минут. Таймер начнётся с первой реплики.</small></div>
   <div id="chat" class="chat"></div>
@@ -2566,6 +2603,7 @@ function wr(x){
   screen('Schreiben',`<div class="card"><span class="chip">${x.k==='formell'?'официальное письмо':'личное письмо'}</span><h4>${esc(x.t)}</h4><p>${esc(x.s)}</p>
   <p>Schreiben Sie zu jedem Punkt ein bis zwei Sätze:</p><ul class="checks">${x.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
   <p class="muted small">Vergessen Sie nicht Anrede und Gruß.</p></div>
+  ${timerBox('tmw',1800,'На экзамене Schreiben — 30 минут на одно письмо.')}
   <textarea id="${id}" class="editor tall" placeholder="${x.k==='formell'?'Sehr geehrte Damen und Herren,':'Liebe Julia,'}">${esc(S.drafts[id]||'')}</textarea>
   <div class="row between"><small id="wc" class="muted"></small><button class="link" id="wclr" style="display:inline;padding:0 8px">🗑 Очистить</button><label class="ghost btnl">📷 Фото текста<input type="file" accept="image/*" id="ph" hidden></label></div>
   <div id="phv"></div>
@@ -2587,6 +2625,7 @@ function wr(x){
     catch(e){showErr(out,e,'Ошибка');}
   };
   $('#mk').onclick=async()=>{const m=$('#mod');m.innerHTML='<p class="muted">…</p>';try{await ask(`Schreibe einen Mustertext (ca. 80–90 Wörter, Niveau B1) für DTZ Schreiben: ${x.t}. ${x.s} Leitpunkte: ${x.p.join('; ')}. Register: ${x.k}. Nur der Brief, danach eine Zeile "**Связки:**" mit 4 nützlichen Konnektoren aus dem Text.`,{onText:({text})=>m.innerHTML=md(text)});}catch(e){showErr(m,e);}};
+  wireTimer('tmw',1800);
 }
 
 // ===================== TESTS (HÖREN / LESEN) =====================
@@ -2618,17 +2657,20 @@ async function genTest(kind,focus){
   }catch(e){showErr(out,e,'Не получилось. Попробуй ещё раз или выбери одну часть (Teil).');}
 }
 function runTest(test,kind){
-  let ti=0,total=0,score=0;const H=kind==='hoeren';
+  let ti=0,total=0,score=0;const H=kind==='hoeren';const T0=Date.now(),TL=H?1500:2700,RID='tt'+T0;
+  const tt=()=>{const el=document.getElementById(RID);if(!el)return;const l=TL-Math.round((Date.now()-T0)/1000);el.querySelector('b').textContent=fmtT(l);el.classList.toggle('warn',l<=300&&l>0);el.classList.toggle('late',l<=0);if(l<=0)el.querySelector('small').innerHTML='<b>Время экзамена вышло</b> — на экзамене пришлось бы сдать.';};
+  const ttIv=setInterval(()=>{if(!document.getElementById(RID)&&ti>=test.tasks.length)return clearInterval(ttIv);tt();},1000);
   const show=()=>{
     if(ti>=test.tasks.length){
       const pct=total?Math.round(score/total*100):0;
       if(S.best[test.id]==null||score>+String(S.best[test.id]).split('/')[0]){S.best[test.id]=`${score}/${total}`;}
       S.hist=S.hist||[];S.hist.push({d:Date.now(),kind,id:test.id,s:score,n:total});S.hist=S.hist.slice(-60);save();
-      return screen('Результат',`<div class="card center"><div class="big">${score}/${total}</div><p>${pct>=60?'💪 Хороший результат для B1!':'Есть над чем поработать — посмотри объяснения и попробуй снова.'}</p></div><button class="wide" id="again">Пройти снова</button><button class="wide ghost" id="bk2">К списку тестов</button>`),
+      return screen('Результат',`<div class="card center"><div class="big">${score}/${total}</div><p class="muted small">⏱ Время: ${fmtT(Math.round((Date.now()-T0)/1000))} из ${fmtT(TL)}</p><p>${pct>=60?'💪 Хороший результат для B1!':'Есть над чем поработать — посмотри объяснения и попробуй снова.'}</p></div><button class="wide" id="again">Пройти снова</button><button class="wide ghost" id="bk2">К списку тестов</button>`),
         $('#again').onclick=()=>runTest(test,kind),$('#bk2').onclick=()=>{stack=[];go();};
     }
-    const t=test.tasks[ti];let plays=0;const sel={};
+    setTimeout(tt,0);const t=test.tasks[ti];let plays=0;const sel={};
     screen(`${esc(test.name)}`,`<div class="bar"><i style="width:${ti/test.tasks.length*100}%"></i></div>
+    <div class="timer small" id="${RID}"><span>⏱ <b></b></span><small>${H?'Hören на экзамене — около 25 минут':'Lesen на экзамене — 45 минут'}</small></div>
     <span class="chip">${esc(t.teil||'')}</span><p class="instr">${esc(t.instr||'')}</p>
     ${t.src?`<div class="player real"><audio id="au" controls preload="metadata" src="${t.src}"></audio><small class="muted">Настоящее аудио экзамена: включи и отвечай, как на экзамене. Паузы между текстами — это нормально.</small></div>`:''}
     ${t.audio?`<div class="player"><button id="play" class="playbtn">▶</button><div><b>Прослушать</b><small id="pc">на экзамене: ${t.plays||1}×</small></div></div>`:''}
