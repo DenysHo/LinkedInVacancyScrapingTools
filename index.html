@@ -72,6 +72,7 @@ button{font:inherit}
 .rule.gder{border-left-color:#2f6fd6}.rule.gdie{border-left-color:#d0453b}.rule.gdas{border-left-color:#2f9a55}
 .wordcard{padding:28px 12px}.word{font-size:34px;font-weight:800;letter-spacing:-.01em;word-break:break-word}
 .arts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.intro p{font-size:18px;line-height:1.6;margin:0 0 12px}
 .dots{letter-spacing:3px;color:#2f9a55;font-size:15px}.bad{color:#d0453b}
 .pbs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.pb{border:2px solid var(--line);background:var(--card);border-radius:16px;padding:18px 0;font-size:21px;font-weight:700;color:var(--ink);cursor:pointer}
 .pb.right{border-color:#2f9a55;background:#e3f4e8;color:#1d6b39}.pb.dim{opacity:.35}.pb.picked{border-color:#d0453b;background:#fbe5e3;opacity:.8;text-decoration:line-through}
@@ -2384,13 +2385,17 @@ function viewSprechen(){
   <button class="wide" id="rnd">🎲 Случайная тема</button>
   <h3>Teil 1 · Sich vorstellen</h3>
   <button class="item" id="t1"><span>👋</span><div><b>Рассказ о себе</b><small>План, вопросы экзаменатора, тренировка</small></div>${badge((S.done||{}).sp1)}</button>
+  ${MINE?`<button class="item" id="t1me"><span>📄</span><div><b>Мой рассказ о себе</b><small>мой текст: выучить и проверить</small></div>${badge((S.done||{}).spme)}</button>`:''}
   <h3>Teil 2 · Bild beschreiben & erzählen <small>(${t2.length})</small></h3>
+  <button class="item" id="tpl2"><span>📋</span><div><b>Как описывать картинку</b><small>структура из 7 шагов, готовые фразы, пример</small></div></button>
   <div class="cards">${t2.map((x,i)=>`<button class="pic ${x.real?'real':''}" data-i="${i}">${(S.done||{})[sid('sp2_'+x.t)]?`<i class="pdone">✓ ${esc(S.done[sid('sp2_'+x.t)])}</i>`:''}${x.img?`<img src="${x.img}" alt="">`:`<span>${x.e}</span>`}<b>${esc(x.t)}</b></button>`).join('')}</div>
   <button class="wide ghost ai" id="new2">🤖 Новая тема для Teil 2</button>
   <h3>Teil 3 · Gemeinsam etwas planen <small>(${t3.length})</small></h3>
   <div class="t3list">${t3.map((x,i)=>`<button class="item p3 ${x.real?'realb':''}" data-i="${i}"><span class="num">${i+1}</span><div><b>${esc(x.t)}</b><small>${esc(x.s)}</small></div>${badge((S.done||{})[sid('sp3_'+x.t)])}</button>`).join('')}</div>
   <button class="wide ghost ai" id="new3">🤖 Новая тема для Teil 3</button>`,false);
   $('#t1').onclick=()=>{push(viewSprechen);sp1();};
+  $('#tpl2').onclick=()=>{push(viewSprechen);viewBildTpl();};
+  if($('#t1me'))$('#t1me').onclick=()=>{push(viewSprechen);spIntro();};
   document.querySelectorAll('.pic').forEach(b=>b.onclick=()=>{push(viewSprechen);sp2(t2[+b.dataset.i]);});
   document.querySelectorAll('.p3').forEach(b=>b.onclick=()=>{push(viewSprechen);sp3(t3[+b.dataset.i]);});
   $('#rnd').onclick=()=>{push(viewSprechen);Math.random()<.5?sp2(t2[Math.floor(Math.random()*t2.length)]):sp3(t3[Math.floor(Math.random()*t3.length)]);};
@@ -2449,18 +2454,57 @@ function sp1(){
   const nf=()=>SPRECHEN1.nachfragen[Math.floor(Math.random()*SPRECHEN1.nachfragen.length)];
   screen('Teil 1 · Sich vorstellen',`<div class="card"><p>${SPRECHEN1.info}</p><h4>Расскажи о себе по пунктам:</h4><ul class="checks">${SPRECHEN1.punkte.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
   <div class="card accent"><small>Вопрос экзаменатора:</small><p class="q" id="nf">${esc(nf())}</p><div class="row"><button class="ghost" id="nfs">🔊</button><button class="ghost" id="nfn">Другой вопрос</button></div></div>
-  ${practiceBox('sp1',)}`);
+  ${MINE?'<button class="item" id="myintro"><span>📄</span><div><b>Мой рассказ о себе</b><small>выучить свой текст и проверить по нему</small></div></button>':''}
+  <h3>Свободная тренировка</h3>${practiceBox('sp1',)}`);
+  $('#nfn').onclick;
+  if($('#myintro'))$('#myintro').onclick=()=>{push(sp1);spIntro();};
   $('#nfn').onclick=()=>$('#nf').textContent=nf();
   $('#nfs').onclick=()=>speakLines([{s:'N',t:$('#nf').textContent}]);
   wirePractice('sp1',t=>`Ich bereite mich auf die DTZ-Prüfung (B1) vor, Sprechen Teil 1 (sich vorstellen). Punkte: ${SPRECHEN1.punkte.join(', ')}. Meine Antwort (Transkript):\n"""${t}"""\nGib Feedback. Sag auch, welche Punkte gefehlt haben.\n${FB}`);
 }
+const INTRO_DEFAULT="";
+function spIntro(){
+  const T=()=>S.myIntro||INTRO_DEFAULT;let mode=S.introMode||'full';
+  const paras=()=>T().split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+  const render=()=>paras().map(p=>{if(mode==='full')return `<p>${esc(p)}</p>`;if(mode==='hide')return '';
+    return '<p>'+p.split(/(?<=[.!?])\s+/).map(s=>{const w=s.split(/\s+/);return `<b>${esc(w.slice(0,3).join(' '))}</b> <span class="muted">…</span>`;}).join(' ')+'</p>';}).join('')||'<p class="muted center">Текст скрыт — расскажи по памяти 💪</p>';
+  screen('📄 Мой рассказ о себе',`<p class="muted">Учи текст по шагам: сначала читай целиком, потом только с подсказками (первые слова), потом полностью по памяти. Затем надиктуй или напиши — Claude сравнит с твоим текстом.</p>
+  <div class="seg full" id="imode"><button data-m="full">Весь текст</button><button data-m="hint">Подсказки</button><button data-m="hide">Скрыть</button></div>
+  <div class="card intro" id="itext">${render()}</div>
+  <div class="row"><button class="ghost" id="isay">🔊 Прослушать</button><button class="ghost" id="iedit">✏️ Изменить текст</button></div>
+  <div id="iedbox" class="hidden"><textarea id="ied" class="editor" style="min-height:260px">${esc(T())}</textarea><div class="row"><button id="isave">Сохранить</button><button class="ghost" id="ireset">Вернуть исходный</button></div></div>
+  <h3>Расскажи по памяти</h3>${practiceBox('spme')}`);
+  const upd=()=>{S.introMode=mode;save();document.querySelectorAll('#imode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));$('#itext').innerHTML=render();};
+  document.querySelectorAll('#imode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;upd();});upd();
+  $('#isay').onclick=()=>speakLines(paras().map(t=>({s:'N',t})));
+  $('#iedit').onclick=()=>$('#iedbox').classList.toggle('hidden');
+  $('#isave').onclick=()=>{S.myIntro=$('#ied').value.trim();save();toast('Текст сохранён');spIntro();};
+  $('#ireset').onclick=()=>{delete S.myIntro;save();toast('Вернула исходный текст');spIntro();};
+  wirePractice('spme',t=>`Ich bereite mich auf die DTZ-Prüfung (B1), Sprechen Teil 1 (sich vorstellen) vor und lerne meinen eigenen Text auswendig.\nMEIN VORLAGE-TEXT:\n"""${T()}"""\nMEINE ANTWORT JETZT (Transkript, ggf. aus Diktat — Satzzeichen/Großschreibung nicht bewerten):\n"""${t}"""\nVergleiche meine Antwort mit dem Vorlage-Text. Отвечай по-русски, коротко:\n**Уровень:** A2 / B1 / выше (как звучит ответ на экзамене).\n**Совпадение с текстом:** примерно в % + какие части/пункты (Name, Geburtsort, Wohnort, Arbeit, Familie, Sprachen) пропущены.\n**Ошибки:** «❌ сказала → ✅ в тексте» — только настоящие грамматические ошибки и потерянные связки (weil, obwohl, deshalb…); если я сказала по-другому, но правильно — это НЕ ошибка, просто отметь «👍 своими словами».\n**Что повторить:** 2–3 предложения из текста, которые выучить ещё раз.`);
+}
+const BILD_STEPS=[
+ ['1. Начало: что на фото',['Auf dem Bild sehe ich …','Das Foto zeigt eine Situation aus dem Alltag.','Auf dem Foto geht es um das Thema … (Einkaufen, Familie, Arbeit …)']],
+ ['2. Кто и где',['Im Vordergrund / Im Hintergrund sieht man …','Links / Rechts / In der Mitte steht / sitzt …','Die Personen sind wahrscheinlich in einem Supermarkt / in einer Wohnung / im Park.','Ich sehe eine Frau, die ungefähr 30 Jahre alt ist.']],
+ ['3. Что они делают',['Die Frau hält … in der Hand.','Der Mann trägt eine Jacke und eine Brille.','Die Kinder spielen / lachen / sitzen am Tisch.','Sie unterhalten sich / kochen zusammen / warten auf …']],
+ ['4. Предположения (очень ценится на B1)',['Ich glaube / Ich vermute, dass die Frau gerade einkauft.','Vielleicht ist das eine Familie.','Wahrscheinlich ist es Wochenende, weil alle Zeit haben.','Es sieht so aus, als ob sie Stress hätten.','Die Frau scheint glücklich zu sein.']],
+ ['5. Настроение',['Die Stimmung ist fröhlich / entspannt / gestresst.','Die Personen sehen zufrieden / müde aus.']],
+ ['6. Переход к себе',['Das Bild erinnert mich an meine eigene Situation.','Das kenne ich auch aus meinem Leben.','Bei mir ist es ähnlich / ganz anders.']],
+ ['7. Опыт, сравнение, мнение, конец',['Ich habe damit schon Erfahrungen gemacht: …','Früher in meiner Heimat war das so: …, aber in Deutschland …','Im Vergleich zu meiner Heimat …','Meiner Meinung nach ist das wichtig, weil …','Einerseits …, andererseits …','Zum Schluss möchte ich sagen, dass …']]];
+const BILD_RESCUE=['Also … / Na ja … / Moment, …','Wie soll ich sagen …','Ich weiß das Wort nicht genau, aber es ist so etwas wie …','Das ist ein Gerät, mit dem man … kann.'];
+const BILD_EX='Auf dem Bild sehe ich eine Frau im Supermarkt. <b>Im Vordergrund</b> steht ein Einkaufswagen, <b>und im Hintergrund</b> sieht man viele Regale. Die Frau <b>hält</b> eine Packung Milch <b>in der Hand</b>. <b>Ich vermute, dass</b> sie für ihre Familie einkauft, <b>weil</b> der Wagen sehr voll ist. <b>Sie scheint</b> ein bisschen gestresst <b>zu sein</b>. <b>Das kenne ich auch</b>: Ich kaufe meistens am Samstag ein, <b>weil</b> ich unter der Woche arbeite. <b>In meiner Heimat</b> war das anders, <b>denn</b> die Geschäfte waren auch am Sonntag offen. <b>Meiner Meinung nach</b> ist es praktisch, online einzukaufen, <b>aber</b> im Geschäft kann man die Produkte besser sehen.';
+function bildTpl(){return `${BILD_STEPS.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('')}
+ <div class="why"><b>Если растерялась — 5 вопросов по порядку:</b><br>Wer? → Wo? → Was machen sie? → Warum (meiner Meinung nach)? → Und bei mir?</div>
+ <h4>Вместо «äh»</h4><ul>${BILD_RESCUE.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+ <h4>Пример: «Einkaufen»</h4><p>${BILD_EX}</p>
+ <p class="small muted">Порядок слов: dass / weil / die → глагол в конец · deshalb / trotzdem → глагол сразу после связки · denn / aber → порядок не меняется.</p>`;}
+function viewBildTpl(){screen('📋 Как описывать картинку',`<p class="muted">Одна структура для любой картинки в Teil 2. Выучи шаги и по 1–2 фразы к каждому.</p><div class="card">${bildTpl()}</div>`);}
 function sp2(x){
   screen('Teil 2',`<h3 class="tt">${esc(x.t)}</h3>${x.img?`<img class="photo" src="${x.img}" alt="">`:`<div class="picture"><span>${x.e}</span></div>`}
   <p class="muted small">Prüfer: «Sie haben in einer Zeitschrift ein Foto gefunden. Was sehen Sie auf dem Foto? Was für eine Situation zeigt dieses Bild?» Потом: «Welche Erfahrungen haben Sie damit?»</p>
   <button class="link" id="desc">Показать, что на картинке</button><p id="bild" class="hidden muted">${esc(x.bild)}</p>
   <div class="card"><h4>1) Опиши картинку (что видишь, где, что делают люди)</h4><h4>2) Ответь на вопросы:</h4><ul>${x.f.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
   <button class="ghost" id="sq">🔊 Озвучить вопросы</button></div>
-  <details class="card"><summary>Полезные фразы</summary><ul>${REDEMITTEL2.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></details>
+  <details class="card"><summary>📋 Структура и фразы для описания</summary>${bildTpl()}</details>
   ${practiceBox(sid('sp2_'+x.t))}`);
   $('#desc').onclick=()=>$('#bild').classList.toggle('hidden');
   $('#sq').onclick=()=>speakLines(x.f.map(t=>({s:'N',t})));
