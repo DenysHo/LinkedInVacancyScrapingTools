@@ -2527,18 +2527,20 @@ function bildTpl(){return `${BILD_STEPS.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x
  <p class="small muted">Порядок слов: dass / weil / die → глагол в конец · deshalb / trotzdem → глагол сразу после связки · denn / aber → порядок не меняется.</p>`;}
 function viewBildTpl(){screen('📋 Как описывать картинку',`<p class="muted">Одна структура для любой картинки в Teil 2. Выучи шаги и по 1–2 фразы к каждому.</p><div class="card">${bildTpl()}</div>`);}
 function sp2(x){
+  const pick=()=>x.f.length>2?shuffle(x.f.slice()).slice(0,2):x.f.slice();let qs=pick();
   screen('Teil 2',`<h3 class="tt">${esc(x.t)}</h3>${x.img?`<img class="photo" src="${x.img}" alt="">`:`<div class="picture"><span>${x.e}</span></div>`}
   <p class="muted small">Prüfer: «Sie haben in einer Zeitschrift ein Foto gefunden. Was sehen Sie auf dem Foto? Was für eine Situation zeigt dieses Bild?» Потом: «Welche Erfahrungen haben Sie damit?»</p>
   <button class="link" id="desc">Показать, что на картинке</button><p id="bild" class="hidden muted">${esc(x.bild)}</p>
-  <div class="card"><h4>1) Опиши картинку (что видишь, где, что делают люди)</h4><h4>2) Ответь на вопросы:</h4><ul>${x.f.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
-  <button class="ghost" id="sq">🔊 Озвучить вопросы</button></div>
+  <div class="card"><h4>1) Опиши картинку (что видишь, где, что делают люди)</h4><h4>2) Экзаменатор спросит о твоём опыте (2 вопроса):</h4><ul id="q2l">${qs.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
+  <div class="row"><button class="ghost" id="sq">🔊 Озвучить вопросы</button>${x.f.length>2?'<button class="ghost" id="qnew">🔄 Другие вопросы</button>':''}</div></div>
   <details class="card"><summary>📋 Структура и фразы для описания</summary>${bildTpl()}</details>
   ${timerBox('tm2',180,'На экзамене Teil 2 — около 3 минут на тебя: ~1,5 мин описание, ~1,5 мин твой опыт.')}
   ${practiceBox(sid('sp2_'+x.t))}`);
   wireTimer('tm2',180,l=>l>90?'<b>2A:</b> опиши картинку — кто, где, что делают, твои догадки.':'<b>2B:</b> переходи к себе — «Das kenne ich auch…», опыт, сравнение, мнение.');
   $('#desc').onclick=()=>$('#bild').classList.toggle('hidden');
-  $('#sq').onclick=()=>speakLines(x.f.map(t=>({s:'N',t})));
-  wirePractice(sid('sp2_'+x.t),t=>`Ich bereite mich auf die DTZ-Prüfung (B1) vor, Sprechen Teil 2. Thema: ${x.t}. Bild: ${x.bild}. Fragen: ${x.f.join(' ')}\nMein Transkript:\n"""${t}"""\nGib Feedback (Bildbeschreibung + Erfahrungen).\n${FB}`);
+  $('#sq').onclick=()=>speakLines(qs.map(t=>({s:'N',t})));
+  if($('#qnew'))$('#qnew').onclick=()=>{const old=qs.join();do{qs=pick();}while(qs.join()===old);$('#q2l').innerHTML=qs.map(f=>`<li>${esc(f)}</li>`).join('');};
+  wirePractice(sid('sp2_'+x.t),t=>`Ich bereite mich auf die DTZ-Prüfung (B1) vor, Sprechen Teil 2. Thema: ${x.t}. Bild: ${x.bild}. Teil 2A: Bildbeschreibung (was sehe ich, welche Situation). Teil 2B: nur diese 2 Fragen des Prüfers: ${qs.join(' ')}\nMein Transkript:\n"""${t}"""\nGib Feedback zu 2A (Bildbeschreibung) und 2B (Antworten auf GENAU diese 2 Fragen). Andere Fragen wurden nicht gestellt — bewerte NICHT, dass etwas anderes fehlt. Auf der Prüfung hat man ca. 3 Minuten; ein Transkript von ca. 150–250 Wörtern ist völlig ausreichend.\n${FB}`);
 }
 const PLAN_STEPS=[
  ['1. Начать разговор',['Wir sollen zusammen … planen.','Wollen wir zuerst über … sprechen?','Womit fangen wir an?']],
