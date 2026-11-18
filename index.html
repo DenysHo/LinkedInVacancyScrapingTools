@@ -2433,23 +2433,23 @@ function wirePractice(id,promptFn){
     catch(e){showErr(out,e,'Ошибка');}
   };
 }
-let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false,dictGuard=0,dictPart='';
+let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false,dictGuard=0,dictPart='',dictPre='';
 function stopDict(){if(DICT&&dictOn){DICT.stop().catch(()=>{});dictOn=false;}dictTarget=null;dictBtn=null;dictPart='';}
 function wireDict(b){
   if(!dictWired){dictWired=true;
-    const put=text=>{const ta=dictTarget;if(!ta||!document.body.contains(ta)||!text||Date.now()<dictGuard)return;ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+text.trim();ta.dispatchEvent(new Event('input'));};
+    const put=text=>{const ta=dictTarget;if(!ta||!document.body.contains(ta)||!text||Date.now()<dictGuard)return;if(dictPre&&ta.dataset.lastPre!==dictPre){ta.value=ta.value.replace(/\s+$/,'')+(ta.value.trim()?'\n':'')+dictPre;ta.dataset.lastPre=dictPre;}else ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'');ta.value+=text.trim();ta.dispatchEvent(new Event('input'));};
     const live=t=>{let el=document.getElementById('dictlive');const ta=dictTarget;if(!ta||!document.body.contains(ta)){if(el)el.remove();return;}
       if(!el){el=document.createElement('p');el.id='dictlive';el.className='muted small';ta.insertAdjacentElement('afterend',el);}el.textContent=t?'🎙 '+t:'';};
     DICT.onFinal(({text})=>{dictPart='';live('');put(text);});
     if(DICT.onPartial)DICT.onPartial(({text})=>{if(Date.now()<dictGuard)return;dictPart=text||'';live(dictPart);});
-    DICT.onState(({state})=>{dictOn=state==='listening';document.querySelectorAll('.dict').forEach(x=>{const me=dictOn&&x===dictBtn;x.textContent=me?'⏹ Стоп':(x.dataset.for==='msg'?'🎤':'🎤 Диктовать');x.classList.toggle('rec',me);});
+    DICT.onState(({state})=>{dictOn=state==='listening';document.querySelectorAll('.dict').forEach(x=>{const me=dictOn&&x===dictBtn;x.textContent=me?'⏹ Стоп':(x.dataset.label||(x.dataset.for==='msg'?'🎤':'🎤 Диктовать'));x.classList.toggle('rec',me);});
       if(dictOn){live('слушаю…');}else{const p=dictPart;setTimeout(()=>{if(dictPart&&dictPart===p){put(p);dictPart='';}live('');},1500);dictBtn=null;}});
   }
   b.onclick=()=>{
     if(dictOn&&dictBtn===b){DICT.stop().catch(()=>{});return;}
     if(dictOn){dictTarget=null;DICT.stop().catch(()=>{});toast('Остановила прошлую диктовку — нажми 🎤 ещё раз');return;}
-    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;dictPart='';dictGuard=Date.now()+800;
-    DICT.start().catch(e=>{b.textContent='🎤 Диктовать';
+    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;dictPre=b.dataset.pre||'';dictPart='';dictGuard=Date.now()+800;
+    DICT.start().catch(e=>{b.textContent=b.dataset.label||'🎤 Диктовать';
       if(e&&e.code==='not_granted')return toast('Нет доступа к микрофону — разреши его для Claude в настройках');
       toast('Диктовка не запустилась ('+((e&&(e.code||e.message))||'ошибка')+'). Нажми ещё раз или используй 🎤 на клавиатуре.');});
   };
@@ -2558,13 +2558,34 @@ function planTpl(){return `<div class="why"><b>Как вести Teil 3:</b> и�
  <p class="small muted">Порядок слов: dass / wenn / weil / ob → глагол в конец · Lass uns / Wir könnten → инфинитив в конец.</p>`;}
 function viewPlanTpl(){screen('📋 Фразы для Teil 3',`<p class="muted">Teil 3 «Gemeinsam etwas planen» — около 6 минут вдвоём.</p><div class="card">${planTpl()}</div>`);}
 function sp3(x){
+  const LID3=sid('sp3live_'+x.t);
   screen('Teil 3',`<div class="card"><h4>${esc(x.t)}</h4><p>${esc(x.s)}</p><h4>Обсудите и договоритесь:</h4><ul class="checks">${x.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
   <details class="card"><summary>📋 Структура и фразы для Teil 3</summary>${planTpl()}</details>
-  <h3>🤝 Диалог с партнёром</h3><p class="muted small">Claude играет твоего партнёра по экзамену. Отвечай короткими фразами, как в реальном разговоре. Голос партнёра звучит, если включён звук.</p>
+  <h3>🤝 Диалог с партнёром</h3>
+  <div class="seg full" id="m3"><button data-m="bot" class="on">🤖 С Claude</button><button data-m="live">👫 С живым партнёром</button></div>
+  <div id="m-live" class="hidden">
+   <p class="muted small">Партнёр (муж, подруга, кто угодно) смотрит на этот же лист с заданием — как на экзамене. Говорите по-немецки по очереди. Перед своей фразой нажимай <b>🎤 Я</b>, перед фразой партнёра — <b>🎤 Партнёр</b>: так Claude поймёт, где ты. Можно и просто записать текстом.</p>
+   <details class="card"><summary>👀 Подсказка для партнёра</summary>
+    <p>Твоя роль — как второй участник экзамена:</p><ul><li>предлагай свои варианты, а не только соглашайся;</li><li>иногда вежливо не соглашайся, чтобы пришлось аргументировать;</li><li>задавай вопросы: «Was meinst du?», «Passt dir das?»;</li><li>не говори долго — половина времени для того, кто тренируется;</li><li>идите по пунктам задания по очереди и в конце договоритесь.</li></ul>
+    <p class="small muted">Фразы: Ich schlage vor, … · Wie wäre es mit …? · Gute Idee! · Das finde ich nicht so gut, weil … · Was meinst du? · Also, wir machen das so: …</p></details>
+   ${timerBox('tm3l',360,'На экзамене Teil 3 — около 6 минут на двоих. Запусти, когда начнёте.')}
+   <textarea id="${LID3}" class="editor tall" placeholder="Ich: Hallo! Wollen wir zuerst über den Termin sprechen?&#10;Partner: Ja, gern. Wann hast du Zeit?">${esc(S.drafts[LID3]||'')}</textarea>
+   <div class="row"><button class="ghost dict hidden" data-for="${LID3}" data-pre="Ich: " data-label="🎤 Я">🎤 Я</button><button class="ghost dict hidden" data-for="${LID3}" data-pre="Partner: " data-label="🎤 Партнёр">🎤 Партнёр</button><button class="ghost" id="l3clr">🗑</button></div>
+   <button class="ai wide" id="l3ev">🤖 Оценить разговор</button><div id="l3out"></div>
+  </div>
+  <div id="m-bot"><p class="muted small">Claude играет твоего партнёра по экзамену. Отвечай короткими фразами, как в реальном разговоре. Голос партнёра звучит, если включён звук.</p>
   <div class="timer" id="tmrbox"><span>⏱ <b id="tmr">6:00</b></span><small id="tmrtxt">На экзамене Teil 3 длится около 6 минут. Таймер начнётся с первой реплики.</small></div>
   <div id="chat" class="chat"></div>
   <div class="send"><textarea id="msg" class="editor short" placeholder="Hallo! Wollen wir zuerst über den Termin sprechen?"></textarea><button class="ghost dict hidden" data-for="msg">🎤</button><button class="ai" id="snd">➤</button></div>
-  <div class="row"><button class="ghost" id="start">Партнёр начинает</button><button class="ai" id="eval">🤖 Оценить диалог</button></div><button class="link" id="again3">↺ Начать диалог заново</button><div id="evo"></div>`);
+  <div class="row"><button class="ghost" id="start">Партнёр начинает</button><button class="ai" id="eval">🤖 Оценить диалог</button></div><button class="link" id="again3">↺ Начать диалог заново</button><div id="evo"></div></div>`);
+  document.querySelectorAll('#m3 button').forEach(b=>b.onclick=()=>{stopDict();document.querySelectorAll('#m3 button').forEach(y=>y.classList.toggle('on',y===b));$('#m-live').classList.toggle('hidden',b.dataset.m!=='live');$('#m-bot').classList.toggle('hidden',b.dataset.m==='live');});
+  wireTimer('tm3l',360,l=>l<=60?'Осталась минута — подводите итог: «Also, fassen wir zusammen…»':null);
+  {const ta=$('#'+LID3);ta.oninput=()=>{S.drafts[LID3]=ta.value;save();};
+   $('#l3clr').onclick=()=>{ta.value='';delete ta.dataset.lastPre;delete S.drafts[LID3];save();$('#l3out').innerHTML='';};
+   capReady.then(()=>{if(DICT)document.querySelectorAll('#m-live .dict').forEach(b=>{b.classList.remove('hidden');wireDict(b);});});
+   $('#l3ev').onclick=async()=>{const t=ta.value.trim();if(!t)return toast('Сначала запиши разговор');const out=$('#l3out');out.innerHTML='<p class="muted">Claude проверяет…</p>';
+    const P=`DTZ Sprechen Teil 3 (B1) «Gemeinsam etwas planen». Aufgabe: ${x.t}. ${x.s}\nLeitpunkte: ${x.p.join('; ')}\nTranskript eines echten Gesprächs mit einem Partner (Zeilen «Ich:» = ich, «Partner:» = mein Partner; fehlt die Markierung, erkenne die Sprecher selbst). Es ist ein Diktat-Transkript: Satzzeichen und Großschreibung nicht bewerten.\n---\n${t}\n---\nBewerte NUR meine Beiträge («Ich»), Fehler des Partners nicht bewerten. Prüfe: Wurden alle Leitpunkte besprochen? Habe ich Vorschläge gemacht, auf den Partner reagiert, zugestimmt/abgelehnt mit Begründung, Fragen gestellt, am Ende ein Ergebnis zusammengefasst? War mein Redeanteil ungefähr die Hälfte?\n${FB}`;
+    try{const r=await ask(P,{onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>',nocache:true});markDone(sid('sp3_'+x.t),r,'sprechen');}catch(e){showErr(out,e,'Ошибка');}};}
   const hist=[];const chat=$('#chat');const LIMIT=360;let t0=0,tick=null,ended=false;
   const left=()=>t0?Math.max(0,LIMIT-Math.round((Date.now()-t0)/1000)):LIMIT;
   const startTimer=()=>{if(t0)return;t0=Date.now();const tmrEl=$('#tmr');tick=setInterval(()=>{const el=tmrEl;if(!document.body.contains(el)){clearInterval(tick);return;}const s=left();el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
