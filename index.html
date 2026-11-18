@@ -2433,22 +2433,22 @@ function wirePractice(id,promptFn){
     catch(e){showErr(out,e,'Ошибка');}
   };
 }
-let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false;
+let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false,dictGuard=0;
 function stopDict(){if(DICT&&dictOn){DICT.stop().catch(()=>{});dictOn=false;}dictTarget=null;dictBtn=null;}
 function wireDict(b){
   if(!dictWired){dictWired=true;
-    DICT.onFinal(({text})=>{const ta=dictTarget;if(!dictOn||!ta||!document.body.contains(ta))return;ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+text;ta.dispatchEvent(new Event('input'));});
+    DICT.onFinal(({text})=>{const ta=dictTarget;if(!dictOn||!ta||!document.body.contains(ta)||Date.now()<dictGuard)return;ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+text;ta.dispatchEvent(new Event('input'));});
     DICT.onState(({state})=>{dictOn=state==='listening';document.querySelectorAll('.dict').forEach(x=>{const me=dictOn&&x===dictBtn;x.textContent=me?'⏹ Стоп':(x.dataset.for==='msg'?'🎤':'🎤 Диктовать');x.classList.toggle('rec',me);});if(!dictOn){dictTarget=null;dictBtn=null;}});
   }
-  b.onclick=async()=>{
-    if(dictOn&&dictBtn===b){try{await DICT.stop();}catch(e){}dictOn=false;return;}
-    if(dictOn){try{await DICT.stop();}catch(e){}dictOn=false;await new Promise(r=>setTimeout(r,300));}
-    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;b.textContent='⏳ …';
-    const fail=e=>{b.textContent='🎤 Диктовать';if(e&&e.code==='not_granted')return toast('Нет доступа к микрофону — разреши его для Claude в настройках телефона');
-      toast('Диктовка не запустилась ('+((e&&(e.code||e.message))||'ошибка')+'). Нажми ещё раз или используй 🎤 на клавиатуре.');};
-    try{await DICT.start();}catch(e){if(e&&e.code==='not_granted')return fail(e);
-      try{await DICT.stop();}catch(_){}await new Promise(r=>setTimeout(r,500));try{await DICT.start();}catch(e2){fail(e2);}}
+  b.onclick=()=>{
+    if(dictOn&&dictBtn===b){DICT.stop().catch(()=>{});return;}
+    if(dictOn){dictTarget=null;DICT.stop().catch(()=>{});toast('Остановила прошлую диктовку — нажми 🎤 ещё раз');return;}
+    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;dictGuard=Date.now()+800;
+    DICT.start().catch(e=>{b.textContent='🎤 Диктовать';
+      if(e&&e.code==='not_granted')return toast('Нет доступа к микрофону — разреши его для Claude в настройках');
+      toast('Диктовка не запустилась ('+((e&&(e.code||e.message))||'ошибка')+'). Нажми ещё раз или используй 🎤 на клавиатуре.');});
   };
+
 }
 const FB=`Отвечай по-русски, дружелюбно и конкретно. Структура:
 **Оценка:** примерный уровень (A2 / B1 / выше) и 1 фраза почему.
