@@ -2565,9 +2565,6 @@ function sp3(x){
   <div class="seg full" id="m3"><button data-m="bot" class="on">🤖 С Claude</button><button data-m="live">👫 С живым партнёром</button></div>
   <div id="m-live" class="hidden">
    <p class="muted small">Партнёр (муж, подруга, кто угодно) смотрит на этот же лист с заданием — как на экзамене. Говорите по-немецки по очереди. Перед своей фразой нажимай <b>🎤 Я</b>, перед фразой партнёра — <b>🎤 Партнёр</b>: так Claude поймёт, где ты. Можно и просто записать текстом.</p>
-   <details class="card"><summary>👀 Подсказка для партнёра</summary>
-    <p>Твоя роль — как второй участник экзамена:</p><ul><li>предлагай свои варианты, а не только соглашайся;</li><li>иногда вежливо не соглашайся, чтобы пришлось аргументировать;</li><li>задавай вопросы: «Was meinst du?», «Passt dir das?»;</li><li>не говори долго — половина времени для того, кто тренируется;</li><li>идите по пунктам задания по очереди и в конце договоритесь.</li></ul>
-    <p class="small muted">Фразы: Ich schlage vor, … · Wie wäre es mit …? · Gute Idee! · Das finde ich nicht so gut, weil … · Was meinst du? · Also, wir machen das so: …</p></details>
    ${timerBox('tm3l',360,'На экзамене Teil 3 — около 6 минут на двоих. Запусти, когда начнёте.')}
    <textarea id="${LID3}" class="editor tall" placeholder="Ich: Hallo! Wollen wir zuerst über den Termin sprechen?&#10;Partner: Ja, gern. Wann hast du Zeit?">${esc(S.drafts[LID3]||'')}</textarea>
    <div class="row"><button class="ghost dict hidden" data-for="${LID3}" data-pre="Ich: " data-label="🎤 Я">🎤 Я</button><button class="ghost dict hidden" data-for="${LID3}" data-pre="Partner: " data-label="🎤 Партнёр">🎤 Партнёр</button><button class="ghost" id="l3clr">🗑</button></div>
