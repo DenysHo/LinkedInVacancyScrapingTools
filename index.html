@@ -2433,17 +2433,22 @@ function wirePractice(id,promptFn){
     catch(e){showErr(out,e,'Ошибка');}
   };
 }
-let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false,dictGuard=0;
-function stopDict(){if(DICT&&dictOn){DICT.stop().catch(()=>{});dictOn=false;}dictTarget=null;dictBtn=null;}
+let dictTarget=null,dictBtn=null,dictOn=false,dictWired=false,dictGuard=0,dictPart='';
+function stopDict(){if(DICT&&dictOn){DICT.stop().catch(()=>{});dictOn=false;}dictTarget=null;dictBtn=null;dictPart='';}
 function wireDict(b){
   if(!dictWired){dictWired=true;
-    DICT.onFinal(({text})=>{const ta=dictTarget;if(!dictOn||!ta||!document.body.contains(ta)||Date.now()<dictGuard)return;ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+text;ta.dispatchEvent(new Event('input'));});
-    DICT.onState(({state})=>{dictOn=state==='listening';document.querySelectorAll('.dict').forEach(x=>{const me=dictOn&&x===dictBtn;x.textContent=me?'⏹ Стоп':(x.dataset.for==='msg'?'🎤':'🎤 Диктовать');x.classList.toggle('rec',me);});if(!dictOn){dictTarget=null;dictBtn=null;}});
+    const put=text=>{const ta=dictTarget;if(!ta||!document.body.contains(ta)||!text||Date.now()<dictGuard)return;ta.value+=(ta.value&&!/\s$/.test(ta.value)?' ':'')+text.trim();ta.dispatchEvent(new Event('input'));};
+    const live=t=>{let el=document.getElementById('dictlive');const ta=dictTarget;if(!ta||!document.body.contains(ta)){if(el)el.remove();return;}
+      if(!el){el=document.createElement('p');el.id='dictlive';el.className='muted small';ta.insertAdjacentElement('afterend',el);}el.textContent=t?'🎙 '+t:'';};
+    DICT.onFinal(({text})=>{dictPart='';live('');put(text);});
+    if(DICT.onPartial)DICT.onPartial(({text})=>{if(Date.now()<dictGuard)return;dictPart=text||'';live(dictPart);});
+    DICT.onState(({state})=>{dictOn=state==='listening';document.querySelectorAll('.dict').forEach(x=>{const me=dictOn&&x===dictBtn;x.textContent=me?'⏹ Стоп':(x.dataset.for==='msg'?'🎤':'🎤 Диктовать');x.classList.toggle('rec',me);});
+      if(dictOn){live('слушаю…');}else{const p=dictPart;setTimeout(()=>{if(dictPart&&dictPart===p){put(p);dictPart='';}live('');},1500);dictBtn=null;}});
   }
   b.onclick=()=>{
     if(dictOn&&dictBtn===b){DICT.stop().catch(()=>{});return;}
     if(dictOn){dictTarget=null;DICT.stop().catch(()=>{});toast('Остановила прошлую диктовку — нажми 🎤 ещё раз');return;}
-    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;dictGuard=Date.now()+800;
+    dictTarget=document.getElementById(b.dataset.for);dictBtn=b;dictPart='';dictGuard=Date.now()+800;
     DICT.start().catch(e=>{b.textContent='🎤 Диктовать';
       if(e&&e.code==='not_granted')return toast('Нет доступа к микрофону — разреши его для Claude в настройках');
       toast('Диктовка не запустилась ('+((e&&(e.code||e.message))||'ошибка')+'). Нажми ещё раз или используй 🎤 на клавиатуре.');});
