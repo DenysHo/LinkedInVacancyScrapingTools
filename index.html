@@ -2313,6 +2313,99 @@ TH('th5','🎧 telc Hören · Test 5',{
 })
 ];
 
+// ===== telc Deutsch A2·B1: Sprechen + Schreiben =====
+const TELC_STICH=['Name','Land','Sprachen','Wohnort','Familie','Beruf','Hobby'];
+const TELC_1B={
+ Name:['Hat Ihr Name eine besondere Bedeutung?','Wer hat Ihren Namen ausgesucht?','Wie werden Sie von Ihren Freunden genannt?'],
+ Land:['Wann sind Sie nach Deutschland gekommen?','Was vermissen Sie aus Ihrer Heimat?','Was war in Ihrer Heimat anders als hier?','Was würden Sie einem Touristen in Ihrer Heimat zeigen?'],
+ Sprachen:['Seit wann lernen Sie Deutsch?','Welche Sprache war für Sie am schwierigsten? Warum?','Mussten Sie in der Schule Fremdsprachen lernen?','Welche Sprache würden Sie gern noch lernen?'],
+ Wohnort:['Seit wann wohnen Sie dort?','Was gefällt Ihnen an Ihrem Wohnort?','Wo würden Sie gern wohnen, wenn Sie frei wählen könnten?','Wie haben Sie Ihre Wohnung gefunden?'],
+ Familie:['Was machen Sie am Wochenende mit Ihrer Familie?','Was haben Sie als Kind gern gemacht?','Wo wohnen Ihre Eltern?','Wie wurden in Ihrer Familie Feste gefeiert?'],
+ Beruf:['Was gefällt Ihnen an Ihrer Arbeit?','Was mussten Sie für Ihren Beruf lernen?','Wann haben Sie angefangen zu arbeiten?','Was würden Sie beruflich gern ändern?','Was wollten Sie als Kind werden?'],
+ Hobby:['Seit wann haben Sie dieses Hobby?','Was haben Sie früher in Ihrer Freizeit gemacht?','Welches Hobby würden Sie gern anfangen?','Wie viel Zeit haben Sie für Ihre Hobbys?']};
+const TELC_PLAN=[
+ {t:'Weihnachtsfeier in der Firma',s:'Sie und Ihr:e Gesprächspartner:in arbeiten in einer Firma. Sie planen gemeinsam die Weihnachtsfeier für alle Mitarbeiter.',p:['Was machen?','Wo?','Wer kann noch helfen?','Wie informieren?']},
+ {t:'Abschiedsfeier für eine Kollegin',s:'Eine Kollegin geht in Rente. Sie planen zusammen eine kleine Abschiedsfeier.',p:['Wann und wo?','Was schenken?','Essen und Getränke?','Wer bezahlt?']},
+ {t:'Ausflug mit dem Deutschkurs',s:'Ihr Deutschkurs ist bald zu Ende. Sie planen einen Ausflug mit der ganzen Gruppe.',p:['Wohin?','Wann?','Wie hinkommen?','Was mitnehmen?']},
+ {t:'Sommerfest im Kindergarten',s:'Sie sind im Elternbeirat und planen mit einer anderen Mutter / einem anderen Vater das Sommerfest.',p:['Spiele für Kinder?','Essen?','Wer hilft?','Was, wenn es regnet?']},
+ {t:'Geburtstagsüberraschung für eine Freundin',s:'Eine gemeinsame Freundin hat bald Geburtstag. Sie planen eine Überraschung.',p:['Was machen?','Wo?','Wen einladen?','Geschenk?']},
+ {t:'Umzug eines Freundes',s:'Ein Freund zieht am Samstag um. Sie wollen ihm zusammen helfen.',p:['Wann treffen?','Auto / Transporter?','Wer hilft noch?','Essen für die Helfer?']},
+ {t:'Nachbarschaftsfest',s:'In Ihrem Haus wohnen viele neue Nachbarn. Sie organisieren ein Fest, damit sich alle kennenlernen.',p:['Wann und wo?','Essen und Trinken?','Was für Kinder?','Wie einladen?']},
+ {t:'Besuch aus dem Ausland',s:'Ein Freund aus Ihrer Heimat besucht Sie für ein Wochenende. Sie planen das Programm.',p:['Was zeigen?','Wo essen?','Ausflug?','Was kostet das?']},
+ {t:'Flohmarkt in der Schule',s:'Die Schule Ihrer Kinder macht einen Flohmarkt. Sie planen, was Ihre Klasse macht.',p:['Was verkaufen?','Wer macht was?','Was mit dem Geld?','Werbung?']},
+ {t:'Lerngruppe für die Prüfung',s:'Sie und Ihr:e Gesprächspartner:in schreiben bald die Deutschprüfung. Sie wollen zusammen lernen.',p:['Wann und wie oft?','Wo?','Was üben?','Wer macht noch mit?']},
+ {t:'Fahrradtour am Wochenende',s:'Sie möchten mit Freunden eine Fahrradtour machen.',p:['Wohin?','Wann losfahren?','Was mitnehmen?','Was, wenn jemand kein Fahrrad hat?']},
+ {t:'Kochabend mit Kolleg:innen',s:'Sie möchten mit Kolleg:innen zusammen kochen und Gerichte aus verschiedenen Ländern probieren.',p:['Wann und bei wem?','Was kochen?','Wer kauft ein?','Getränke?']},
+ {t:'Hochzeitsgeschenk für einen Kollegen',s:'Ein Kollege heiratet. Das Team möchte ihm etwas schenken.',p:['Was schenken?','Wie viel Geld?','Wer kauft es?','Karte?']},
+ {t:'Picknick im Park',s:'Sie möchten mit Ihren Familien ein Picknick machen.',p:['Wann und wo?','Essen?','Spiele für Kinder?','Was, wenn das Wetter schlecht ist?']},
+ {t:'Tag der offenen Tür in der Firma',s:'Ihre Firma macht einen Tag der offenen Tür für Familien. Sie planen das Programm.',p:['Was zeigen?','Was für Kinder?','Essen?','Wie informieren?']}];
+const TELC_MEINUNG=[
+ ['Wasser oder Limonade?','Was ist besser für die Gesundheit?','Ist das eine umweltfreundlicher als das andere?'],
+ ['Wohnen in der Stadt oder auf dem Land?','Wo ist das Leben teurer?','Wo können Kinder besser aufwachsen?'],
+ ['Mit dem Auto oder mit Bus und Bahn?','Was ist bequemer?','Was ist besser für die Umwelt?'],
+ ['Online einkaufen oder im Geschäft?','Was ist günstiger?','Wo wird man besser beraten?'],
+ ['Selbst kochen oder Essen bestellen?','Was ist gesünder?','Was spart mehr Zeit?'],
+ ['Urlaub am Meer oder in den Bergen?','Wo kann man sich besser erholen?','Was ist für Familien besser?'],
+ ['Bücher aus Papier oder E-Books?','Was ist praktischer auf Reisen?','Was ist besser für die Augen?'],
+ ['Hund oder Katze?','Welches Tier macht mehr Arbeit?','Welches Tier passt besser in eine Wohnung?'],
+ ['Homeoffice oder Büro?','Wo arbeitet man konzentrierter?','Was ist besser für den Kontakt mit Kollegen?'],
+ ['Sport im Fitnessstudio oder draußen?','Was ist billiger?','Was macht mehr Spaß?'],
+ ['Film im Kino oder zu Hause?','Was ist gemütlicher?','Was ist ein besseres Erlebnis?'],
+ ['Bargeld oder Karte?','Was ist sicherer?','Womit behält man besser den Überblick über sein Geld?'],
+ ['Geschenke kaufen oder selbst machen?','Worüber freut man sich mehr?','Was kostet mehr Zeit?'],
+ ['Mit dem Zug oder mit dem Flugzeug reisen?','Was ist schneller?','Was ist besser für das Klima?'],
+ ['Eine Wohnung mieten oder kaufen?','Was ist sicherer für die Zukunft?','Was ist flexibler?'],
+ ['Deutsch im Kurs oder online lernen?','Wo lernt man mehr?','Was passt besser zu Familie und Arbeit?'],
+ ['Kleidung neu oder Second Hand kaufen?','Was ist besser für die Umwelt?','Was ist billiger?'],
+ ['Geburtstag zu Hause oder im Restaurant feiern?','Was ist entspannter?','Was ist teurer?'],
+ ['In einer großen oder in einer kleinen Firma arbeiten?','Wo verdient man mehr?','Wo ist die Atmosphäre besser?'],
+ ['Sommer oder Winter?','Welche Jahreszeit ist schöner?','Wann kann man mehr unternehmen?'],
+ ['Nachrichten im Internet oder in der Zeitung?','Was ist aktueller?','Was ist zuverlässiger?'],
+ ['Mit Freunden oder allein in den Urlaub fahren?','Was macht mehr Spaß?','Wie gibt es weniger Streit?'],
+ ['Frühstück zu Hause oder unterwegs?','Was ist gesünder?','Was ist praktischer am Morgen?'],
+ ['Fahrrad oder E-Scooter in der Stadt?','Was ist sicherer?','Was ist besser für die Gesundheit?'],
+ ['Kinder mit oder ohne Handy?','Ist ein Handy für Kinder sicherer?','Lernen Kinder ohne Handy mehr?']].map(([t,a2,b1])=>({t,q:[a2,b1]}));
+const TELC_MAIL=[
+ {t:'Kindergartenfest',k:'informell',from:'Martina Winkel, Kita „Sonnenblume“',betreff:'Sommerfest',text:'Liebe Eltern,\nam 21. Juni feiern wir unser Sommerfest. Die Kinder üben schon fleißig Lieder.\nFür die Kinder gibt es Spiele, Malen und Kinderschminken. Wer von Ihnen kann bei einer dieser Aktivitäten helfen?\nGetränke kauft der Kindergarten. Könnten Sie etwas zum Essen mitbringen? Was?\nUnd noch eine Frage: Mit wie vielen Personen kommen Sie?\nHerzliche Grüße\nMartina Winkel',q:['Bei welcher Aktivität helfen?','Was zum Essen mitbringen?','Mit wie vielen Personen kommen?']},
+ {t:'Nachbarin fragt nach Hilfe',k:'informell',from:'Petra (Nachbarin)',betreff:'Urlaub',text:'Hallo!\nWir fahren nächste Woche für zehn Tage nach Italien. Könntest du in dieser Zeit unsere Blumen gießen? Wie oft hättest du Zeit?\nUnsere Katze bleibt auch zu Hause. Hast du schon einmal eine Katze gefüttert?\nWann kann ich dir den Schlüssel bringen?\nVielen Dank und liebe Grüße\nPetra',q:['Wie oft Zeit zum Gießen?','Erfahrung mit Katzen?','Wann den Schlüssel bringen?']},
+ {t:'Kollege lädt zum Grillen ein',k:'informell',from:'Markus (Kollege)',betreff:'Grillen am Samstag',text:'Hallo,\nam Samstag mache ich bei mir im Garten eine Grillparty und möchte dich und deine Familie einladen! Kommt ihr?\nIch kaufe Fleisch und Würstchen. Isst jemand bei euch vegetarisch?\nKannst du vielleicht einen Salat oder einen Nachtisch mitbringen?\nBis bald!\nMarkus',q:['Kommt ihr?','Isst jemand vegetarisch?','Salat oder Nachtisch?']},
+ {t:'Vermieter: Renovierung',k:'formell',from:'Hausverwaltung Berger',betreff:'Renovierung des Treppenhauses',text:'Sehr geehrte Mieterinnen und Mieter,\nim März wird unser Treppenhaus renoviert. An welchen Tagen sind Sie normalerweise zu Hause?\nDer Fahrradkeller wird in dieser Zeit geschlossen. Wo könnten Sie Ihre Fahrräder abstellen?\nHaben Sie außerdem Wünsche für die Farbe der Wände?\nMit freundlichen Grüßen\nHausverwaltung Berger',q:['Wann zu Hause?','Wo die Fahrräder abstellen?','Wünsche für die Farbe?']},
+ {t:'Deutschkurs: Abschlussfest',k:'informell',from:'Frau Schneider (Kursleiterin)',betreff:'Unser Abschlussfest',text:'Liebe Kursteilnehmerinnen und Kursteilnehmer,\nunser Kurs ist bald zu Ende und wir möchten zusammen feiern! Wann hätten Sie Zeit – am Freitagabend oder am Samstagnachmittag?\nJeder bringt ein typisches Gericht aus seinem Land mit. Was bringen Sie mit?\nUnd eine letzte Frage: Was hat Ihnen im Kurs besonders gut gefallen?\nViele Grüße\nAnna Schneider',q:['Freitag oder Samstag?','Welches Gericht?','Was hat im Kurs gefallen?']},
+ {t:'Sportverein sucht Hilfe',k:'formell',from:'TSV Murnau',betreff:'Helfer für das Vereinsfest',text:'Liebe Mitglieder,\nam 5. Juli feiert unser Verein sein 100-jähriges Jubiläum. Dafür brauchen wir viele Helfer. Können Sie uns unterstützen?\nWir suchen Helfer für den Kuchenverkauf, die Getränke und den Aufbau. Was würden Sie am liebsten machen?\nWie lange könnten Sie helfen?\nSportliche Grüße\nIhr TSV-Team',q:['Können Sie helfen?','Welche Aufgabe?','Wie lange?']},
+ {t:'Freundin zieht um',k:'informell',from:'Olga',betreff:'Mein Umzug',text:'Hallo meine Liebe,\nstell dir vor, ich habe endlich eine neue Wohnung gefunden! Am 15. ziehe ich um. Kannst du mir helfen?\nIch brauche noch ein paar Kartons. Hast du vielleicht welche?\nUnd: Hast du eine Idee, wie ich die Wohnung gemütlich machen kann?\nLiebe Grüße\nOlga',q:['Kannst du helfen?','Hast du Kartons?','Ideen für die Wohnung?']},
+ {t:'Firma: Weiterbildung',k:'formell',from:'Frau Keller, Personalabteilung',betreff:'Weiterbildungen im nächsten Jahr',text:'Liebe Kolleginnen und Kollegen,\nwir planen die Weiterbildungen für das nächste Jahr. Welche Themen interessieren Sie?\nDie Kurse können online oder im Büro stattfinden. Was ist Ihnen lieber und warum?\nAn welchen Tagen könnten Sie an einer Weiterbildung teilnehmen?\nMit freundlichen Grüßen\nSabine Keller',q:['Welche Themen?','Online oder im Büro? Warum?','An welchen Tagen?']},
+ {t:'Elternabend in der Schule',k:'formell',from:'Herr Wagner, Klassenlehrer',betreff:'Klassenfahrt',text:'Liebe Eltern,\nim Mai möchte die Klasse 4b eine Klassenfahrt an den Chiemsee machen. Sind Sie damit einverstanden?\nDie Fahrt kostet ungefähr 150 Euro. Brauchen Sie dafür finanzielle Unterstützung?\nWir suchen außerdem zwei Eltern, die mitfahren. Hätten Sie Zeit und Lust?\nMit freundlichen Grüßen\nThomas Wagner',q:['Einverstanden?','Finanzielle Unterstützung?','Mitfahren?']},
+ {t:'Freund besucht dich',k:'informell',from:'Jan',betreff:'Besuch im Sommer',text:'Hi!\nIm August habe ich Urlaub und würde dich gern besuchen! Wann passt es dir am besten?\nWas kann man bei dir in der Gegend unternehmen?\nSoll ich ein Hotel buchen oder kann ich bei dir schlafen?\nIch freue mich!\nJan',q:['Wann passt es?','Was unternehmen?','Hotel oder bei dir?']},
+ {t:'Bibliothek: Umfrage',k:'formell',from:'Stadtbücherei Weilheim',betreff:'Ihre Meinung ist uns wichtig',text:'Liebe Leserinnen und Leser,\nwir möchten unser Angebot verbessern. Wie oft besuchen Sie unsere Bücherei?\nWelche Bücher oder Medien fehlen Ihnen bei uns?\nWir überlegen, länger zu öffnen. Welche Öffnungszeiten wären für Sie ideal?\nVielen Dank für Ihre Antwort!\nIhr Team der Stadtbücherei',q:['Wie oft?','Was fehlt?','Ideale Öffnungszeiten?']},
+ {t:'Kollegin fragt nach dem Wochenende',k:'informell',from:'Sarah (Kollegin)',betreff:'Ausflug',text:'Hallo,\nich möchte am Wochenende mit meinen Kindern einen Ausflug machen. Du wohnst doch in der Nähe der Berge – was kannst du empfehlen?\nWie kommt man am besten dorthin?\nUnd gibt es dort auch ein gutes Restaurant oder sollen wir lieber ein Picknick mitnehmen?\nDanke dir!\nSarah',q:['Was empfehlen?','Wie hinkommen?','Restaurant oder Picknick?']}];
+const TELC_KURZ=[
+ ['Kommst du am Dienstag zum Training?','Nein, diesen Dienstag habe ich keine Zeit.','Was machst du denn?'],
+ ['Hast du am Samstag Lust auf Kino?','Leider nicht, da bin ich nicht zu Hause.','Wohin fährst du denn?'],
+ ['Kommst du heute Abend zum Elternabend?','Nein, heute schaffe ich es nicht.','Warum nicht?'],
+ ['Gehst du morgen mit zum Schwimmen?','Morgen geht es nicht, aber vielleicht nächste Woche.','Wann hast du denn Zeit?'],
+ ['Ich habe gehört, du hast eine neue Wohnung!','Ja, wir sind letzte Woche umgezogen.','Wie gefällt sie dir?'],
+ ['Wir wollen ein Geschenk für Anna kaufen.','Super Idee, ich mache mit!','Welches Geschenk findest du gut?'],
+ ['Bist du schon wieder gesund?','Fast, aber ich bleibe noch zu Hause.','Wie lange bist du noch krank geschrieben?'],
+ ['Hast du deinen Urlaub schon geplant?','Ja, wir fahren im Juli weg.','Wohin fahrt ihr?'],
+ ['Kommst du zu meinem Geburtstag am Freitag?','Ich komme gern, aber etwas später.','Wann kannst du da sein?'],
+ ['Wie war dein erster Tag im neuen Job?','Anstrengend, aber schön!','Was hast du gemacht?'],
+ ['Kannst du mir am Wochenende beim Umzug helfen?','Am Samstag leider nicht.','Warum nicht?'],
+ ['Wollen wir uns morgen zum Kaffee treffen?','Gern!','Wo treffen wir uns?'],
+ ['Wir machen am Sonntag ein Picknick. Kommst du mit?','Ich weiß noch nicht.','Was brauchst du noch?'],
+ ['Ich suche ein gutes Restaurant für Samstag.','Ich kenne eins in der Altstadt.','Welches Essen gibt es da?'],
+ ['Hast du den neuen Film schon gesehen?','Nein, noch nicht.','Wann gehen wir zusammen?'],
+ ['Du warst lange nicht im Deutschkurs.','Ja, ich war im Urlaub.','Wie lange warst du weg?'],
+ ['Ich fange nächste Woche einen Yogakurs an.','Toll!','Warum machst du nicht auch mit?'],
+ ['Meine Schwester kommt nächste Woche zu Besuch.','Schön!','Was wollt ihr zusammen machen?'],
+ ['Kommst du am Montag ins Büro?','Nein, ich arbeite von zu Hause.','Warum?'],
+ ['Wir brauchen noch jemanden für das Fußballspiel am Sonntag.','Ich habe leider keine Zeit.','Was hast du denn vor?']].map(([a,b,c])=>({a,b,c,t:c}));
+const MEIN_PHR=[
+ ['Meinung sagen',['Ich finde, dass … (глагол в конец)','Meiner Meinung nach ist …','Ich bin der Meinung, dass …','Für mich ist … wichtiger, weil …','Ich mag lieber …, weil …']],
+ ['Begründen und Beispiele',['…, weil / denn …','Deshalb …','Zum Beispiel …','Aus eigener Erfahrung weiß ich, dass …','Bei mir ist es so: …']],
+ ['Vergleichen',['… ist gesünder / billiger / praktischer als …','Einerseits …, andererseits …','Der Vorteil ist …, der Nachteil ist …']],
+ ['Auf den Partner reagieren',['Da hast du recht, aber …','Das sehe ich anders, weil …','Das stimmt, trotzdem …','Ich verstehe deine Meinung, aber …','Was meinst du dazu? / Warum?']],
+ ['Abschluss',['Wir haben unterschiedliche Meinungen, aber …','Zum Schluss möchte ich sagen, dass …']]];
+
 /*TELCR*/</script>
 <script>const PUBLIC_BUILD=true;
 // ===================== STATE =====================
@@ -2565,9 +2658,9 @@ async function importQuestions(src,out){
 }
 
 // ===================== SPRECHEN =====================
-function viewSprechen(){
+function viewSprechenDTZ(){
   const t2=SPRECHEN_REAL.t2.concat(SPRECHEN2,S.sp2||[]),t3=SPRECHEN_REAL.t3.concat(SPRECHEN3,S.sp3||[]);
-  screen('Sprechen',`
+  screen('Sprechen · DTZ',`
   <p class="muted">Устная часть DTZ — примерно 16 минут, с партнёром. Тренируйся говорить вслух: напиши или надиктуй ответ — Claude даст обратную связь. В Teil 3 Claude может быть твоим партнёром.</p>
   <button class="wide" id="rnd">🎲 Случайная тема</button>
   <h3>Teil 1 · Sich vorstellen</h3>
@@ -2580,7 +2673,7 @@ function viewSprechen(){
   <h3>Teil 3 · Gemeinsam etwas planen <small>(${t3.length})</small></h3>
   <button class="item" id="tpl3"><span>📋</span><div><b>Фразы для Teil 3</b><small>предложить, согласиться, возразить, договориться</small></div></button>
   <div class="t3list">${t3.map((x,i)=>`<button class="item p3 ${x.real?'realb':''}" data-i="${i}"><span class="num">${i+1}</span><div><b>${esc(x.t)}</b><small>${esc(x.s)}</small></div>${badge((S.done||{})[sid('sp3_'+x.t)])}</button>`).join('')}</div>
-  <button class="wide ghost ai" id="new3">🤖 Новая тема для Teil 3</button>`,false);
+  <button class="wide ghost ai" id="new3">🤖 Новая тема для Teil 3</button>`);
   $('#t1').onclick=()=>{push(viewSprechen);sp1();};
   $('#tpl2').onclick=()=>{push(viewSprechen);viewBildTpl();};
   $('#tpl3').onclick=()=>{push(viewSprechen);viewPlanTpl();};
@@ -2685,15 +2778,15 @@ function spIntro(){
   <div class="card intro" id="itext">${render()}</div>
   <div class="row"><button class="ghost" id="isay">🔊 Прослушать</button><button class="ghost" id="iedit">✏️ Изменить текст</button></div>
   <div id="iedbox" class="hidden"><textarea id="ied" class="editor" style="min-height:260px">${esc(T())}</textarea><div class="row"><button id="isave">Сохранить</button><button class="ghost" id="ireset">Вернуть исходный</button></div></div>
-  <h3>Расскажи по памяти</h3>${timerBox('tmme',120,'На экзамене — около 2 минут. Включи таймер и расскажи вслух.')}${practiceBox('spme')}`);
-  wireTimer('tmme',120);
+  <h3>Расскажи по памяти</h3>${timerBox('tmme',90,'На экзамене telc Teil 1A — около 1,5 минуты. Включи таймер и расскажи вслух.')}${practiceBox('spme')}`);
+  wireTimer('tmme',90);
   const upd=()=>{S.introMode=mode;save();document.querySelectorAll('#imode button').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));$('#itext').innerHTML=render();};
   document.querySelectorAll('#imode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;upd();});upd();
   $('#isay').onclick=()=>speakLines(paras().map(t=>({s:'N',t})));
   $('#iedit').onclick=()=>$('#iedbox').classList.toggle('hidden');
   $('#isave').onclick=()=>{S.myIntro=$('#ied').value.trim();save();toast('Текст сохранён');spIntro();};
   $('#ireset').onclick=()=>{delete S.myIntro;save();toast('Вернула исходный текст');spIntro();};
-  wirePractice('spme',t=>`Ich bereite mich auf die DTZ-Prüfung (B1), Sprechen Teil 1 (sich vorstellen) vor und lerne meinen eigenen Text auswendig.\nMEIN VORLAGE-TEXT:\n"""${T()}"""\nMEINE ANTWORT JETZT (Transkript, ggf. aus Diktat — Satzzeichen/Großschreibung nicht bewerten):\n"""${t}"""\nVergleiche meine Antwort mit dem Vorlage-Text. Отвечай по-русски, коротко:\n**Уровень:** A2 / B1 / выше (как звучит ответ на экзамене).\n**Совпадение с текстом:** примерно в % + какие части/пункты (Name, Geburtsort, Wohnort, Arbeit, Familie, Sprachen) пропущены.\n**Ошибки:** «❌ сказала → ✅ в тексте» — только настоящие грамматические ошибки и потерянные связки (weil, obwohl, deshalb…); если я сказала по-другому, но правильно — это НЕ ошибка, просто отметь «👍 своими словами».\n**Что повторить:** 2–3 предложения из текста, которые выучить ещё раз.`);
+  wirePractice('spme',t=>`Ich bereite mich auf telc Deutsch A2·B1, Sprechen Teil 1A (sich vorstellen, ca. 1,5 Minuten; Stichpunkte: Name, Land, Sprachen, Wohnort, Familie, Beruf, Hobby) vor und lerne meinen eigenen Text auswendig.\nMEIN VORLAGE-TEXT:\n"""${T()}"""\nMEINE ANTWORT JETZT (Transkript, ggf. aus Diktat — Satzzeichen/Großschreibung nicht bewerten):\n"""${t}"""\nVergleiche meine Antwort mit dem Vorlage-Text. Отвечай по-русски, коротко:\n**Уровень:** A2 / B1 / выше (как звучит ответ на экзамене).\n**Совпадение с текстом:** примерно в % + какие пункты (Name, Land, Sprachen, Wohnort, Familie, Beruf, Hobby) пропущены.\n**Ошибки:** «❌ сказала → ✅ в тексте» — только настоящие грамматические ошибки и потерянные связки (weil, obwohl, deshalb…); если я сказала по-другому, но правильно — это НЕ ошибка, просто отметь «👍 своими словами».\n**Что повторить:** 2–3 предложения из текста, которые выучить ещё раз.`);
 }
 const BILD_STEPS=[
  ['1. Начало: что на фото',['Auf dem Bild sehe ich …','Das Foto zeigt eine Situation aus dem Alltag.','Auf dem Foto geht es um das Thema … (Einkaufen, Familie, Arbeit …)']],
@@ -2742,40 +2835,44 @@ function planTpl(){return `<div class="why"><b>Как вести Teil 3:</b> и�
  <h4>Если не поняла партнёра</h4><ul>${PLAN_RESCUE.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
  <p class="small muted">Порядок слов: dass / wenn / weil / ob → глагол в конец · Lass uns / Wir könnten → инфинитив в конец.</p>`;}
 function viewPlanTpl(){screen('📋 Фразы для Teil 3',`<p class="muted">Teil 3 «Gemeinsam etwas planen» — около 6 минут вдвоём.</p><div class="card">${planTpl()}</div>`);}
-function sp3(x){
+function sp3(x,o={}){
+  const L=o.label||'Teil 3',LIM=o.limit||360,EX=o.exam||'DTZ Sprechen Teil 3 (B1) «Gemeinsam etwas planen»',MEIN=o.mode==='mein';
+  const TASKD=MEIN?`${EX}. Frage: ${x.t} Mögliche Fragen des Prüfers: ${x.q.join(' ')}`:`${EX}. Aufgabe: ${x.t}. ${x.s}\nLeitpunkte: ${x.p.join('; ')}`;
+  const CRIT=MEIN?'Habe ich meine Meinung klar gesagt, sie mit Argumenten und Beispielen begründet, auf die Argumente des Partners reagiert (zustimmen/widersprechen), Fragen gestellt? War mein Redeanteil ungefähr die Hälfte?':'Wurden alle Leitpunkte besprochen? Habe ich Vorschläge gemacht, auf den Partner reagiert, zugestimmt/abgelehnt mit Begründung, Fragen gestellt, am Ende ein Ergebnis zusammengefasst? War mein Redeanteil ungefähr die Hälfte?';
   const LID3=sid('sp3live_'+x.t);
-  screen('Teil 3',`<div class="card"><h4>${esc(x.t)}</h4><p>${esc(x.s)}</p><h4>Обсудите и договоритесь:</h4><ul class="checks">${x.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
-  <details class="card"><summary>📋 Структура и фразы для Teil 3</summary>${planTpl()}</details>
+  screen(L,`${MEIN?`<div class="card"><h4>Was mögen/möchten Sie lieber? Warum?</h4><p style="font-size:24px;font-weight:800;margin:8px 0">${esc(x.t)}</p><p class="small">Begründen Sie Ihre Meinung und geben Sie Beispiele. Diskutieren Sie mit Ihrer Gesprächspartnerin / Ihrem Gesprächspartner.</p><p class="small muted">Возможные вопросы экзаменатора: ${x.q.map(esc).join(' · ')}</p></div>${timerBox('think',60,'1 минута подумать и сделать заметки — как на экзамене')}`:`<div class="card"><h4>${esc(x.t)}</h4><p>${esc(x.s)}</p><h4>Обсудите:</h4><ul class="checks">${x.p.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`}
+  <details class="card"><summary>📋 Фразы для ${L}</summary>${MEIN?meinTpl():planTpl()}</details>
   <h3>🤝 Диалог с партнёром</h3>
   <div class="seg full" id="m3"><button data-m="bot" class="on">🤖 С Claude</button><button data-m="live">👫 С живым партнёром</button></div>
   <div id="m-live" class="hidden">
    <p class="muted small">Партнёр (муж, подруга, кто угодно) смотрит на этот же лист с заданием — как на экзамене. Говорите по-немецки по очереди. Перед своей фразой нажимай <b>🎤 Я</b>, перед фразой партнёра — <b>🎤 Партнёр</b>: так Claude поймёт, где ты. Можно и просто записать текстом.</p>
-   ${timerBox('tm3l',360,'На экзамене Teil 3 — около 6 минут на двоих. Запусти, когда начнёте.')}
+   ${timerBox('tm3l',LIM,`На экзамене ${L} — около ${LIM/60} минут на двоих. Запусти, когда начнёте.`)}
    <textarea id="${LID3}" class="editor tall" placeholder="Ich: Hallo! Wollen wir zuerst über den Termin sprechen?&#10;Partner: Ja, gern. Wann hast du Zeit?">${esc(S.drafts[LID3]||'')}</textarea>
    <div class="row"><button class="ghost dict hidden" data-for="${LID3}" data-pre="Ich: " data-label="🎤 Я">🎤 Я</button><button class="ghost dict hidden" data-for="${LID3}" data-pre="Partner: " data-label="🎤 Партнёр">🎤 Партнёр</button><button class="ghost" id="l3clr">🗑</button></div>
    <button class="ai wide" id="l3ev">🤖 Оценить разговор</button><div id="l3out"></div>
   </div>
   <div id="m-bot"><p class="muted small">Claude играет твоего партнёра по экзамену. Отвечай короткими фразами, как в реальном разговоре. Голос партнёра звучит, если включён звук.</p>
-  <div class="timer" id="tmrbox"><span>⏱ <b id="tmr">6:00</b></span><small id="tmrtxt">На экзамене Teil 3 длится около 6 минут. Таймер начнётся с первой реплики.</small></div>
+  <div class="timer" id="tmrbox"><span>⏱ <b id="tmr">${LIM/60}:00</b></span><small id="tmrtxt">На экзамене ${L} длится около ${LIM/60} минут. Таймер начнётся с первой реплики.</small></div>
   <div id="chat" class="chat"></div>
   <div class="send"><textarea id="msg" class="editor short" placeholder="Hallo! Wollen wir zuerst über den Termin sprechen?"></textarea><button class="ghost dict hidden" data-for="msg">🎤</button><button class="ai" id="snd">➤</button></div>
   <div class="row"><button class="ghost" id="start">Партнёр начинает</button><button class="ai" id="eval">🤖 Оценить диалог</button></div><button class="link" id="again3">↺ Начать диалог заново</button><div id="evo"></div></div>`);
   document.querySelectorAll('#m3 button').forEach(b=>b.onclick=()=>{stopDict();document.querySelectorAll('#m3 button').forEach(y=>y.classList.toggle('on',y===b));$('#m-live').classList.toggle('hidden',b.dataset.m!=='live');$('#m-bot').classList.toggle('hidden',b.dataset.m==='live');});
-  wireTimer('tm3l',360,l=>l<=60?'Осталась минута — подводите итог: «Also, fassen wir zusammen…»':null);
+  wireTimer('think',60);wireTimer('tm3l',LIM,l=>l<=60?'Осталась минута — подводите итог: «Also, fassen wir zusammen…»':null);
   {const ta=$('#'+LID3);ta.oninput=()=>{S.drafts[LID3]=ta.value;save();};
    $('#l3clr').onclick=()=>{ta.value='';delete ta.dataset.lastPre;delete S.drafts[LID3];save();$('#l3out').innerHTML='';};
    capReady.then(()=>{if(DICT)document.querySelectorAll('#m-live .dict').forEach(b=>{b.classList.remove('hidden');wireDict(b);});});
    $('#l3ev').onclick=async()=>{const t=ta.value.trim();if(!t)return toast('Сначала запиши разговор');const out=$('#l3out');out.innerHTML='<p class="muted">Claude проверяет…</p>';
-    const P=`DTZ Sprechen Teil 3 (B1) «Gemeinsam etwas planen». Aufgabe: ${x.t}. ${x.s}\nLeitpunkte: ${x.p.join('; ')}\nTranskript eines echten Gesprächs mit einem Partner (Zeilen «Ich:» = ich, «Partner:» = mein Partner; fehlt die Markierung, erkenne die Sprecher selbst). Es ist ein Diktat-Transkript: Satzzeichen und Großschreibung nicht bewerten.\n---\n${t}\n---\nBewerte NUR meine Beiträge («Ich»), Fehler des Partners nicht bewerten. Prüfe: Wurden alle Leitpunkte besprochen? Habe ich Vorschläge gemacht, auf den Partner reagiert, zugestimmt/abgelehnt mit Begründung, Fragen gestellt, am Ende ein Ergebnis zusammengefasst? War mein Redeanteil ungefähr die Hälfte?\n${FB}`;
+    const P=`${TASKD}\nTranskript eines echten Gesprächs mit einem Partner (Zeilen «Ich:» = ich, «Partner:» = mein Partner; fehlt die Markierung, erkenne die Sprecher selbst). Es ist ein Diktat-Transkript: Satzzeichen und Großschreibung nicht bewerten.\n---\n${t}\n---\nBewerte NUR meine Beiträge («Ich»), Fehler des Partners nicht bewerten. Prüfe: ${CRIT}\n${FB}`;
     try{const r=await ask(P,{onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>',nocache:true});markDone(sid('sp3_'+x.t),r,'sprechen');}catch(e){showErr(out,e,'Ошибка');}};}
-  const hist=[];const chat=$('#chat');const LIMIT=360;let t0=0,tick=null,ended=false;
+  const hist=[];const chat=$('#chat');const LIMIT=LIM;let t0=0,tick=null,ended=false;
   const left=()=>t0?Math.max(0,LIMIT-Math.round((Date.now()-t0)/1000)):LIMIT;
   const startTimer=()=>{if(t0)return;t0=Date.now();const tmrEl=$('#tmr');tick=setInterval(()=>{const el=tmrEl;if(!document.body.contains(el)){clearInterval(tick);return;}const s=left();el.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
     el.parentNode.parentNode.classList.toggle('warn',s<=60&&s>0);
     if(s<=60&&s>0)$('#tmrtxt').textContent='Осталась минута — пора подводить итог: «Also, fassen wir zusammen…»';
-    if(s===0){clearInterval(tick);finish('⏰ Время вышло (6 минут). Нажми «Оценить диалог».');}},1000);};
+    if(s===0){clearInterval(tick);finish(`⏰ Время вышло (${LIM/60} минут). Нажми «Оценить диалог».`);}},1000);};
   const finish=(msg)=>{if(ended)return;ended=true;clearInterval(tick);$('#tmrbox').classList.add('over');$('#tmrtxt').textContent=msg;$('#msg').disabled=true;$('#snd').disabled=true;stopSpeak&&0;};
-  const sys=`Wir üben DTZ Sprechen Teil 3 (B1): gemeinsam etwas planen. Aufgabe: ${x.t}. Situation: ${x.s}. Punkte: ${x.p.join(' ')}. Du bist mein Prüfungspartner. Antworte IMMER nur mit 1–3 kurzen, natürlichen Sätzen auf einfachem B1-Deutsch, mach eigene Vorschläge, widersprich manchmal freundlich, stelle eine Rückfrage. Keine Korrekturen, kein Russisch, keine Erklärungen. Das Gespräch dauert wie in der Prüfung nur ca. 6 Minuten: Wenn alle Punkte besprochen sind oder die Zeit fast um ist, fasse in 1–2 Sätzen zusammen, verabschiede dich und schreibe ganz am Ende [ENDE].`;
+  const sys=MEIN?`Wir üben ${EX}: Meinung begründen. Frage: ${x.t} Du bist mein Prüfungspartner. Vertritt eine ANDERE Meinung als ich (oder, wenn ich noch nichts gesagt habe, wähle eine Seite). Antworte IMMER nur mit 1–3 kurzen, natürlichen Sätzen auf einfachem B1-Deutsch: nenne ein Argument oder Beispiel, reagiere auf mein Argument und stelle eine Rückfrage (z. B. «Warum?», «Was machst du selbst?»). Keine Korrekturen, kein Russisch. Das Gespräch dauert nur ca. ${LIM/60} Minuten: Wenn die Zeit fast um ist, fasse kurz zusammen («Wir sehen das unterschiedlich, aber …») und schreibe ganz am Ende [ENDE].`
+   :`Wir üben ${EX}. Aufgabe: ${x.t}. Situation: ${x.s}. Punkte: ${x.p.join(' ')}. Du bist mein Prüfungspartner. Antworte IMMER nur mit 1–3 kurzen, natürlichen Sätzen auf einfachem B1-Deutsch, mach eigene Vorschläge, widersprich manchmal freundlich, stelle eine Rückfrage. Keine Korrekturen, kein Russisch, keine Erklärungen. Das Gespräch dauert wie in der Prüfung nur ca. ${LIM/60} Minuten: Wenn alle Punkte besprochen sind oder die Zeit fast um ist, fasse in 1–2 Sätzen zusammen, verabschiede dich und schreibe ganz am Ende [ENDE].`;
   const add=(who,t)=>{chat.insertAdjacentHTML('beforeend',`<div class="bub ${who}">${esc(t)}</div>`);chat.scrollTop=chat.scrollHeight;};
   const turn=async(userText)=>{
     if(ended)return;startTimer();
@@ -2790,23 +2887,23 @@ function sp3(x){
   };
   capReady.then(()=>{if(DICT)document.querySelectorAll('.dict').forEach(b=>{b.classList.remove('hidden');wireDict(b);});});
   $('#start').onclick=()=>{if(!hist.length)turn(null);};
-  $('#again3').onclick=()=>sp3(x);
+  $('#again3').onclick=()=>sp3(x,o);
   $('#snd').onclick=()=>{const v=$('#msg').value.trim();if(!v)return;$('#msg').value='';turn(v);};
   $('#eval').onclick=async()=>{
     const mine=hist.filter(h=>h.role==='user').map(h=>h.content);if(!mine.length)return toast('Сначала поговори с партнёром');
     const out=$('#evo');out.innerHTML='<p class="muted">Claude проверяет…</p>';
-    try{await ask(`DTZ Sprechen Teil 3 (B1), Aufgabe: ${x.t}. Dialog (A = ich, B = Partner):\n${hist.map(h=>(h.role==='user'?'A: ':'B: ')+h.content).join('\n')}\nBewerte NUR meine Beiträge (A). Habe ich Vorschläge gemacht, reagiert, zugestimmt/abgelehnt mit Begründung, alle Punkte besprochen?\n${FB}`,{onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>',nocache:true}).then(r=>markDone(sid('sp3_'+x.t),r,'sprechen'));}
+    try{await ask(`${TASKD}\nDialog (A = ich, B = Partner):\n${hist.map(h=>(h.role==='user'?'A: ':'B: ')+h.content).join('\n')}\nBewerte NUR meine Beiträge (A). ${CRIT}\n${FB}`,{onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>',nocache:true}).then(r=>markDone(sid('sp3_'+x.t),r,'sprechen'));}
     catch(e){showErr(out,e);}
   };
 }
 
 // ===================== SCHREIBEN =====================
-function viewSchreiben(){
+function viewSchreibenDTZ(){
   const all=SCHREIBEN_REAL.concat(SCHREIBEN,S.wr||[]);
-  screen('Schreiben',`<p class="muted">В DTZ выбираешь одно из двух заданий и пишешь письмо/e-mail (~80 слов, 30 минут) по 4 пунктам. Не забывай: обращение, все 4 пункта, прощание.</p>
+  screen('Schreiben · DTZ',`<p class="muted">В DTZ выбираешь одно из двух заданий и пишешь письмо/e-mail (~80 слов, 30 минут) по 4 пунктам. Не забывай: обращение, все 4 пункта, прощание.</p>
   <button class="wide" id="rnd">🎲 Случайная тема</button>
   ${all.map((x,i)=>`<button class="item" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.s)}</small></div>${(S.done||{})[sid('wr_'+x.t)]?badge(S.done[sid('wr_'+x.t)]):(S.drafts[sid('wr_'+x.t)]?'<em>✎</em>':'')}</button>`).join('')}
-  <button class="wide ghost ai" id="nw">🤖 Новая тема от Claude</button>`,false);
+  <button class="wide ghost ai" id="nw">🤖 Новая тема от Claude</button>`);
   document.querySelectorAll('.item').forEach(b=>b.onclick=()=>{push(viewSchreiben);wr(all[+b.dataset.i]);});
   $('#rnd').onclick=()=>{push(viewSchreiben);wr(all[Math.floor(Math.random()*all.length)]);};
   $('#nw').onclick=async()=>{toast('Claude придумывает…');try{const x=await askJSON(`Erfinde eine neue Schreibaufgabe für DTZ (B1), Alltag in Deutschland. Nicht: ${all.map(a=>a.t).join(', ')}. Format: {"t":"Titel","k":"formell" oder "informell","s":"Situation in 1–2 Sätzen","p":["4 kurze Leitpunkte"]}`,{nocache:true});S.wr.push(x);save();push(viewSchreiben);wr(x);}catch(e){toast(e.message||'Ошибка');}};
@@ -2841,22 +2938,135 @@ function wr(x){
   wireTimer('tmw',1800);
 }
 
+// ===================== telc: SPRECHEN =====================
+function meinTpl(){return `<div class="why"><b>Как вести Teil 3:</b> скажи, что тебе нравится больше, и сразу объясни почему (weil / denn) + пример из своей жизни. Потом реагируй на партнёра: согласись или возрази с аргументом, задай вопрос. Убедить партнёра не нужно.</div>${MEIN_PHR.map(([h,l])=>`<h4>${h}</h4><ul>${l.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('')}`;}
+function viewSprechen(){
+  const P=TELC_PLAN,M=TELC_MEINUNG,dn=t=>badge((S.done||{})[sid('sp3_'+t)]);
+  screen('Sprechen',`<p class="muted">Устная часть telc Deutsch A2·B1 — около 15 минут, вдвоём с партнёром, без времени на подготовку. 1A — о себе (~1,5 мин), 1B — вопросы экзаменатора (~1 мин), Teil 2 — вместе спланировать (~5 мин), Teil 3 — обсудить мнения (~5 мин).</p>
+  <h3>Teil 1A · Sich vorstellen</h3>
+  <button class="item" id="ta"><span>👋</span><div><b>Рассказ о себе</b><small>Name, Land, Sprachen, Wohnort, Familie, Beruf, Hobby · 1,5 мин</small></div>${badge((S.done||{}).tp1a)}</button>
+  ${MINE?`<button class="item" id="t1me"><span>📄</span><div><b>Мой рассказ о себе</b><small>мой текст: выучить и проверить</small></div>${badge((S.done||{}).spme)}</button>`:''}
+  <h3>Teil 1B · Anschlussfragen beantworten</h3>
+  <button class="item" id="tb"><span>❓</span><div><b>Вопросы экзаменатора</b><small>2–3 уточняющих вопроса после рассказа · ~1 мин</small></div>${badge((S.done||{}).tp1b)}</button>
+  <h3>Teil 2 · Gemeinsam etwas planen <small>(${P.length})</small></h3>
+  <button class="item" id="tpl3"><span>📋</span><div><b>Фразы для планирования</b><small>предложить, согласиться, возразить</small></div></button>
+  <div class="t3list">${P.map((x,i)=>`<button class="item tp2" data-i="${i}"><span class="num">${i+1}</span><div><b>${esc(x.t)}</b><small>${esc(x.p.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}</div>
+  <h3>Teil 3 · Meinung begründen <small>(${M.length})</small></h3>
+  <button class="item" id="tplm"><span>📋</span><div><b>Фразы для мнения</b><small>сказать мнение, обосновать, возразить</small></div></button>
+  <div class="t3list">${M.map((x,i)=>`<button class="item tp3" data-i="${i}"><span class="num">${i+1}</span><div><b>${esc(x.t)}</b></div>${dn(x.t)}</button>`).join('')}</div>
+  <details class="card"><summary>Задания DTZ (другой экзамен)</summary><button class="item" id="dtz"><span>📦</span><div><b>Sprechen DTZ</b><small>описание картинки и прочее — для telc не нужно</small></div></button></details>`,false);
+  $('#ta').onclick=()=>{push(viewSprechen);tp1a();};$('#tb').onclick=()=>{push(viewSprechen);tp1b();};
+  if($('#t1me'))$('#t1me').onclick=()=>{push(viewSprechen);spIntro();};
+  $('#tpl3').onclick=()=>{push(viewSprechen);viewPlanTpl();};
+  $('#tplm').onclick=()=>{push(viewSprechen);screen('📋 Фразы: Meinung begründen',`<div class="card">${meinTpl()}</div>`);};
+  document.querySelectorAll('.tp2').forEach(b=>b.onclick=()=>{push(viewSprechen);sp3(P[+b.dataset.i],{label:'Teil 2',limit:300,exam:'telc Deutsch A2·B1, Sprechen Teil 2 «Gemeinsam etwas planen» (Einigung nicht zwingend)'});});
+  document.querySelectorAll('.tp3').forEach(b=>b.onclick=()=>{push(viewSprechen);sp3(M[+b.dataset.i],{label:'Teil 3',limit:300,mode:'mein',exam:'telc Deutsch A2·B1, Sprechen Teil 3 «Meinung begründen»'});});
+  $('#dtz').onclick=()=>{push(viewSprechen);viewSprechenDTZ();};
+}
+function tp1a(){
+  screen('Teil 1A',`<div class="card"><h4>Stellen Sie sich vor. Diese Stichpunkte können Ihnen helfen.</h4><p style="font-size:19px;line-height:1.9;margin:6px 0">${TELC_STICH.join(' · ')}</p><p class="small muted">Пункты — подсказка, не обязательный список. Говори около 1,5 минуты, связно, с weil / deshalb / seit.</p></div>
+  ${timerBox('tm1a',90,'На экзамене Teil 1A — около 1,5 минуты на человека.')}
+  ${MINE?`<button class="item" id="myi"><span>📄</span><div><b>Мой рассказ о себе</b><small>твой выученный текст</small></div></button>`:''}
+  ${practiceBox('tp1a')}`);
+  wireTimer('tm1a',90);if($('#myi'))$('#myi').onclick=()=>{push(tp1a);spIntro();};
+  wirePractice('tp1a',t=>`Ich übe telc Deutsch A2·B1, Sprechen Teil 1A «Sich vorstellen» (ca. 1,5 Minuten). Stichpunkte: ${TELC_STICH.join(', ')}.\nMein Transkript (Diktat, Satzzeichen nicht bewerten):\n"""${t}"""\nBewerte nach telc-Kriterien (Aufgabenbewältigung, Flüssigkeit/Zusammenhang, Korrektheit, Wortschatz). Сначала скажи, каких пунктов не хватает.\n${FB}`);
+}
+function tp1b(){
+  const pickQ=()=>shuffle(TELC_STICH.slice()).slice(0,3).map(k=>{const l=TELC_1B[k];return l[Math.floor(Math.random()*l.length)];});
+  let qs=pickQ(),show=false;
+  const render=()=>{
+    screen('Teil 1B',`<p class="muted">После рассказа о себе экзаменатор задаёт несколько уточняющих вопросов (около 1 минуты). Вопросы только звучат — нажми 🔊 и отвечай 2–3 предложениями, с причиной (weil …) или примером.</p>
+    ${timerBox('tm1b',60,'На экзамене Teil 1B — около 1 минуты на человека.')}
+    <div class="seg full" id="qv"><button class="${show?'':'on'}" data-v="0">Вопросы скрыты</button><button class="${show?'on':''}" data-v="1">Показать текст</button></div>
+    ${qs.map((q,i)=>`<div class="card"><div class="row between"><b>Frage ${i+1}</b><button class="ghost" data-say="${i}">🔊 Слушать</button></div><p style="${show?'':'filter:blur(6px);user-select:none'}">${esc(q)}</p><textarea id="tp1b_${i}" class="editor short" placeholder="Antwort …"></textarea><button class="ghost dict hidden" data-for="tp1b_${i}">🎤 Диктовать</button></div>`).join('')}
+    <div class="row"><button class="ghost" id="qnew">🔄 Другие вопросы</button>${MINE?'<button class="ghost ai" id="qmy">🤖 По моему рассказу</button>':''}</div>
+    <button class="ai wide" id="b1ev">🤖 Оценить ответы</button><div id="b1out"></div>`);
+    wireTimer('tm1b',60);
+    document.querySelectorAll('#qv button').forEach(b=>b.onclick=()=>{show=b.dataset.v==='1';render();});
+    document.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speakLines([{s:'A',t:qs[+b.dataset.say]}]));
+    capReady.then(()=>{if(DICT)document.querySelectorAll('.dict').forEach(b=>{b.classList.remove('hidden');wireDict(b);});});
+    $('#qnew').onclick=()=>{qs=pickQ();render();};
+    if($('#qmy'))$('#qmy').onclick=async()=>{toast('Claude придумывает вопросы…');try{const j=await askJSON(`Hier ist meine Vorstellung für telc Deutsch A2·B1 Sprechen Teil 1A:\n"""${S.myIntro||INTRO_DEFAULT}"""\nStelle als Prüfer 3 kurze Anschlussfragen (Teil 1B) zu meinem Text, B1-Niveau, mit diesen Grammatikpunkten: Präteritum, Konjunktiv II, Passiv, Modalverben, «seit wann», «warum», «als …». Format: {"q":["…","…","…"]}`,{nocache:true});if(j.q&&j.q.length){qs=j.q.slice(0,3);render();}}catch(e){toast(e.message||'Ошибка');}};
+    $('#b1ev').onclick=async()=>{const ans=qs.map((q,i)=>`Frage: ${q}\nAntwort: ${$('#tp1b_'+i).value.trim()||'(keine Antwort)'}`).join('\n\n');
+      if(!qs.some((q,i)=>$('#tp1b_'+i).value.trim()))return toast('Сначала ответь хотя бы на один вопрос');
+      const out=$('#b1out');out.innerHTML='<p class="muted">Claude проверяет…</p>';
+      try{const r=await ask(`Ich übe telc Deutsch A2·B1, Sprechen Teil 1B «Anschlussfragen beantworten». Diktat-Transkript, Satzzeichen nicht bewerten.\n${ans}\nPrüfe: Habe ich jede Frage passend und ausführlich genug beantwortet (Begründung/Beispiel, richtige Zeitform wie in der Frage)?\n${FB}`,{nocache:true,onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>'});markDone('tp1b',r,'sprechen');}catch(e){showErr(out,e,'Ошибка');}};
+  };
+  render();
+}
+// ===================== telc: SCHREIBEN =====================
+function viewSchreiben(){
+  const dn=t=>{const v=(S.done||{})[sid('tw_'+t)];return v?badge(v):(S.drafts[sid('tw_'+t)]?'<em>✎</em>':'');};
+  screen('Schreiben',`<p class="muted">Schreiben в telc A2·B1 — две задачи. ✉️ <b>Ответить на e-mail</b>: ответить на <b>все 3 вопроса</b> из письма, с обращением и прощанием (в блоке 35 минут вместе со Sprachbausteine). 💬 <b>Короткое сообщение</b>: ответить на вопрос в чате, «больше одного слова» (10 минут).</p>
+  <details class="card"><summary>📋 Как отвечать, чтобы получить B1</summary><ul>
+   <li>Каждому вопросу — свой абзац, отвечай подробно: ответ + причина (weil / denn) + деталь.</li>
+   <li>Обращение по тону письма: «Liebe Petra,» / «Hallo Markus,» или «Sehr geehrte Frau Keller,», в конце «Viele Grüße» / «Mit freundlichen Grüßen».</li>
+   <li>Начало: «vielen Dank für deine / Ihre E-Mail.» Конец: «Ich freue mich auf …» / «Bis bald!»</li>
+   <li>Связки: außerdem, deshalb, trotzdem, wenn, dass, obwohl — это критерий «Kommunikative Gestaltung».</li>
+   <li>Kurznachricht: ответь на вопрос и добавь 1–2 детали (когда, с кем, почему). Одно слово = 0 баллов.</li></ul></details>
+  <h3>✉️ E-Mail beantworten <small>(${TELC_MAIL.length})</small></h3>
+  ${TELC_MAIL.map((x,i)=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.q.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}
+  <h3>💬 Kurznachricht <small>(${TELC_KURZ.length})</small></h3>
+  ${TELC_KURZ.map((x,i)=>`<button class="item tk" data-i="${i}"><span>💬</span><div><b>${esc(x.c)}</b><small>${esc(x.a)}</small></div>${dn(x.a)}</button>`).join('')}
+  <details class="card"><summary>Письма DTZ (другой экзамен)</summary><button class="item" id="dtzw"><span>📦</span><div><b>Schreiben DTZ</b><small>письма по 4 пунктам</small></div></button></details>`,false);
+  document.querySelectorAll('.tm').forEach(b=>b.onclick=()=>{push(viewSchreiben);twMail(TELC_MAIL[+b.dataset.i]);});
+  document.querySelectorAll('.tk').forEach(b=>b.onclick=()=>{push(viewSchreiben);twKurz(TELC_KURZ[+b.dataset.i]);});
+  $('#dtzw').onclick=()=>{push(viewSchreiben);viewSchreibenDTZ();};
+}
+function twEditor(id,ph,target,secs,tlabel){return `${timerBox('tmw',secs,tlabel)}
+  <textarea id="${id}" class="editor ${target>40?'tall':''}" placeholder="${ph}">${esc(S.drafts[id]||'')}</textarea>
+  <div class="row between"><small id="wc" class="muted"></small><button class="link" id="wclr" style="display:inline;padding:0 8px">🗑 Очистить</button><label class="ghost btnl">📷 Фото текста<input type="file" accept="image/*" id="ph" hidden></label></div>
+  <div id="phv"></div><button class="ghost dict hidden" data-for="${id}">🎤 Диктовать</button>
+  <button class="wide ai" id="chk">🤖 Проверить</button><div id="out"></div>`;}
+function twWire(id,target,secs,promptFn){
+  let photo=null;const ta=$('#'+id);const wc=()=>{const n=(ta.value.trim().match(/\S+/g)||[]).length;$('#wc').textContent=`${n} слов · ориентир ${target}`;};
+  ta.oninput=()=>{S.drafts[id]=ta.value;save();wc();};wc();wireTimer('tmw',secs);
+  capReady.then(()=>{if(DICT)document.querySelectorAll('.dict').forEach(b=>{b.classList.remove('hidden');wireDict(b);});});
+  $('#wclr').onclick=()=>{ta.value='';delete S.drafts[id];save();wc();$('#out').innerHTML='';};
+  $('#ph').onchange=e=>{photo=e.target.files[0]||null;if(photo){const u=URL.createObjectURL(photo);$('#phv').innerHTML=`<div class="phv"><img src="${u}"><button class="link" id="rmph">убрать фото</button></div>`;$('#rmph').onclick=()=>{photo=null;$('#phv').innerHTML='';};}};
+  $('#chk').onclick=async()=>{const t=ta.value.trim();if(!t&&!photo)return toast('Напиши текст или прикрепи фото');
+    const out=$('#out');out.innerHTML='<p class="muted">Claude проверяет…</p>';
+    try{const r=await ask(promptFn(t,photo),{images:photo?[photo]:[],nocache:true,onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>'});markDone(id,r,'schreiben');}catch(e){showErr(out,e,'Ошибка');}};
+}
+const TW_FB=`Отвечай по-русски. Структура:
+**Оценка:** уровень (B1 gut erfüllt / B1 erfüllt / A2 gut erfüllt / A2 erfüllt / unter A2) по критериям telc: I Kommunikative Aufgabenbewältigung, II Kommunikative Gestaltung (связность, связки, обращение/прощание, регистр), III Formale Richtigkeit, IV Spektrum sprachlicher Mittel — по каждому критерию одна строка.
+**Ошибки:** «❌ → ✅ (объяснение)», до 10 штук.
+**Исправленный текст:** (по-немецки, сохраняя мой стиль, уровень B1).
+**Совет:** 1–2 конкретных совета.`;
+function twMail(x){
+  const id=sid('tw_'+x.t);
+  screen('E-Mail beantworten',`<div class="card"><span class="chip">${x.k==='formell'?'официальное':'личное'}</span><p class="small muted">Von: ${esc(x.from)}<br>Betreff: ${esc(x.betreff)}</p><div class="read">${esc(x.text).replace(/\n/g,'<br>')}</div>
+  <p class="small"><b>Schreiben Sie eine E-Mail. Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p>
+  <ul class="checks">${x.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div>
+  ${twEditor(id,x.k==='formell'?'Sehr geehrte Frau …,':'Liebe … / Hallo …,',80,1500,'Ориентир ~25 минут (весь блок со Sprachbausteine — 35 минут).')}
+  <details class="card"><summary>Пример ответа</summary><div id="mod"><button class="link" id="mk">🤖 Показать образец</button></div></details>`);
+  twWire(id,'70–100',1500,(t,photo)=>`telc Deutsch A2·B1, «Lesen und Schreiben»: Antwort auf eine E-Mail. Die erhaltene E-Mail:\n"""${x.text}"""\nDie 3 Fragen: ${x.q.join('; ')}.\n${photo?'Mein handgeschriebener Text ist auf dem Foto. Lies ihn zuerst ab (schreib ihn unter **Твой текст:** ab).\n':''}${t?`Meine Antwort:\n"""${t}"""\n`:''}Bewerte streng nach telc: Kriterium I (A: alle 3 Fragen umfassend, präzise und angemessen beantwortet … F: nicht bearbeitet). Сначала по каждому из 3 вопросов: ✅ ответила подробно / ⚠️ кратко / ❌ нет ответа.\n${TW_FB}`);
+  $('#mk').onclick=async()=>{const m=$('#mod');m.innerHTML='<p class="muted">…</p>';try{await ask(`Schreibe eine Musterantwort (ca. 90 Wörter, Niveau B1) auf diese E-Mail für telc Deutsch A2·B1. Beantworte alle 3 Fragen ausführlich, mit Anrede und Gruß, Register: ${x.k}.\n"""${x.text}"""\nNur die E-Mail, danach eine Zeile "**Связки:**" mit 4 nützlichen Konnektoren aus dem Text.`,{onText:({text})=>m.innerHTML=md(text)});}catch(e){showErr(m,e);}};
+}
+function twKurz(x){
+  const id=sid('tw_'+x.a);
+  screen('Kurznachricht',`<p class="small"><b>Sie haben folgende Kurznachricht bekommen. Antworten Sie. Schreiben Sie mehr als ein Wort. Zeigen Sie, was Sie können.</b></p>
+  <div class="chat"><div class="bub pt">${esc(x.a)}</div><div class="bub me">${esc(x.b)}</div><div class="bub pt">${esc(x.c)}</div></div>
+  ${twEditor(id,'…',20,600,'На экзамене — 10 минут.')}`);
+  twWire(id,'20–40',600,(t,photo)=>`telc Deutsch A2·B1, Schreiben (Kurznachricht, 10 Minuten). Chat:\nA: ${x.a}\nIch: ${x.b}\nA: ${x.c}\n${photo?'Mein Text ist auf dem Foto, lies ihn zuerst ab (unter **Твой текст:**).\n':''}${t?`Meine Antwort:\n"""${t}"""\n`:''}Bewerte nach telc Kriterium I (A: greift den Inhalt auf, setzt die Kommunikation fort, Details sind enthalten … F: kein Bezug) und II–IV.\n${TW_FB}`);
+}
+
 // ===================== TESTS (HÖREN / LESEN) =====================
 function testsOf(kind){return (kind==='hoeren'?HOEREN_NEW.concat(HOEREN_MORE,HOEREN_SEED):LESEN_NEW.concat(LESEN_MORE,LESEN_SEED)).concat(S.gen[kind]||[]).concat(kind==='hoeren'?HOEREN_REAL:LESEN_REAL);}
 function viewTests(kind){
-  const H=kind==='hoeren';const list=testsOf(kind);
+  const H=kind==='hoeren';const list=(H&&MINE)?[]:testsOf(kind);
   screen(H?'Hören':'Lesen',`<p class="muted">${H?'Hören в telc Deutsch B1: 5 частей, 25 заданий, 35 минут. Teil 1 — разговор, сопоставить (2 раза), Teil 2 — рабочий разговор, richtig/falsch (1 раз), Teil 3 — 5 объявлений (2 раза), Teil 4 — мнения (1 раз), Teil 5 — автоответчик, записать заметку (2 раза). Озвучку можно замедлить.':'Lesen в DTZ: указатели, объявления, короткие тексты, письма с пропусками — 45 минут. Читай задание раньше текста и ищи ключевые слова.'}</p>
   ${H?`<label class="card row between" style="cursor:pointer"><span>🎓 Как на экзамене<br><small class="muted">сколько раз звучит запись — как на экзамене</small></span><input type="checkbox" id="exm" ${S.examMode?'checked':''} style="width:26px;height:26px;flex:none"></label>`:''}
   ${H?`<div class="row between card"><span>Скорость речи</span><div class="seg">${[0.8,0.95,1.1].map(r=>`<button class="${RATE===r?'on':''}" data-r="${r}">${r===0.8?'медленно':r===0.95?'нормально':'быстро'}</button>`).join('')}</div></div>`:''}
-  ${H?`<h3>🎯 telc Deutsch B1 — новые тесты</h3>${TLIST().map((t,i)=>`<button class="item" data-t="${i}"><span>🎧</span><div><b>${esc(t.name)}</b><small>${t.real?'настоящее аудио экзамена · ':''}5 частей · 25 заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>`).join('')}<details class="card"><summary>Тесты в формате DTZ (другой экзамен)</summary>`:'<h3>Новые тесты по образцу DTZ</h3>'}
+  ${H?`<h3>🎯 telc Deutsch B1 — новые тесты</h3>${TLIST().map((t,i)=>`<button class="item" data-t="${i}"><span>🎧</span><div><b>${esc(t.name)}</b><small>${t.real?'настоящее аудио экзамена · ':''}5 частей · 25 заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>`).join('')}${list.length?'<details class="card"><summary>Тесты в формате DTZ (другой экзамен)</summary>':'<div class="hidden">'}`:'<h3>Новые тесты по образцу DTZ</h3>'}
   ${list.map((t,i)=>`${t.real&&!(list[i-1]||{}).real?'<h3>Твои пробники (уже пройдены — для повторения)</h3>':''}<button class="item ${t.real?'done':''}" data-i="${i}"><span>${H?'🎧':'📖'}</span><div><b>${esc(t.name)}</b><small>${t.tasks.reduce((a,b)=>a+b.items.length,0)} заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>${(!t.real&&((list[i+1]||{}).real||i===list.length-1))?`<button class="wide ai" id="gen">🤖 Сгенерировать ещё один новый тест</button><div class="seg full" id="focus"><button class="on" data-f="">весь тест</button>${[1,2,3,4].concat(H?[]:[5]).map(n=>`<button data-f="${n}">Teil ${n}</button>`).join('')}</div><div id="gout"></div>`:''}`).join('')}
-  ${H?'</details>':''}`,false);
+  ${H?(list.length?'</details>':'</div>'):''}`,false);
   const exm=$('#exm');if(exm)exm.onchange=()=>{S.examMode=exm.checked;save();};
   document.querySelectorAll('.seg:not(.full) button').forEach(b=>b.onclick=()=>{RATE=+b.dataset.r;S.rate=RATE;save();viewTests(kind);});
   let focus='';document.querySelectorAll('#focus button').forEach(b=>b.onclick=()=>{focus=b.dataset.f;document.querySelectorAll('#focus button').forEach(x=>x.classList.toggle('on',x===b));});
   document.querySelectorAll('.item[data-i]').forEach(b=>b.onclick=()=>{push(()=>viewTests(kind));runTest(list[+b.dataset.i],kind);});
   document.querySelectorAll('.item[data-t]').forEach(b=>b.onclick=()=>{push(()=>viewTests(kind));runTest(TLIST()[+b.dataset.t],kind);});
-  $('#gen').onclick=()=>genTest(kind,focus);
+  if($('#gen'))$('#gen').onclick=()=>genTest(kind,focus);
 }
 async function genTest(kind,focus){
   const H=kind==='hoeren';const out=$('#gout');out.innerHTML='<p class="muted">Claude пишет новый тест… это может занять 1–2 минуты.</p>';
