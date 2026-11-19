@@ -2138,24 +2138,26 @@ function TH(id,name,P){
  // Teil 1
  const o1=P.t1.opts.map((o,k)=>let9[k]+'  '+o).join('\n');
  tasks.push({teil:'Teil 1',instr:'Sie hören ein Gespräch. Welche Information a–i passt zu welcher Aufgabe 1–5? Sie hören das Gespräch zweimal. '+P.t1.title,
-  text:`Beispiel: ${P.t1.ex[0]} → ${P.t1.ex[1]}\n\n${o1}`,plays:2,audio:nm(L(P.t1.dlg),P.t1.names),
+  text:`Beispiel: ${P.t1.ex[0]} → ${P.t1.ex[1]}\n\n${o1}`,plays:2,read:30,audio:nm(L(P.t1.dlg),P.t1.names),
   items:P.t1.items.map((q,k)=>({q:`${k+1}. ${q}`,o:[...let9],a:let9.indexOf(P.t1.ans[k]),why:P.t1.why[k]}))});
  // Teil 2
- tasks.push({teil:'Teil 2',instr:'Sie hören ein Gespräch. Sind die Aussagen 6–10 richtig oder falsch? Sie hören das Gespräch nur einmal. '+(P.t2.sit||''),plays:1,audio:nm(L(P.t2.dlg),P.t2.names),
+ tasks.push({teil:'Teil 2',instr:'Sie hören ein Gespräch. Sind die Aussagen 6–10 richtig oder falsch? Sie hören das Gespräch nur einmal. '+(P.t2.sit||''),plays:1,read:30,audio:nm(L(P.t2.dlg),P.t2.names),
   items:P.t2.st.map((q,k)=>({q:`${k+6}. ${q}`,o:['richtig','falsch'],a:P.t2.ans[k]==='+'?0:1,why:P.t2.why[k]}))});
- // Teil 3
- P.t3.forEach((x,i)=>tasks.push({teil:'Teil 3',instr:(i?'':'Sie hören fünf kurze Texte. Sind die Aussagen richtig oder falsch? Sie hören die Texte zweimal. ')+x[0],plays:2,audio:[{s:'N',t:x[1]}],
-  items:[{q:`${i+11}. ${x[2]}`,o:['richtig','falsch'],a:x[3]==='+'?0:1,why:x[4]}]}));
+ // Teil 3 — один блок: каждый текст звучит 2 раза подряд
+ {const seq=[],au=[];P.t3.forEach((x,i)=>{const intro={s:'N',n:'',t:`Nummer ${i+11}. ${x[0]}`},tx={s:'N',n:'',t:x[1]};seq.push([intro,tx],3000,[tx],5000);au.push({s:'N',n:`${i+11}. ${x[0]}`,t:x[1]});});
+ tasks.push({teil:'Teil 3',instr:'Sie hören fünf kurze Texte. Sind die Aussagen 11–15 richtig oder falsch? Sie hören die Texte zweimal.',plays:1,read:30,seq,audio:au,
+  items:P.t3.map((x,i)=>({q:`${i+11}. ${x[2]}`,o:['richtig','falsch'],a:x[3]==='+'?0:1,why:x[4]}))});}
  // Teil 4
  const let6='abcdef';const o4=P.t4.opts.map((o,k)=>let6[k]+'  … '+o).join('\n');
  const au4=[{s:'N',n:'Moderator',t:P.t4.mod},{s:'A',n:P.t4.ex[0],t:P.t4.ex[1]}];
  P.t4.p.forEach((x,k)=>{au4.push({s:'N',n:'Moderator',t:x[2]});au4.push({s:k%2?'A':'B',n:x[0],t:x[1]});});
  tasks.push({teil:'Teil 4',instr:`Sie hören fünf Meinungen zum Thema „${P.t4.topic}“. Welche Meinung a–f passt zu welcher Person 16–20? Sie hören die Meinungen nur einmal.`,
-  text:`Beispiel: ${P.t4.ex[0]} ${P.t4.verb[0]||'findet'}, dass … ${P.t4.ex[2]}\n\n${o4}`,plays:1,audio:au4,
+  text:`Beispiel: ${P.t4.ex[0]} ${P.t4.verb[0]||'findet'}, dass … ${P.t4.ex[2]}\n\n${o4}`,plays:1,read:30,audio:au4,
   items:P.t4.p.map((x,k)=>({q:`${k+16}. ${x[0]} ${P.t4.verb[k+1]||'meint'}, dass …`,o:[...let6],a:let6.indexOf(P.t4.ans[k]),why:P.t4.why[k]}))});
- // Teil 5
- P.t5.forEach((x,i)=>tasks.push({teil:'Teil 5 · Hören und Schreiben',instr:(i?'':'Sie hören fünf Sprachnachrichten. Ergänzen Sie die Telefonnotiz. Sie hören jede Nachricht zweimal. Schreiben Sie nur das Wichtigste (1–3 Wörter oder eine Zahl). '),plays:2,audio:[{s:i%2?'A':'B',t:x[2]}],
-  items:[{q:`${i+21}. ${x[0].join(' · ')}\n${x[1]}`,inp:true,acc:x[3],ans:x[4],why:x[5]}]}));
+ // Teil 5 — один блок: каждое сообщение 2 раза, пауза на запись
+ {const seq=[],au=[];P.t5.forEach((x,i)=>{const v=i%2?'A':'B',m={s:v,n:'',t:x[2]};seq.push([{s:'N',n:'',t:`Nummer ${i+21}.`},m],3000,[m],8000);au.push({s:v,n:`${i+21}. ${x[0].join(' · ')}`,t:x[2]});});
+ tasks.push({teil:'Teil 5 · Hören und Schreiben',instr:'Sie hören fünf Sprachnachrichten. Zu jeder Nachricht gibt es eine Aufgabe, 21–25. Sie hören jede Nachricht zweimal. Ergänzen Sie die Telefonnotiz (1–3 Wörter oder eine Zahl).',plays:1,read:20,seq,audio:au,
+  items:P.t5.map((x,i)=>({q:`${i+21}. ${x[0].join(' · ')}\n${x[1]}`,inp:true,acc:x[3],ans:x[4],why:x[5]}))});}
  return {id,name,fmt:'telc',tasks};
 }
 const TELC_H=[
@@ -2310,7 +2312,8 @@ TH('th5','🎧 telc Hören · Test 5',{
   [['Chef Herr Roth','Dienstplan geändert'],'Welcher Tag frei?','Hallo, hier ist Herr Roth. Ich muss den Dienstplan ändern. Sie arbeiten diese Woche am Samstag, dafür haben Sie am Montag frei. Passt das?',['montag'],'Montag','Ловушка: в субботу работать, свободный день — понедельник.']]
 })
 ];
-</script>
+
+/*TELCR*/</script>
 <script>const PUBLIC_BUILD=true;
 // ===================== STATE =====================
 const KEY='dtz-trainer-public-v1';
@@ -2845,14 +2848,14 @@ function viewTests(kind){
   screen(H?'Hören':'Lesen',`<p class="muted">${H?'Hören в telc Deutsch B1: 5 частей, 25 заданий, 35 минут. Teil 1 — разговор, сопоставить (2 раза), Teil 2 — рабочий разговор, richtig/falsch (1 раз), Teil 3 — 5 объявлений (2 раза), Teil 4 — мнения (1 раз), Teil 5 — автоответчик, записать заметку (2 раза). Озвучку можно замедлить.':'Lesen в DTZ: указатели, объявления, короткие тексты, письма с пропусками — 45 минут. Читай задание раньше текста и ищи ключевые слова.'}</p>
   ${H?`<label class="card row between" style="cursor:pointer"><span>🎓 Как на экзамене<br><small class="muted">сколько раз звучит запись — как на экзамене</small></span><input type="checkbox" id="exm" ${S.examMode?'checked':''} style="width:26px;height:26px;flex:none"></label>`:''}
   ${H?`<div class="row between card"><span>Скорость речи</span><div class="seg">${[0.8,0.95,1.1].map(r=>`<button class="${RATE===r?'on':''}" data-r="${r}">${r===0.8?'медленно':r===0.95?'нормально':'быстро'}</button>`).join('')}</div></div>`:''}
-  ${H?`<h3>🎯 telc Deutsch B1 — новые тесты</h3>${TELC_H.map((t,i)=>`<button class="item" data-t="${i}"><span>🎧</span><div><b>${esc(t.name)}</b><small>5 частей · 25 заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>`).join('')}<details class="card"><summary>Тесты в формате DTZ (другой экзамен)</summary>`:'<h3>Новые тесты по образцу DTZ</h3>'}
+  ${H?`<h3>🎯 telc Deutsch B1 — новые тесты</h3>${TLIST().map((t,i)=>`<button class="item" data-t="${i}"><span>🎧</span><div><b>${esc(t.name)}</b><small>${t.real?'настоящее аудио экзамена · ':''}5 частей · 25 заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>`).join('')}<details class="card"><summary>Тесты в формате DTZ (другой экзамен)</summary>`:'<h3>Новые тесты по образцу DTZ</h3>'}
   ${list.map((t,i)=>`${t.real&&!(list[i-1]||{}).real?'<h3>Твои пробники (уже пройдены — для повторения)</h3>':''}<button class="item ${t.real?'done':''}" data-i="${i}"><span>${H?'🎧':'📖'}</span><div><b>${esc(t.name)}</b><small>${t.tasks.reduce((a,b)=>a+b.items.length,0)} заданий${S.best[t.id]!=null?' · пройден':''}</small></div>${S.best[t.id]!=null?badge(S.best[t.id],scoreCls(S.best[t.id])):''}</button>${(!t.real&&((list[i+1]||{}).real||i===list.length-1))?`<button class="wide ai" id="gen">🤖 Сгенерировать ещё один новый тест</button><div class="seg full" id="focus"><button class="on" data-f="">весь тест</button>${[1,2,3,4].concat(H?[]:[5]).map(n=>`<button data-f="${n}">Teil ${n}</button>`).join('')}</div><div id="gout"></div>`:''}`).join('')}
   ${H?'</details>':''}`,false);
   const exm=$('#exm');if(exm)exm.onchange=()=>{S.examMode=exm.checked;save();};
   document.querySelectorAll('.seg:not(.full) button').forEach(b=>b.onclick=()=>{RATE=+b.dataset.r;S.rate=RATE;save();viewTests(kind);});
   let focus='';document.querySelectorAll('#focus button').forEach(b=>b.onclick=()=>{focus=b.dataset.f;document.querySelectorAll('#focus button').forEach(x=>x.classList.toggle('on',x===b));});
   document.querySelectorAll('.item[data-i]').forEach(b=>b.onclick=()=>{push(()=>viewTests(kind));runTest(list[+b.dataset.i],kind);});
-  document.querySelectorAll('.item[data-t]').forEach(b=>b.onclick=()=>{push(()=>viewTests(kind));runTest(TELC_H[+b.dataset.t],kind);});
+  document.querySelectorAll('.item[data-t]').forEach(b=>b.onclick=()=>{push(()=>viewTests(kind));runTest(TLIST()[+b.dataset.t],kind);});
   $('#gen').onclick=()=>genTest(kind,focus);
 }
 async function genTest(kind,focus){
@@ -2867,6 +2870,8 @@ async function genTest(kind,focus){
     S.gen[kind].push(t);save();out.innerHTML='';viewTests(kind);toast('Новый тест добавлен ✓');
   }catch(e){showErr(out,e,'Не получилось. Попробуй ещё раз или выбери одну часть (Teil).');}
 }
+let FLOWSTOP=null;
+const TLIST=()=>(typeof TELC_REAL!=='undefined'?TELC_REAL:[]).concat(TELC_H);
 const normA=s=>String(s||'').toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/é/g,'e').replace(/[^a-z0-9]/g,'');
 function runTest(test,kind){
   let ti=0,total=0,score=0;const H=kind==='hoeren',TC=test.fmt==='telc';const T0=Date.now(),TL=TC?2100:H?1500:2700,RID='tt'+T0;
@@ -2885,12 +2890,29 @@ function runTest(test,kind){
     <div class="timer small" id="${RID}"><span>⏱ <b></b></span><small>${TC?'telc Hören на экзамене — 35 минут':H?'Hören на экзамене — около 25 минут':'Lesen на экзамене — 45 минут'}</small></div>
     <span class="chip">${esc(t.teil||'')}</span><p class="instr">${esc(t.instr||'')}</p>
     ${t.src?`<div class="player real"><audio id="au" controls preload="metadata" src="${t.src}"></audio><small class="muted">Настоящее аудио экзамена: включи и отвечай, как на экзамене. Паузы между текстами — это нормально.</small></div>`:''}
-    ${t.audio?`<div class="player"><button id="play" class="playbtn">▶</button><div><b>Прослушать</b><small id="pc">на экзамене: ${t.plays||1}×</small></div></div>`:''}
+    ${t.audio&&TC?`<div class="player"><button id="play" class="playbtn">▶</button><div style="flex:1"><b id="pst">Старт как на экзамене</b><small id="pc">${t.read||30} сек на чтение заданий, потом запись — ${t.seq?'каждый текст 2 раза':(t.plays||1)===2?'2 раза':'1 раз'}, с паузами</small></div><button class="link hidden" id="skip">пропустить ⏭</button></div>`:t.audio?`<div class="player"><button id="play" class="playbtn">▶</button><div><b>Прослушать</b><small id="pc">на экзамене: ${t.plays||1}×</small></div></div>`:''}
     ${t.text?`<div class="read">${esc(t.text).replace(/\n/g,'<br>')}</div>`:''}
     ${t.items.map((it,k)=>`<div class="card"><p class="q">${t.items.length>1&&!TC?`<b>${k+1}.</b> `:''}${esc(it.q).replace(/\n/g,'<br>')}</p>${it.inp?`<input class="inp" data-k="${k}" placeholder="Ответ…" autocomplete="off"><div class="fbk"></div>`:`<div class="opts ${it.o.every(o=>o.length<=2)?'compact':''}" data-k="${k}">${it.o.map((o,j)=>`<button class="opt" data-j="${j}">${esc(o)}</button>`).join('')}</div><div class="fbk"></div>`}</div>`).join('')}
     <div id="tr"></div>
     <button class="wide" id="check">Проверить</button><button class="wide hidden" id="nx">Дальше →</button>`);
-    if(t.audio){
+    if(t.audio&&TC){
+      const pb=$('#play'),st=$('#pst'),pc=$('#pc'),sk=$('#skip');let run=0,flows=0,tmo=null,skipFn=null;
+      const seq=t.seq||((t.plays||1)===2?[t.audio,5000,t.audio]:[t.audio]);const nA=seq.filter(x=>Array.isArray(x)).length;
+      const stop=()=>{run++;clearTimeout(tmo);clearInterval(tmo);stopSpeak();pb.dataset.on='';pb.textContent='▶';sk.classList.add('hidden');};
+      pb.onclick=()=>{
+        if(pb.dataset.on){stop();st.textContent='Остановлено';pc.textContent='Нажми ▶, чтобы начать заново';return;}
+        if(S.examMode&&flows>=1){toast('Режим экзамена: запись уже прозвучала');return;}
+        flows++;const my=++run;pb.dataset.on=1;pb.textContent='■';
+        let left=t.read||30;sk.classList.remove('hidden');st.textContent='📖 Lesen Sie jetzt die Aufgaben';pc.textContent=`осталось ${left} сек`;
+        const go=()=>{if(my!==run)return;clearInterval(tmo);sk.classList.add('hidden');let i=0,k=0;
+          const next=()=>{if(my!==run||!document.body.contains(pb))return;if(i>=seq.length){pb.dataset.on='';pb.textContent='▶';st.textContent='✅ Запись закончилась';pc.textContent='Отметь ответы и нажми «Проверить»';if(S.examMode){pb.disabled=true;pb.style.opacity=.4;}return;}
+            const x=seq[i++];if(typeof x==='number'){st.textContent='⏸ Пауза';tmo=setTimeout(next,x);return;}
+            k++;st.textContent=nA>2?`🔊 Text ${Math.ceil(k/2)} · ${k%2?'1-й':'2-й'} раз`:`🔊 Hören · ${k}-й раз из ${nA}`;pc.textContent='слушай и отмечай ответы';speakLines(x,next);};
+          next();};
+        skipFn=go;tmo=setInterval(()=>{if(my!==run||!document.body.contains(pb)){clearInterval(tmo);return;}left--;pc.textContent=`осталось ${left} сек`;if(left<=0)go();},1000);
+      };
+      sk.onclick=()=>skipFn&&skipFn();FLOWSTOP=stop;
+    }else if(t.audio){
       const pb=$('#play');pb.onclick=()=>{if(pb.dataset.on){stopSpeak();pb.dataset.on='';pb.textContent='▶';return;}
         if(S.examMode&&plays>=(t.plays||1)){toast('Режим экзамена: больше прослушиваний нет');return;}plays++;pb.dataset.on=1;pb.textContent='■';
         $('#pc').textContent=`прослушано ${plays}× (на экзамене: ${t.plays||1}×)`;
@@ -2900,7 +2922,7 @@ function runTest(test,kind){
     $('#check').onclick=()=>{
       const nAns=t.items.filter((it,k)=>it.inp?(document.querySelector(`.inp[data-k="${k}"]`).value.trim()):sel[k]!=null).length;
       if(nAns<t.items.length&&!$('#check').dataset.warn){$('#check').dataset.warn=1;$('#check').textContent='Не все ответы выбраны — всё равно проверить';return;}
-      stopSpeak();const au=$('#au');if(au)au.pause();
+      if(FLOWSTOP){FLOWSTOP();FLOWSTOP=null;}stopSpeak();const au=$('#au');if(au)au.pause();
       t.items.forEach((it,k)=>{if(it.inp){const inp=document.querySelector(`.inp[data-k="${k}"]`);inp.disabled=true;total++;const v=normA(inp.value);const ok=!!v&&it.acc.some(x=>v.includes(normA(x)));if(ok)score++;logTeil(kind,(TC?'telc ':'')+(t.teil||'Teil ?'),ok);inp.classList.add(ok?'ok':'bad');
           inp.nextElementSibling.innerHTML=`<div class="why ${ok?'good':''}"><b>${ok?'✅':'❌ Правильно: '+esc(it.ans)}</b> ${esc(it.why||'')}${ok?'':'<br><small class="muted">Проверка автоматическая: если по смыслу ты ответила верно, засчитай себе сама.</small>'}</div>`;return;}
         const g=document.querySelector(`.opts[data-k="${k}"]`);g.dataset.done=1;total++;
