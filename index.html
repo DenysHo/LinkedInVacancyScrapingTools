@@ -2639,6 +2639,13 @@ function markDone(id,txt,sec){S.done=S.done||{};S.done[id]=lvlOf(txt);
 (function fixLevels(){try{let ch=0;Object.keys(S.lv||{}).forEach(sec=>S.lv[sec].forEach(e=>{if(e.l!=='✓')return;
   const f=(S.fb||[]).find(f=>f.sec===sec&&Math.abs(f.d-e.d)<5000);if(!f)return;const l=lvlOf(f.t);if(l==='✓')return;
   e.l=l;if(S.done&&S.done[e.id]==='✓')S.done[e.id]=l;ch=1;}));if(ch)save();}catch(e){}})();
+const isTelcId=id=>/^(th\d|tl\d|telc_)/.test(String(id||''));
+(function telcReset(){if(S.telcReset)return;S.telcReset=Date.now();
+  S.hist=(S.hist||[]).filter(h=>h.kind==='lid'||isTelcId(h.id));
+  Object.keys(S.best||{}).forEach(k=>{if(k!=='lid'&&!isTelcId(k))delete S.best[k];});
+  Object.keys(S.teil||{}).forEach(k=>{if(!/\|telc /.test(k))delete S.teil[k];});
+  const keep=new Set(['tp1a','tp1b','spme'].concat(TELC_PLAN.map(x=>sid('sp3_'+x.t)),TELC_MEINUNG.map(x=>sid('sp3_'+x.t)),TELC_MAIL.map(x=>sid('tw_'+x.t)),TELC_KURZ.map(x=>sid('tw_'+x.a))));
+  Object.keys(S.lv||{}).forEach(s=>{S.lv[s]=(S.lv[s]||[]).filter(e=>keep.has(e.id));});S.fb=[];save();})();
 function logTeil(kind,teil,ok){S.teil=S.teil||{};const k=kind+'|'+teil;(S.teil[k]=S.teil[k]||[]).push(ok?1:0);S.teil[k]=S.teil[k].slice(-40);}
 function badge(v,cls=''){return v?`<span class="res ${cls}"><b>✓</b><small>${v==='✓'?'сделано':esc(v)}</small></span>`:'';}
 function scoreCls(s){const m=String(s).match(/(\d+)\/(\d+)/);if(!m)return'';const p=m[1]/m[2];return p>=.6?'good':p>=.4?'mid':'low';}
@@ -3541,8 +3548,8 @@ function stat(name,pct,info,tip){return {name,pct,info,tip};}
 function viewAnalyse(){
   const ed=S.examDate||DEFAULT_EXAM;const exam=ed?new Date(ed+'T08:30:00'):null;const days=exam?Math.max(0,Math.ceil((exam-Date.now())/86400000)):null;
   const H=(S.hist||[]).slice();const rows=[];
-  // старые результаты (до появления анализа): берём лучший балл из S.best
-  for(const kind of ['hoeren','lesen']){for(const t of testsOf(kind)){const b=S.best[t.id];if(b==null||H.some(h=>h.id===t.id))continue;const m=String(b).match(/(\d+)\/(\d+)/);if(m)H.push({d:0,kind,id:t.id,s:+m[1],n:+m[2],old:true});}}
+  // только telc: лучший балл из S.best, если нет истории
+  for(const kind of ['hoeren','lesen']){for(const t of TLIST(kind)){const b=S.best[t.id];if(b==null||H.some(h=>h.id===t.id))continue;const m=String(b).match(/(\d+)\/(\d+)/);if(m)H.push({d:0,kind,id:t.id,s:+m[1],n:+m[2],old:true});}}
   if(S.best.lid&&!H.some(h=>h.kind==='lid'))H.push({d:0,kind:'lid',s:S.best.lid,n:33,old:true});
   H.sort((a,b)=>a.d-b.d);
   // LiD
@@ -3551,17 +3558,18 @@ function viewAnalyse(){
   rows.push({sec:'🇩🇪 Leben in Deutschland',pct:lidPct,info:lidEx.length?`Пробные тесты (последние ${lidEx.length}): ${lidEx.map(h=>h.s+'/'+h.n).join(', ')} · нужно ≥15, для гражданства ≥17`:`Выучено ${known} из ${qs.length} · пробный тест ещё не пройден`,
     tip:wrongs?`Повтори «Мои ошибки» (${wrongs} вопр.) и сделай пробный тест.`:'Сделай пробный тест на 33 вопроса.',parts:[]});
   // Hören / Lesen
-  for(const [kind,label,nT] of [['hoeren','🎧 Hören',4],['lesen','📖 Lesen',5]]){
-    const parts=[];for(let i=1;i<=nT;i++){const arr=(S.teil||{})[kind+'|Teil '+i]||[];parts.push({t:'Teil '+i,pct:arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length*100):null,n:arr.length});}
-    const hs=H.filter(h=>h.kind===kind).slice(-5);const pct=hs.length?Math.round(hs.reduce((a,h)=>a+h.s/h.n,0)/hs.length*100):null;
+  const TP={hoeren:[['telc Teil 1','Teil 1'],['telc Teil 2','Teil 2'],['telc Teil 3','Teil 3'],['telc Teil 4','Teil 4'],['telc Teil 5 · Hören und Schreiben','Teil 5']],lesen:[['telc Lesen Teil 1','Teil 1'],['telc Lesen Teil 2','Teil 2'],['telc Lesen Teil 3','Teil 3'],['telc Lesen Teil 4','Teil 4'],['telc Sprachbausteine','Sprachb.'],['telc Lesen und Schreiben','L+S']]};
+  for(const [kind,label] of [['hoeren','🎧 Hören'],['lesen','📖 Lesen']]){
+    const parts=TP[kind].map(([key,t])=>{const arr=(S.teil||{})[kind+'|'+key]||[];return {t,pct:arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length*100):null,n:arr.length};});
+    const hs=H.filter(h=>h.kind===kind&&isTelcId(h.id)).slice(-5);const pct=hs.length?Math.round(hs.reduce((a,h)=>a+h.s/h.n,0)/hs.length*100):null;
     const weak=parts.filter(p=>p.pct!=null).sort((a,b)=>a.pct-b.pct)[0];
     rows.push({sec:label,pct,info:hs.length?`Пройдено тестов: ${H.filter(h=>h.kind===kind).length} · последние: ${hs.map(h=>h.s+'/'+h.n).join(', ')}`:'Ещё нет пройденных тестов',
-      tip:weak&&weak.pct<75?`Слабее всего ${weak.t} (${weak.pct}%). Тренируй его отдельно: кнопка генерации → «${weak.t}».`:(hs.length?(pct<75?'Пройди ещё 1–2 теста — тогда будет видно, какой Teil слабее.':'Держи уровень: 1 тест через день.'):'Пройди хотя бы один тест.'),parts});
+      tip:weak&&weak.pct<75?`Слабее всего ${weak.t} (${weak.pct}%). Повтори его в следующем тесте и разбери объяснения.`:(hs.length?(pct<75?'Пройди ещё 1–2 теста — тогда будет видно, какой Teil слабее.':'Держи уровень: 1 тест через день.'):'Пройди хотя бы один тест.'),parts});
   }
   for(const [sec,label] of [['sprechen','🗣️ Sprechen'],['schreiben','✍️ Schreiben']]){
     const lv=((S.lv||{})[sec]||[]).slice(-5);const pct=lv.length?Math.round(lv.reduce((a,x)=>a+(LVSCORE[x.l]||60),0)/lv.length):null;
     rows.push({sec:label,pct,info:lv.length?`Последние оценки: ${lv.map(x=>x.l).join(' → ')}`:'Ещё нет оценок от Claude',
-      tip:sec==='sprechen'?(lv.length?'Каждый день: 1 картинка по каркасу + 1 диалог Teil 3 на время.':'Сделай 1 картинку и 1 диалог с «Оценить».'):(lv.length?'Пиши по каркасу: 1 абзац = 1 пункт задания, слова из задания.':'Напиши одно письмо и нажми «Проверить».'),parts:[]});
+      tip:sec==='sprechen'?(lv.length?'Каждый день: 1A+1B по своему тексту, 1 задание Teil 2 и 1 тема Teil 3 на время.':'Сделай 1A, 1B и один диалог Teil 3 с «Оценить».'):(lv.length?'Пиши по каркасу: 1 абзац = 1 пункт задания, слова из задания.':'Напиши одно письмо и нажми «Проверить».'),parts:[]});
   }
   const col=p=>p==null?'na':p>=75?'good':p>=55?'mid':'low';
   const word=p=>p==null?'нет данных':p>=75?'готова':p>=55?'почти':'тренировать';
@@ -3577,14 +3585,16 @@ function viewAnalyse(){
     <p class="muted small">${esc(r.info)}</p>
     ${r.parts.length?`<div class="parts">${r.parts.map(p=>`<div><small>${p.t}</small><div class="bar"><i class="${col(p.pct)}" style="width:${p.pct||0}%"></i></div><small class="muted">${p.pct==null?'—':p.pct+'%'}</small></div>`).join('')}</div>`:''}
     <p class="small">💡 ${esc(r.tip)}</p></div>`).join('')}
-  <p class="muted small">Ориентир для B1 в DTZ: Hören + Lesen вместе — примерно от 73 % правильных; Sprechen и Schreiben — оценка B1. Шкала: зелёный ≥75 %, жёлтый 55–74 %, красный <55 %.</p>
+  ${(()=>{const four=rows.slice(1).map(r=>r.pct);if(four.some(p=>p==null))return '';const pts=four.map(p=>Math.round(p*0.6));const tot=pts.reduce((a,b)=>a+b,0);const n70=four.filter(p=>p>=70).length;const ok=tot>=168&&n70>=3&&four.every(p=>p>=40);
+   return `<div class="card center ${ok?'accent':''}"><p style="margin:0">Прогноз по telc (из 240):</p><div class="big">${tot}</div><p class="small">Hören ${pts[0]} · Lesen ${pts[1]} · Sprechen ${pts[2]} · Schreiben ${pts[3]}</p><p><b>${ok?'✅ Сейчас это B1':'Пока A2 — до B1 не хватает: '+[tot<168?`ещё ${168-tot} баллов всего`:'',n70<3?`70 % ещё в ${3-n70} частях`:''].filter(Boolean).join(', ')}</b></p></div>`;})()}
+  <p class="muted small">Для B1 в telc A2·B1: ≥70 % всего (168 из 240), ≥70 % в 3 из 4 частей и ≥40 % в каждой. Шкала: зелёный ≥75 %, жёлтый 55–74 %, красный &lt;55 %.</p>
   <button class="wide ai" id="aiplan">🤖 Разбор и план от Claude</button><div id="aiout"></div>`,false);
   $('#exd').onchange=e=>{S.examDate=e.target.value;save();viewAnalyse();};
   $('#aiplan').onclick=async()=>{
     const out=$('#aiout');out.innerHTML='<p class="muted">Claude анализирует…</p>';
     const data=rows.map(r=>`${r.sec}: ${r.pct==null?'нет данных':r.pct+'%'}; ${r.info}${r.parts.length?'; по частям: '+r.parts.map(p=>p.t+' '+(p.pct==null?'—':p.pct+'%')).join(', '):''}`).join('\n');
     const fbs=(S.fb||[]).slice(-6).map(f=>`[${f.sec}] ${f.t.slice(0,700)}`).join('\n---\n');
-    try{await ask(`Ich bereite mich auf DTZ (Ziel B1) und den Test „Leben in Deutschland“ vor. Prüfung in ${days==null?'?':days} Tagen. Meine Statistik aus der Trainings-App:\n${data}\n\nAuszüge aus den letzten Feedbacks zu Sprechen/Schreiben:\n${fbs||'(noch keine)'}\n\nОтветь по-русски, коротко и конкретно:\n**Где я сейчас:** 2–3 предложения.\n**Сильные стороны:** 2–3 пункта.\n**Главные проблемы:** 3 пункта, с конкретными повторяющимися ошибками из отзывов, если они есть.\n**План на ${Math.min(days||7,7)} дней:** по дням, 30–40 минут в день, с конкретными заданиями из приложения (части LiD, Hören Teil X, Lesen Teil X, Sprechen Teil 2/3, Schreiben).\nНе выдумывай данные, которых нет.`,{nocache:true,onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>'});}
+    try{await ask(`Ich bereite mich auf telc Deutsch A2·B1 (Ziel B1: mind. 70 % gesamt, 70 % in 3 von 4 Teilen, mind. 40 % in jedem Teil) und den Test „Leben in Deutschland“ vor. Prüfung in ${days==null?'?':days} Tagen. Meine Statistik aus der Trainings-App:\n${data}\n\nAuszüge aus den letzten Feedbacks zu Sprechen/Schreiben:\n${fbs||'(noch keine)'}\n\nОтветь по-русски, коротко и конкретно:\n**Где я сейчас:** 2–3 предложения.\n**Сильные стороны:** 2–3 пункта.\n**Главные проблемы:** 3 пункта, с конкретными повторяющимися ошибками из отзывов, если они есть.\n**План на ${Math.min(days||7,7)} дней:** по дням, 30–40 минут в день, с конкретными заданиями из приложения (части LiD, Hören Teil X, Lesen Teil X, Sprechen Teil 2/3, Schreiben).\nНе выдумывай данные, которых нет.`,{nocache:true,onText:({text})=>out.innerHTML='<div class="fb">'+md(text)+'</div>'});}
     catch(e){showErr(out,e,'Ошибка');}
   };
 }
