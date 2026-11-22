@@ -2513,9 +2513,9 @@ function LT(id,name,P){
   items:P.t4.mc.map((m,k)=>mc(k+14,m[0],m[1],m[2],P.t4.why[k]))};
  const SB={teil:'Sprachbausteine',instr:'Lesen Sie den Text. Welches Wort passt in die jeweilige Lücke (19–28)?',text:P.sb.text.replace(/\{(\d+)\}/g,' __$1__ '),
   items:P.sb.opts.map((o,k)=>({q:`${k+19}.`,o:o.map((x,j)=>ABC[j]+'  '+x),a:ABC.indexOf(P.sb.ans[k]),why:P.sb.why[k]}))};
- const LS={teil:'Lesen und Schreiben',instr:'Sie haben folgende E-Mail bekommen. Lesen Sie die E-Mail und lösen Sie die Aufgaben 29–30. (Задание 31 — ответ на это письмо — во вкладке Schreiben → «'+P.lus.t+'».)',text:P.lus.text,
-  items:[rf(29,P.lus.rf[0],P.lus.rf[1],P.lus.why[0]),{q:`30. ${P.lus.mc[0]}`,o:P.lus.mc[1].map((x,j)=>'ab'[j]+'  '+x),a:'ab'.indexOf(P.lus.mc[2]),why:P.lus.why[1]}]};
- if(typeof TELC_MAIL!=='undefined'&&P.lus.q)TELC_MAIL.push({t:P.lus.t,k:P.lus.k||'informell',from:P.lus.from,betreff:P.lus.betreff,text:P.lus.text,q:P.lus.q});
+ const LS={teil:'Lesen und Schreiben',instr:'Sie haben folgende E-Mail bekommen. Lesen Sie die E-Mail und lösen Sie die Aufgaben 29–30. Ниже — задание 31: ответ на это письмо.',text:P.lus.text,
+  write:P.lus.q?{t:P.lus.t,k:P.lus.k||'informell',text:P.lus.text,q:P.lus.q}:null,items:[rf(29,P.lus.rf[0],P.lus.rf[1],P.lus.why[0]),{q:`30. ${P.lus.mc[0]}`,o:P.lus.mc[1].map((x,j)=>'ab'[j]+'  '+x),a:'ab'.indexOf(P.lus.mc[2]),why:P.lus.why[1]}]};
+ if(typeof TELC_MAIL!=='undefined'&&P.lus.q)TELC_MAIL.push({t:P.lus.t,k:P.lus.k||'informell',from:P.lus.from,betreff:P.lus.betreff,text:P.lus.text,q:P.lus.q,fromTest:true});
  return [{id,name:name+' · Lesen',fmt:'telc',real:P.real,tl:2700,tlLabel:'telc Lesen — 45 минут',tasks:[T1,T2,T3,T4]},
   {id:id+'sb',name:name+' · Sprachbausteine',fmt:'telc',real:P.real,tl:2100,tlLabel:'Sprachbausteine + Lesen und Schreiben — 35 минут (вместе с письмом)',tasks:[SB,LS]}];
 }
@@ -3256,7 +3256,7 @@ function viewSchreibenDTZ(){
   const all=SCHREIBEN_REAL.concat(SCHREIBEN,S.wr||[]);
   screen('Schreiben · DTZ',`<p class="muted">В DTZ выбираешь одно из двух заданий и пишешь письмо/e-mail (~80 слов, 30 минут) по 4 пунктам. Не забывай: обращение, все 4 пункта, прощание.</p>
   <button class="wide" id="rnd">🎲 Случайная тема</button>
-  ${all.map((x,i)=>`<button class="item" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.s)}</small></div>${(S.done||{})[sid('wr_'+x.t)]?badge(S.done[sid('wr_'+x.t)]):(S.drafts[sid('wr_'+x.t)]?'<em>✎</em>':'')}</button>`).join('')}
+  ${all.map((x,i)=>`<button class="item" data-i="${i}"><span>${x.fromTest?'📖':x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.s)}</small></div>${(S.done||{})[sid('wr_'+x.t)]?badge(S.done[sid('wr_'+x.t)]):(S.drafts[sid('wr_'+x.t)]?'<em>✎</em>':'')}</button>`).join('')}
   <button class="wide ghost ai" id="nw">🤖 Новая тема от Claude</button>`);
   document.querySelectorAll('.item').forEach(b=>b.onclick=()=>{push(viewSchreiben);wr(all[+b.dataset.i]);});
   $('#rnd').onclick=()=>{push(viewSchreiben);wr(all[Math.floor(Math.random()*all.length)]);};
@@ -3369,7 +3369,8 @@ function viewSchreiben(){
    <li>Связки: außerdem, deshalb, trotzdem, wenn, dass, obwohl — это критерий «Kommunikative Gestaltung».</li>
    <li>Kurznachricht: ответь на вопрос и добавь 1–2 детали (когда, с кем, почему). Одно слово = 0 баллов.</li></ul></details>
   <h3>✉️ E-Mail beantworten <small>(${TELC_MAIL.length})</small></h3>
-  ${TELC_MAIL.map((x,i)=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.q.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}
+  <p class="muted small">📖 — дословно то письмо, которое ты читаешь в тесте Lesen («Lesen und Schreiben», задание 31). Его же можно написать прямо в тесте.</p>
+  ${TELC_MAIL.map((x,i)=>[x,i]).sort((p,q)=>(q[0].fromTest?1:0)-(p[0].fromTest?1:0)).map(([x,i])=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.q.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}
   <h3>💬 Kurznachricht <small>(${TELC_KURZ.length})</small></h3>
   ${TELC_KURZ.map((x,i)=>`<button class="item tk" data-i="${i}"><span>💬</span><div><b>${esc(x.c)}</b><small>${esc(x.a)}</small></div>${dn(x.a)}</button>`).join('')}
   <details class="card"><summary>Письма DTZ (другой экзамен)</summary><button class="item" id="dtzw"><span>📦</span><div><b>Schreiben DTZ</b><small>письма по 4 пунктам</small></div></button></details>`,false);
@@ -3401,6 +3402,7 @@ const TW_FB=`Отвечай по-русски. Оценивай строго, к
 **Ошибки:** «❌ → ✅ (объяснение)», до 10 штук.
 **Исправленный текст:** (по-немецки, сохраняя мой стиль, уровень B1).
 **Совет:** 1–2 конкретных совета.`;
+function mailPrompt(x,t,photo){return `telc Deutsch A2·B1, «Lesen und Schreiben»: Antwort auf eine E-Mail. Die erhaltene E-Mail:\n"""${x.text}"""\nDie Fragen darin: ${x.q.join('; ')}.\n${photo?'Mein handgeschriebener Text ist auf dem Foto. Lies ihn zuerst ab (schreib ihn unter **Твой текст:** ab).\n':''}${t?`Meine Antwort:\n"""${t}"""\n`:''}Bewerte streng nach telc: Kriterium I (A: alle Fragen umfassend, präzise und angemessen beantwortet … F: nicht bearbeitet). Сначала по каждому вопросу из письма: ✅ ответила подробно / ⚠️ кратко / ❌ нет ответа.\n${TW_FB}`;}
 function twMail(x){
   const id=sid('tw_'+x.t);
   screen('E-Mail beantworten',`<div class="card"><span class="chip">${x.k==='formell'?'официальное':'личное'}</span><p class="small muted">Von: ${esc(x.from)}<br>Betreff: ${esc(x.betreff)}</p><div class="read">${esc(x.text).replace(/\n/g,'<br>')}</div>
@@ -3408,7 +3410,7 @@ function twMail(x){
   <ul class="checks">${x.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div>
   ${twEditor(id,x.k==='formell'?'Sehr geehrte Frau …,':'Liebe … / Hallo …,',80,1500,'Ориентир ~25 минут (весь блок со Sprachbausteine — 35 минут).')}
   <details class="card"><summary>Пример ответа</summary><div id="mod"><button class="link" id="mk">🤖 Показать образец</button></div></details>`);
-  twWire(id,'70–100',1500,(t,photo)=>`telc Deutsch A2·B1, «Lesen und Schreiben»: Antwort auf eine E-Mail. Die erhaltene E-Mail:\n"""${x.text}"""\nDie 3 Fragen: ${x.q.join('; ')}.\n${photo?'Mein handgeschriebener Text ist auf dem Foto. Lies ihn zuerst ab (schreib ihn unter **Твой текст:** ab).\n':''}${t?`Meine Antwort:\n"""${t}"""\n`:''}Bewerte streng nach telc: Kriterium I (A: alle 3 Fragen umfassend, präzise und angemessen beantwortet … F: nicht bearbeitet). Сначала по каждому из 3 вопросов: ✅ ответила подробно / ⚠️ кратко / ❌ нет ответа.\n${TW_FB}`);
+  twWire(id,'70–100',1500,(t,photo)=>mailPrompt(x,t,photo));
   $('#mk').onclick=async()=>{const m=$('#mod');m.innerHTML='<p class="muted">…</p>';try{await ask(`Schreibe eine Musterantwort (ca. 90 Wörter, Niveau B1) auf diese E-Mail für telc Deutsch A2·B1. Beantworte alle 3 Fragen ausführlich, mit Anrede und Gruß, Register: ${x.k}.\n"""${x.text}"""\nNur die E-Mail, danach eine Zeile "**Связки:**" mit 4 nützlichen Konnektoren aus dem Text.`,{onText:({text})=>m.innerHTML=md(text)});}catch(e){showErr(m,e);}};
 }
 function twKurz(x){
@@ -3461,7 +3463,7 @@ function telcVerdict(PT,H){
   if(H){const [c,n]=sum(['Teil 1','Teil 2','Teil 3','Teil 4']);h+=line('Hören (Teil 1–4)',c,n,3,60,'Эти баллы идут в часть Hören (макс. 60). Для B1 нужно ≥42 из 60.');
     const [c5,n5]=g('Teil 5 · Hören und Schreiben');h+=line('Teil 5 · Hören und Schreiben',c5,n5,1,5,'Эти баллы идут в часть Schreiben (макс. 5 из 60). Проверка автоматическая — если ответ по смыслу верный, засчитай себе.');}
   else if(PT['Sprachbausteine']||PT['Lesen und Schreiben']){const [c,n]=g('Sprachbausteine');h+=line('Sprachbausteine',c,n,0.5,5,'Идёт в часть Schreiben (всего 5 из 60 баллов) — вес маленький, но это хорошая проверка грамматики.');
-    const [c2,n2]=g('Lesen und Schreiben');h+=line('Lesen und Schreiben (29–30)',c2,n2,3,6,'Идёт в часть Lesen (6 из 60 баллов). Письмо 31 пиши во вкладке Schreiben.');}
+    const [c2,n2]=g('Lesen und Schreiben');h+=line('Lesen und Schreiben (29–30)',c2,n2,3,6,'Идёт в часть Lesen (6 из 60 баллов). Письмо 31 оценивает Claude прямо под заданиями — эти баллы идут в Schreiben.');}
   else{const [c,n]=sum(['Lesen Teil 1','Lesen Teil 2','Lesen Teil 3','Lesen Teil 4']);h+=line('Lesen (Teil 1–4)',c,n,3,54,'Ещё 6 баллов Lesen дают задания 29–30 (тест «Sprachbausteine»). Для B1 нужно ≥42 из 60.');}
   return h+'<p class="muted small">Правило telc A2·B1: B1, если ≥70 % всего (168 из 240), ≥70 % в 3 из 4 частей и ≥40 % в каждой части.</p>';
 }
@@ -3486,7 +3488,9 @@ function runTest(test,kind){
     ${t.text?`<div class="read">${esc(t.text).replace(/\n/g,'<br>')}</div>`:''}
     ${t.items.map((it,k)=>`<div class="card"><p class="q">${t.items.length>1&&!TC?`<b>${k+1}.</b> `:''}${esc(it.q).replace(/\n/g,'<br>')}</p>${it.inp?`<input class="inp" data-k="${k}" placeholder="Ответ…" autocomplete="off"><div class="fbk"></div>`:`<div class="opts ${it.o.every(o=>o.length<=2)?'compact':''}" data-k="${k}">${it.o.map((o,j)=>`<button class="opt" data-j="${j}">${esc(o)}</button>`).join('')}</div><div class="fbk"></div>`}</div>`).join('')}
     <div id="tr"></div>
-    <button class="wide" id="check">Проверить</button><button class="wide hidden" id="nx">Дальше →</button>`);
+    <button class="wide" id="check">Проверить ${t.write?'29–30':''}</button><button class="wide hidden" id="nx">Дальше →</button>
+    ${t.write?`<h3>31. Schreiben Sie eine Antwort auf diese E-Mail</h3><p class="small"><b>Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p><ul class="checks">${t.write.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${twEditor(sid('tw_'+t.write.t),t.write.k==='formell'?'Sehr geehrte …,':'Liebe … / Hallo …,',80,1500,'Письмо 31 — ориентир ~25 минут (весь блок 35 минут).')}`:''}`);
+    if(t.write)twWire(sid('tw_'+t.write.t),'70–100',1500,(txt,photo)=>mailPrompt(t.write,txt,photo));
     if(t.audio&&TC){
       const pb=$('#play'),st=$('#pst'),pc=$('#pc'),sk=$('#skip');let run=0,flows=0,tmo=null,skipFn=null;
       const seq=t.seq||((t.plays||1)===2?[t.audio,5000,t.audio]:[t.audio]);const nA=seq.filter(x=>Array.isArray(x)).length;
