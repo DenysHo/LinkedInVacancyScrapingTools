@@ -3362,21 +3362,23 @@ function tp1b(){
 function viewSchreiben(){
   const dn=t=>{const v=(S.done||{})[sid('tw_'+t)];return v?badge(v):(S.drafts[sid('tw_'+t)]?'<em>✎</em>':'');};
   screen('Schreiben',`<p class="muted">Schreiben в telc A2·B1 — две задачи. ✉️ <b>Ответить на e-mail</b>: ответить на <b>все 3 вопроса</b> из письма, с обращением и прощанием (в блоке 35 минут вместе со Sprachbausteine). 💬 <b>Короткое сообщение</b>: ответить на вопрос в чате, «больше одного слова» (10 минут).</p>
+  <div class="grid"><button class="tile" id="goM"><span>✉️</span><b>E-Mail</b><small>ответ на письмо · ${TELC_MAIL.length}</small></button><button class="tile" id="goK"><span>💬</span><b>Kurznachricht</b><small>мини-сообщение, 10 мин · ${TELC_KURZ.length}</small></button></div>
   <details class="card"><summary>📋 Как отвечать, чтобы получить B1</summary><ul>
    <li>Каждому вопросу — свой абзац, отвечай подробно: ответ + причина (weil / denn) + деталь.</li>
    <li>Обращение по тону письма: «Liebe Petra,» / «Hallo Markus,» или «Sehr geehrte Frau Keller,», в конце «Viele Grüße» / «Mit freundlichen Grüßen».</li>
    <li>Начало: «vielen Dank für deine / Ihre E-Mail.» Конец: «Ich freue mich auf …» / «Bis bald!»</li>
    <li>Связки: außerdem, deshalb, trotzdem, wenn, dass, obwohl — это критерий «Kommunikative Gestaltung».</li>
    <li>Kurznachricht: ответь на вопрос и добавь 1–2 детали (когда, с кем, почему). Одно слово = 0 баллов.</li></ul></details>
-  <h3>✉️ E-Mail beantworten <small>(${TELC_MAIL.length})</small></h3>
+  <h3 id="secM">✉️ E-Mail beantworten <small>(${TELC_MAIL.length})</small></h3>
   <p class="muted small">📖 — дословно то письмо, которое ты читаешь в тесте Lesen («Lesen und Schreiben», задание 31). Его же можно написать прямо в тесте.</p>
   ${TELC_MAIL.map((x,i)=>[x,i]).sort((p,q)=>(q[0].fromTest?1:0)-(p[0].fromTest?1:0)).map(([x,i])=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.q.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}
-  <h3>💬 Kurznachricht <small>(${TELC_KURZ.length})</small></h3>
+  <h3 id="secK">💬 Kurznachricht <small>(${TELC_KURZ.length})</small></h3>
   ${TELC_KURZ.map((x,i)=>`<button class="item tk" data-i="${i}"><span>💬</span><div><b>${esc(x.c)}</b><small>${esc(x.a)}</small></div>${dn(x.a)}</button>`).join('')}
   <details class="card"><summary>Письма DTZ (другой экзамен)</summary><button class="item" id="dtzw"><span>📦</span><div><b>Schreiben DTZ</b><small>письма по 4 пунктам</small></div></button></details>`,false);
   document.querySelectorAll('.tm').forEach(b=>b.onclick=()=>{push(viewSchreiben);twMail(TELC_MAIL[+b.dataset.i]);});
   document.querySelectorAll('.tk').forEach(b=>b.onclick=()=>{push(viewSchreiben);twKurz(TELC_KURZ[+b.dataset.i]);});
   $('#dtzw').onclick=()=>{push(viewSchreiben);viewSchreibenDTZ();};
+  $('#goK').onclick=()=>$('#secK').scrollIntoView({behavior:'smooth'});$('#goM').onclick=()=>$('#secM').scrollIntoView({behavior:'smooth'});
 }
 function twEditor(id,ph,target,secs,tlabel){return `${timerBox('tmw',secs,tlabel)}
   <textarea id="${id}" class="editor ${target>40?'tall':''}" placeholder="${ph}">${esc(S.drafts[id]||'')}</textarea>
