@@ -3369,9 +3369,11 @@ function viewSchreiben(){
    <li>Начало: «vielen Dank für deine / Ihre E-Mail.» Конец: «Ich freue mich auf …» / «Bis bald!»</li>
    <li>Связки: außerdem, deshalb, trotzdem, wenn, dass, obwohl — это критерий «Kommunikative Gestaltung».</li>
    <li>Kurznachricht: ответь на вопрос и добавь 1–2 детали (когда, с кем, почему). Одно слово = 0 баллов.</li></ul></details>
-  <h3 id="secM">✉️ E-Mail beantworten <small>(${TELC_MAIL.length})</small></h3>
-  <p class="muted small">📖 — дословно то письмо, которое ты читаешь в тесте Lesen («Lesen und Schreiben», задание 31). Его же можно написать прямо в тесте.</p>
-  ${TELC_MAIL.map((x,i)=>[x,i]).sort((p,q)=>(q[0].fromTest?1:0)-(p[0].fromTest?1:0)).map(([x,i])=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${x.k==='formell'?'официальное':'личное'} · ${esc(x.q.join(' · '))}</small></div>${dn(x.t)}</button>`).join('')}
+  <h3 id="secM">✉️ E-Mail beantworten</h3>
+  <p class="muted small">Письма дословно из тестов Lesen («Lesen und Schreiben», задание 31) — как на экзамене: прочитай письмо и сама найди, на какие вопросы нужно ответить.</p>
+  ${TELC_MAIL.map((x,i)=>[x,i]).filter(p=>p[0].fromTest).map(([x,i])=>`<button class="item tm" data-i="${i}"><span>📖</span><div><b>${esc(x.t)}</b><small>${esc(x.from||'')}</small></div>${dn(x.t)}</button>`).join('')}
+  <details class="card"><summary>Ещё письма для тренировки (не из тестов)</summary>
+  ${TELC_MAIL.map((x,i)=>[x,i]).filter(p=>!p[0].fromTest).map(([x,i])=>`<button class="item tm" data-i="${i}"><span>${x.k==='formell'?'🏛️':'💌'}</span><div><b>${esc(x.t)}</b><small>${esc(x.from||'')}</small></div>${dn(x.t)}</button>`).join('')}</details>
   <h3 id="secK">💬 Kurznachricht <small>(${TELC_KURZ.length})</small></h3>
   ${TELC_KURZ.map((x,i)=>`<button class="item tk" data-i="${i}"><span>💬</span><div><b>${esc(x.c)}</b><small>${esc(x.a)}</small></div>${dn(x.a)}</button>`).join('')}
   <details class="card"><summary>Письма DTZ (другой экзамен)</summary><button class="item" id="dtzw"><span>📦</span><div><b>Schreiben DTZ</b><small>письма по 4 пунктам</small></div></button></details>`,false);
@@ -3408,8 +3410,7 @@ function mailPrompt(x,t,photo){return `telc Deutsch A2·B1, «Lesen und Schreibe
 function twMail(x){
   const id=sid('tw_'+x.t);
   screen('E-Mail beantworten',`<div class="card"><span class="chip">${x.k==='formell'?'официальное':'личное'}</span><p class="small muted">Von: ${esc(x.from)}<br>Betreff: ${esc(x.betreff)}</p><div class="read">${esc(x.text).replace(/\n/g,'<br>')}</div>
-  <p class="small"><b>Schreiben Sie eine E-Mail. Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p>
-  <ul class="checks">${x.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul></div>
+  <p class="small"><b>Schreiben Sie eine E-Mail. Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p></div>
   ${twEditor(id,x.k==='formell'?'Sehr geehrte Frau …,':'Liebe … / Hallo …,',80,1500,'Ориентир ~25 минут (весь блок со Sprachbausteine — 35 минут).')}
   <details class="card"><summary>Пример ответа</summary><div id="mod"><button class="link" id="mk">🤖 Показать образец</button></div></details>`);
   twWire(id,'70–100',1500,(t,photo)=>mailPrompt(x,t,photo));
@@ -3503,7 +3504,7 @@ function runTest(test,kind){
     ${t.items.map((it,k)=>`<div class="card"><p class="q">${t.items.length>1&&!TC?`<b>${k+1}.</b> `:''}${esc(it.q).replace(/\n/g,'<br>')}</p>${it.inp?`<input class="inp" data-k="${k}" placeholder="Ответ…" autocomplete="off"><div class="fbk"></div>`:`<div class="opts ${it.o.every(o=>o.length<=2)?'compact':''}" data-k="${k}">${it.o.map((o,j)=>`<button class="opt" data-j="${j}">${esc(o)}</button>`).join('')}</div><div class="fbk"></div>`}</div>`).join('')}
     <div id="tr"></div>
     <button class="wide" id="check">Проверить ${t.write?'29–30':''}</button><button class="wide hidden" id="nx">Дальше →</button>
-    ${t.write?`<h3>31. Schreiben Sie eine Antwort auf diese E-Mail</h3><p class="small"><b>Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p><ul class="checks">${t.write.q.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>${twEditor(sid('tw_'+t.write.t),t.write.k==='formell'?'Sehr geehrte …,':'Liebe … / Hallo …,',80,1500,'Письмо 31 — ориентир ~25 минут (весь блок 35 минут).')}`:''}`);
+    ${t.write?`<h3>31. Schreiben Sie eine Antwort auf diese E-Mail</h3><p class="small"><b>Beantworten Sie die Fragen aus der E-Mail. Zeigen Sie, was Sie können. Vergessen Sie nicht die Anrede und den Gruß.</b></p>${twEditor(sid('tw_'+t.write.t),t.write.k==='formell'?'Sehr geehrte …,':'Liebe … / Hallo …,',80,1500,'Письмо 31 — ориентир ~25 минут (весь блок 35 минут).')}`:''}`);
     if(t.write)twWire(sid('tw_'+t.write.t),'70–100',1500,(txt,photo)=>mailPrompt(t.write,txt,photo));
     if(t.audio&&TC){
       const pb=$('#play'),st=$('#pst'),pc=$('#pc'),sk=$('#skip');let run=0,flows=0,tmo=null,skipFn=null;
