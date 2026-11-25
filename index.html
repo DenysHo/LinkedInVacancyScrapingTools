@@ -3420,7 +3420,19 @@ function twKurz(x){
   screen('Kurznachricht',`<p class="small"><b>Sie haben folgende Kurznachricht bekommen. Antworten Sie. Schreiben Sie mehr als ein Wort. Zeigen Sie, was Sie können.</b></p>
   <div class="chat"><div class="bub pt">${esc(x.a)}</div><div class="bub me">${esc(x.b)}</div><div class="bub pt">${esc(x.c)}</div></div>
   ${twEditor(id,'…',20,600,'На экзамене — 10 минут.')}`);
-  twWire(id,'20–40',600,(t,photo)=>`telc Deutsch A2·B1, Schreiben (Kurznachricht, 10 Minuten). Chat:\nA: ${x.a}\nIch: ${x.b}\nA: ${x.c}\n${photo?'Mein Text ist auf dem Foto, lies ihn zuerst ab (unter **Твой текст:**).\n':''}${t?`Meine Antwort:\n"""${t}"""\n`:''}Bewerte nach telc Kriterium I (A: greift den Inhalt auf, setzt die Kommunikation fort, Details sind enthalten … F: kein Bezug) und II–IV.\n${TW_FB}`);
+  twWire(id,'20–40',600,(t,photo)=>`telc Deutsch A2·B1, Schreiben Item 57 (Kurznachricht, 10 Minuten). Das ist ein Chat unter Bekannten.\nChat:\nA: ${x.a}\nIch: ${x.b}\nA: ${x.c}\n${photo?'Mein Text ist auf dem Foto, lies ihn zuerst ab (unter **Твой текст:**).\n':''}${t?`Meine Antwort:\n«${t}»\n`:''}
+Bewerte GENAU nach dem offiziellen telc-Kriterium für Item 57 (Kriterium I, max. 5 Punkte):
+A 5 = Der Text greift den Inhalt der erhaltenen Nachricht auf und setzt die Kommunikation fort. Details sind enthalten.
+B 4 = Der Text greift den Inhalt auf und setzt die Kommunikation fort (ohne Details).
+C 3 = Die Kommunikation wird allgemein gehalten bzw. mit wenig Bezug zur Nachricht fortgesetzt.
+D 2 = allgemein, wenig Bezug, der Leser muss mitdenken. E 1 = schwer verständlich, kaum Bezug. F 0 = unverständlich / Thema verfehlt.
+WICHTIG: Es ist ein Chat. Anrede, Gruß und Unterschrift sind NICHT nötig und dürfen NICHT kritisiert werden. Es gibt keine Mindestwortzahl; 2–4 Sätze sind ideal. «Details» heißt: die konkrete Antwort auf die Frage (${x.c}) plus 1–2 Einzelheiten (Grund, Zeit, Ort, Alternative). Prüfe vor allem, ob genau die gestellte Frage beantwortet wurde.
+Kriterien II–IV werden in der Prüfung nicht für die Kurznachricht allein, sondern zusammen mit der E-Mail bewertet — gib hier nur eine kurze Einschätzung der Sprache, ohne Punkte.
+Отвечай по-русски:
+**Оценка:** уровень одним словом (A2 или B1) и баллы по критерию I (из 5) с одной фразой почему.
+**Хватает на B1?** ✅ / ⚠️ / ❌ — коротко.
+**Ошибки:** «❌ → ✅ (объяснение)», только настоящие ошибки.
+**Исправленный вариант:** (по-немецки, 2–4 предложения, в том же чатовом стиле, без приветствия).`);
 }
 
 // ===================== TESTS (HÖREN / LESEN) =====================
